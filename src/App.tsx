@@ -7,17 +7,32 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import AuthPage from "./pages/auth/AuthPage";
+import { OnboardingFlow } from "./components/onboarding/OnboardingFlow";
 
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      setLoading(false);
+      if (session) {
+        // Check onboarding status
+        supabase
+          .from("profiles")
+          .select("onboarding_completed")
+          .eq("user_id", session.user.id)
+          .single()
+          .then(({ data }) => {
+            setOnboardingCompleted(data?.onboarding_completed ?? false);
+            setLoading(false);
+          });
+      } else {
+        setLoading(false);
+      }
     });
 
     const {
@@ -35,6 +50,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (!session) {
     return <Navigate to="/auth" />;
+  }
+
+  if (!onboardingCompleted) {
+    return <OnboardingFlow />;
   }
 
   return <>{children}</>;
