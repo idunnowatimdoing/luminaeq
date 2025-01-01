@@ -103,8 +103,8 @@
 /* Orb Animation Styles */
 .auth-orb {
   @apply absolute w-48 h-48 rounded-full;
-  background: linear-gradient(-45deg, #00ffd5, #00b4d8, #0077b6);
-  background-size: 200% 200%;
+  background: linear-gradient(-45deg, #00ffd5, #00b4d8, #0077b6, #00ffd5);
+  background-size: 400% 400%;
   animation: gradientFlow 8s ease infinite, float 6s ease-in-out infinite;
   filter: blur(20px);
   opacity: 0.8;
@@ -114,8 +114,14 @@
   0% {
     background-position: 0% 50%;
   }
-  50% {
+  25% {
     background-position: 100% 50%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+  75% {
+    background-position: 0% 50%;
   }
   100% {
     background-position: 0% 50%;
