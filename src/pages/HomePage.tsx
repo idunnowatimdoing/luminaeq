@@ -72,7 +72,7 @@ export default function HomePage() {
         </div>
 
         {/* Pillar Orbs and Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           {/* Self Awareness */}
           <div className="flex flex-col items-center space-y-4">
             <div className="pillar-orb gradient-selfawareness" />
@@ -100,6 +100,22 @@ export default function HomePage() {
                 <div className="flex justify-between text-gray-300">
                   <span>Current: {dashboardData?.self_regulation}/20</span>
                   <span>Goal: 18/20</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Motivation */}
+          <div className="flex flex-col items-center space-y-4">
+            <div className="pillar-orb gradient-motivation" />
+            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-lg text-white">Motivation</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-between text-gray-300">
+                  <span>Current: {dashboardData?.motivation}/20</span>
+                  <span>Goal: 20/20</span>
                 </div>
               </CardContent>
             </Card>
