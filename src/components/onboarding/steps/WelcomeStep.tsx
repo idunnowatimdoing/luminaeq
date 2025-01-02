@@ -37,7 +37,7 @@ export const WelcomeStep = ({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#051527] relative overflow-hidden">
-      <AuthOrb className="opacity-40" />
+      <AuthOrb className="opacity-60 left-2/3 top-1/4" />
       
       <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="text-center space-y-2 mb-8">
