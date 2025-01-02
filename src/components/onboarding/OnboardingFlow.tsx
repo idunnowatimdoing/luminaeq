@@ -55,7 +55,7 @@ export const OnboardingFlow = () => {
       }
 
       console.log("Profile updated successfully");
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true }); // Updated to navigate to dashboard
     } catch (error: any) {
       console.error("Submit profile error:", error);
       toast({
@@ -75,6 +75,7 @@ export const OnboardingFlow = () => {
         description: "You can complete it anytime from the dashboard to unlock tailored insights and suggestions.",
         duration: 6000,
       });
+      navigate("/dashboard", { replace: true }); // Added explicit navigation
     } catch (error) {
       console.error("Error skipping assessment:", error);
     }
@@ -82,6 +83,7 @@ export const OnboardingFlow = () => {
 
   const handleStartAssessment = () => {
     console.log("Starting assessment...");
+    sessionStorage.setItem("startedFromIntro", "true");
     navigate("/assessment", { replace: true });
   };
 
