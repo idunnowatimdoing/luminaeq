@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AssessmentQuestion } from "@/components/assessment/AssessmentQuestion";
 import { toast } from "sonner";
-import { AuthOrb } from "@/components/auth/AuthOrb";
 
 interface Question {
   id: number;
@@ -40,18 +39,33 @@ export const AssessmentPage = () => {
   const [responses, setResponses] = useState<{ [key: number]: number }>({});
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
-        return;
+    const initializeAssessment = async () => {
+      try {
+        console.log("Initializing assessment...");
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          console.log("No session found, redirecting to auth");
+          navigate("/auth");
+          return;
+        }
+
+        // Shuffle questions
+        const shuffled = [...questions].sort(() => Math.random() - 0.5);
+        console.log("Questions shuffled, count:", shuffled.length);
+        setShuffledQuestions(shuffled);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error initializing assessment:", error);
+        toast.error("Failed to initialize assessment. Please try again.");
+        setIsLoading(false);
       }
     };
-    
-    checkAuth();
-    setShuffledQuestions([...questions].sort(() => Math.random() - 0.5));
+
+    initializeAssessment();
   }, [navigate]);
 
   const handleResponse = (value: number) => {
@@ -159,7 +173,7 @@ export const AssessmentPage = () => {
     }
   };
 
-  if (shuffledQuestions.length === 0) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-[#051527] flex items-center justify-center">
         <div className="text-white text-center space-y-4">
