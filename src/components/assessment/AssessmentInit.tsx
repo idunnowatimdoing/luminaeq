@@ -13,8 +13,13 @@ export const AssessmentInit = ({ onInitialized }: AssessmentInitProps) => {
   useEffect(() => {
     const initializeAssessment = async () => {
       try {
-        console.log("Initializing assessment...");
-        const { data: { session } } = await supabase.auth.getSession();
+        // Wait for auth to be ready
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+          throw sessionError;
+        }
         
         if (!session) {
           console.log("No session found, redirecting to auth");
@@ -22,7 +27,9 @@ export const AssessmentInit = ({ onInitialized }: AssessmentInitProps) => {
           return;
         }
 
-        console.log("Fetching profile data...");
+        console.log("Session found:", session.user.id);
+
+        // Fetch profile with proper auth
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('onboarding_completed')
@@ -34,16 +41,19 @@ export const AssessmentInit = ({ onInitialized }: AssessmentInitProps) => {
         }
 
         console.log("Profile data:", profile);
+        
         if (profile?.onboarding_completed) {
           console.log("Assessment already completed, redirecting to home");
           navigate('/', { replace: true });
           return;
         }
 
+        console.log("Assessment can be initialized");
         onInitialized();
       } catch (error: any) {
         console.error("Error initializing assessment:", error);
         toast.error("Failed to initialize assessment. Please try again.");
+        navigate("/auth", { replace: true });
       }
     };
 
