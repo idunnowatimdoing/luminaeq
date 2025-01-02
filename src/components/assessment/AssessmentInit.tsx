@@ -22,12 +22,18 @@ export const AssessmentInit = ({ onInitialized }: AssessmentInitProps) => {
           return;
         }
 
-        const { data: profile } = await supabase
+        console.log("Fetching profile data...");
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('onboarding_completed')
-          .eq('user_id', session.user.id)
           .single();
 
+        if (profileError) {
+          console.error("Profile fetch error:", profileError);
+          throw profileError;
+        }
+
+        console.log("Profile data:", profile);
         if (profile?.onboarding_completed) {
           console.log("Assessment already completed, redirecting to home");
           navigate('/', { replace: true });
@@ -35,7 +41,7 @@ export const AssessmentInit = ({ onInitialized }: AssessmentInitProps) => {
         }
 
         onInitialized();
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error initializing assessment:", error);
         toast.error("Failed to initialize assessment. Please try again.");
       }
