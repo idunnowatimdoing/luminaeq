@@ -55,7 +55,7 @@ export const OnboardingFlow = () => {
       }
 
       console.log("Profile updated successfully");
-      navigate("/dashboard", { replace: true }); // Updated to navigate to dashboard
+      navigate("/dashboard", { replace: true });
     } catch (error: any) {
       console.error("Submit profile error:", error);
       toast({
@@ -69,15 +69,41 @@ export const OnboardingFlow = () => {
   const handleSkipAssessment = async () => {
     console.log("Skipping assessment...");
     try {
-      await handleSubmitProfile();
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData?.session?.user;
+      
+      if (!user) {
+        throw new Error("No user found");
+      }
+
+      // Update profile with onboarding completed status
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          name,
+          age_range: ageRange,
+          onboarding_completed: true
+        })
+        .eq("user_id", user.id);
+
+      if (error) {
+        throw error;
+      }
+
       toast({
         title: "Assessment Skipped",
         description: "You can complete it anytime from the dashboard to unlock tailored insights and suggestions.",
         duration: 6000,
       });
-      navigate("/dashboard", { replace: true }); // Added explicit navigation
+      
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       console.error("Error skipping assessment:", error);
+      toast({
+        title: "Error",
+        description: "Failed to skip assessment. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
