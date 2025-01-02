@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AssessmentQuestion } from "@/components/assessment/AssessmentQuestion";
 import { AssessmentLoading } from "@/components/assessment/AssessmentLoading";
 import { AssessmentInit } from "@/components/assessment/AssessmentInit";
@@ -7,6 +8,7 @@ import { useAssessmentSubmission } from "@/components/assessment/AssessmentSubmi
 
 export const AssessmentPage = () => {
   const [isInitialized, setIsInitialized] = useState(false);
+  const navigate = useNavigate();
   
   const {
     currentQuestionIndex,
@@ -43,10 +45,12 @@ export const AssessmentPage = () => {
       [shuffledQuestions[currentQuestionIndex].id]: normalizedValue,
     }));
 
-    if (currentQuestionIndex < shuffledQuestions.length - 1) {
-      handleNextQuestion();
-    } else {
+    // If this is the last question, submit the assessment
+    if (currentQuestionIndex === shuffledQuestions.length - 1) {
+      console.log("Last question completed, submitting assessment");
       await handleSubmitAssessment();
+    } else {
+      handleNextQuestion();
     }
   };
 
