@@ -40,7 +40,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <>{children}</>;
   }
 
-  // If onboarding is not completed
+  // If onboarding status is explicitly false (not null or undefined)
   if (onboardingCompleted === false) {
     // Allow access to assessment page only if user came from assessment intro
     if (currentPath === "/assessment" && sessionStorage.getItem("startedFromIntro") === "true") {
@@ -49,15 +49,17 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     
     // If user is not on the welcome/onboarding page, redirect them there
     if (currentPath !== "/") {
-      console.log("Redirecting to onboarding flow");
+      console.log("Redirecting to onboarding flow - onboarding not completed");
       return <Navigate to="/" replace />;
     }
   }
 
   // If onboarding is completed but user tries to access onboarding-related pages
-  if (onboardingCompleted === true && (currentPath === "/assessment" || currentPath === "/")) {
-    console.log("Onboarding completed, redirecting to dashboard");
-    return <Navigate to="/dashboard" replace />;
+  if (onboardingCompleted === true) {
+    if (currentPath === "/assessment" || currentPath === "/") {
+      console.log("Onboarding completed, redirecting to dashboard");
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   return <>{children}</>;
