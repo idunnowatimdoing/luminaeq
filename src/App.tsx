@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import AuthPage from "./pages/auth/AuthPage";
 import { OnboardingFlow } from "./components/onboarding/OnboardingFlow";
+import { AssessmentPage } from "./pages/assessment/AssessmentPage";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,14 @@ const App = () => (
             }
           />
           <Route path="/auth" element={<AuthPage />} />
+          <Route
+            path="/assessment"
+            element={
+              <ProtectedRoute>
+                <AssessmentPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
