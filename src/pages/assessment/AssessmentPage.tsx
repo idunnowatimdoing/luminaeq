@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { AssessmentQuestion } from "@/components/assessment/AssessmentQuestion";
-import { toast } from "sonner";
+import { AssessmentLoading } from "@/components/assessment/AssessmentLoading";
+import { AssessmentInit } from "@/components/assessment/AssessmentInit";
 import { useAssessmentState } from "./hooks/useAssessmentState";
-import { calculateScores } from "./utils/calculateScores";
+import { useAssessmentSubmission } from "@/components/assessment/AssessmentSubmission";
 
 export const AssessmentPage = () => {
-  const navigate = useNavigate();
+  const [isInitialized, setIsInitialized] = useState(false);
+  
   const {
     currentQuestionIndex,
     responses,
@@ -21,38 +21,12 @@ export const AssessmentPage = () => {
     handlePreviousQuestion,
   } = useAssessmentState();
 
-  useEffect(() => {
-    const initializeAssessment = async () => {
-      try {
-        console.log("Initializing assessment...");
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-          console.log("No session found, redirecting to auth");
-          navigate("/auth", { replace: true });
-          return;
-        }
-
-        // Check if user has already completed the assessment
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('onboarding_completed')
-          .eq('user_id', session.user.id)
-          .single();
-
-        if (profile?.onboarding_completed) {
-          console.log("Assessment already completed, redirecting to home");
-          navigate('/', { replace: true });
-          return;
-        }
-      } catch (error) {
-        console.error("Error initializing assessment:", error);
-        toast.error("Failed to initialize assessment. Please try again.");
-      }
-    };
-
-    initializeAssessment();
-  }, [navigate]);
+  const { handleSubmitAssessment } = useAssessmentSubmission({
+    responses,
+    shuffledQuestions,
+    isSubmitting,
+    setIsSubmitting,
+  });
 
   const handleResponse = async (value: number) => {
     if (isSubmitting) {
@@ -72,97 +46,16 @@ export const AssessmentPage = () => {
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       handleNextQuestion();
     } else {
-      await calculateAndSaveScores();
+      await handleSubmitAssessment();
     }
   };
 
-  const calculateAndSaveScores = async () => {
-    if (isSubmitting) {
-      console.log("Already submitting scores, ignoring duplicate call");
-      return;
-    }
-
-    setIsSubmitting(true);
-    console.log("Starting score calculation and submission");
-
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        throw new Error("No authenticated user found");
-      }
-
-      const { pillarScores, totalScore } = calculateScores(responses, shuffledQuestions);
-      console.log("Calculated scores:", { pillarScores, totalScore });
-
-      // Create normalized responses array
-      const normalizedResponses = Object.entries(responses).map(([questionId, score]) => ({
-        user_id: session.user.id,
-        question_id: parseInt(questionId),
-        score: Math.min(Math.max(Math.round(score), 0), 100),
-        pillar: shuffledQuestions.find(q => q.id === parseInt(questionId))?.pillar || '',
-      }));
-
-      // Save responses
-      const { error: responsesError } = await supabase
-        .from("assessment_responses")
-        .upsert(normalizedResponses, {
-          onConflict: 'user_id,question_id',
-          ignoreDuplicates: false
-        });
-
-      if (responsesError) {
-        throw responsesError;
-      }
-
-      // Update user profile with scores
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({
-          total_eq_score: totalScore,
-          self_awareness: Math.round(pillarScores.selfAwareness),
-          self_regulation: Math.round(pillarScores.selfRegulation),
-          motivation: Math.round(pillarScores.motivation),
-          empathy: Math.round(pillarScores.empathy),
-          social_skills: Math.round(pillarScores.socialSkills),
-          onboarding_completed: true,
-        })
-        .eq("user_id", session.user.id);
-
-      if (profileError) {
-        throw profileError;
-      }
-
-      // Navigate to results with scores
-      navigate("/assessment/results", {
-        replace: true,
-        state: {
-          totalScore,
-          pillarScores: {
-            selfAwareness: Math.round(pillarScores.selfAwareness),
-            selfRegulation: Math.round(pillarScores.selfRegulation),
-            motivation: Math.round(pillarScores.motivation),
-            empathy: Math.round(pillarScores.empathy),
-            socialSkills: Math.round(pillarScores.socialSkills)
-          }
-        }
-      });
-    } catch (error: any) {
-      console.error("Error saving assessment results:", error);
-      toast.error("Failed to save assessment results. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  if (!isInitialized) {
+    return <AssessmentInit onInitialized={() => setIsInitialized(true)} />;
+  }
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#051527] flex items-center justify-center">
-        <div className="text-white text-center space-y-4">
-          <div className="animate-spin w-8 h-8 border-4 border-[#00ffd5] border-t-transparent rounded-full mx-auto"></div>
-          <p>Loading your assessment...</p>
-        </div>
-      </div>
-    );
+    return <AssessmentLoading />;
   }
 
   return (

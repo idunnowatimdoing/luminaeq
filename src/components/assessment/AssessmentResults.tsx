@@ -3,20 +3,8 @@ import { Button } from "@/components/ui/button";
 import { AuthOrb } from "@/components/auth/AuthOrb";
 import { RadarChart } from "@/components/assessment/RadarChart";
 import { Card } from "@/components/ui/card";
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-interface PillarScore {
-  pillar: string;
-  score: number;
-  description: string;
-  strengths: string;
-  improvements: string;
-}
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { PillarCard } from "./results/PillarCard";
 
 interface AssessmentResultsProps {
   totalScore: number;
@@ -29,13 +17,6 @@ interface AssessmentResultsProps {
   };
   onContinue: () => void;
 }
-
-const getPillarLevel = (score: number): string => {
-  if (score >= 18) return "Advanced";
-  if (score >= 15) return "Proficient";
-  if (score >= 12) return "Intermediate";
-  return "Beginner";
-};
 
 const getTotalLevel = (score: number): string => {
   if (score >= 90) return "Advanced";
@@ -51,7 +32,7 @@ export const AssessmentResults = ({
 }: AssessmentResultsProps) => {
   const [selectedPillar, setSelectedPillar] = useState<string | null>(null);
 
-  const pillarDetails: PillarScore[] = [
+  const pillarDetails = [
     {
       pillar: "Self-Awareness",
       score: pillarScores.selfAwareness,
@@ -123,29 +104,11 @@ export const AssessmentResults = ({
         {/* Pillar Details Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {pillarDetails.map((pillar) => (
-            <Card 
+            <PillarCard
               key={pillar.pillar}
-              className="p-6 bg-black/20 border-gray-800 hover:bg-black/30 transition-colors cursor-pointer"
+              {...pillar}
               onClick={() => setSelectedPillar(pillar.pillar)}
-            >
-              <h3 className="text-xl font-semibold text-white mb-2">{pillar.pillar}</h3>
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="text-2xl font-bold text-[#00ffd5]">{pillar.score}</span>
-                <span className="text-gray-400">/ 20</span>
-                <span className="text-sm text-gray-400 ml-2">
-                  ({getPillarLevel(pillar.score)})
-                </span>
-              </div>
-              <p className="text-gray-300 text-sm mb-4">{pillar.description}</p>
-              <div className="space-y-2">
-                <p className="text-sm text-green-400">
-                  <span className="font-semibold">Strength:</span> {pillar.strengths}
-                </p>
-                <p className="text-sm text-blue-400">
-                  <span className="font-semibold">Focus Area:</span> {pillar.improvements}
-                </p>
-              </div>
-            </Card>
+            />
           ))}
         </div>
 
