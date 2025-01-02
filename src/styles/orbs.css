@@ -1,0 +1,78 @@
+/* Orb Animation Styles */
+.auth-orb {
+  @apply absolute w-48 h-48 rounded-full;
+  background: linear-gradient(-45deg, #00ffd5, #00b4d8, #0077b6, #00ffd5);
+  background-size: 400% 400%;
+  animation: gradientFlow 8s ease infinite, float 6s ease-in-out infinite;
+  filter: blur(20px);
+  opacity: 0.8;
+}
+
+/* Main EQ Score Orb */
+.main-orb {
+  @apply w-48 h-48 rounded-full flex items-center justify-center mb-8;
+  background: linear-gradient(-45deg, #9b87f5, #8B5CF6, #D946EF, #9b87f5);
+  background-size: 400% 400%;
+  animation: gradientFlow 8s ease infinite;
+  box-shadow: 0 0 40px rgba(155, 135, 245, 0.4);
+}
+
+/* Pillar Orbs */
+.pillar-orb {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+  color: white;
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Updated Gradient Styling for Pillar Orbs */
+.gradient-selfawareness {
+  background: linear-gradient(45deg, #003366, #00FFFF);
+  box-shadow: 0 0 50px rgba(0, 255, 255, 0.4),
+              inset 0 0 30px rgba(0, 102, 204, 0.3);
+}
+
+.gradient-selfregulation {
+  background: linear-gradient(45deg, #88D498, #FFD700);
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.4),
+              inset 0 0 30px rgba(136, 212, 152, 0.3);
+}
+
+.gradient-motivation {
+  background: linear-gradient(45deg, #FF4500, #FFD700);
+  box-shadow: 0 0 50px rgba(255, 69, 0, 0.4),
+              inset 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+.gradient-empathy {
+  background: linear-gradient(45deg, #FF5E7E, #DDA0DD);
+  box-shadow: 0 0 50px rgba(255, 94, 126, 0.4),
+              inset 0 0 30px rgba(221, 160, 221, 0.3);
+}
+
+.gradient-socialskills {
+  background: linear-gradient(45deg, #6A0DAD, #FF00FF);
+  box-shadow: 0 0 50px rgba(255, 0, 255, 0.4),
+              inset 0 0 30px rgba(106, 13, 173, 0.3);
+}
+
+/* Feature Orbs */
+.feature-orb {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0px 8px 20px rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+  color: white;
+}
