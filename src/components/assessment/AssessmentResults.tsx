@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { AuthOrb } from "@/components/auth/AuthOrb";
-import { RadarChart } from "@/components/assessment/RadarChart";
+import { useLocation } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthOrb } from "@/components/auth/AuthOrb";
+import { RadarChart } from "@/components/assessment/RadarChart";
 import { PillarCard } from "./results/PillarCard";
+import { ResultsHeader } from "./results/ResultsHeader";
+import { ResultsNavigation } from "./results/ResultsNavigation";
 import { supabase } from "@/integrations/supabase/client";
 
 interface AssessmentResultsProps {
@@ -20,19 +21,11 @@ interface AssessmentResultsProps {
   onContinue: () => void;
 }
 
-const getTotalLevel = (score: number): string => {
-  if (score >= 90) return "Advanced";
-  if (score >= 75) return "Proficient";
-  if (score >= 60) return "Intermediate";
-  return "Beginner";
-};
-
 export const AssessmentResults = ({ 
   totalScore: initialTotalScore, 
   pillarScores: initialPillarScores,
   onContinue 
 }: AssessmentResultsProps) => {
-  const navigate = useNavigate();
   const location = useLocation();
   const [scores, setScores] = useState({
     totalScore: initialTotalScore,
@@ -123,29 +116,13 @@ export const AssessmentResults = ({
     value: detail.score
   }));
 
-  const handleGoToDashboard = () => {
-    console.log("Navigating to dashboard...");
-    navigate("/dashboard", { replace: true });
-  };
-
   return (
     <div className="min-h-screen bg-[#051527] p-8 relative overflow-hidden">
       <AuthOrb className="opacity-70 left-3/4 top-1/4 scale-150" />
       
       <div className="max-w-6xl mx-auto space-y-8 relative z-10">
-        {/* Header Section */}
-        <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold text-white">Your EQ Assessment Results</h1>
-          <p className="text-lg text-gray-300">
-            Congratulations! Here's a breakdown of your emotional intelligence across five key pillars.
-          </p>
-          <div className="flex flex-col items-center space-y-2">
-            <span className="text-5xl font-bold text-[#00ffd5]">{scores.totalScore}</span>
-            <span className="text-xl text-gray-300">Overall EQ Score - {getTotalLevel(scores.totalScore)}</span>
-          </div>
-        </div>
+        <ResultsHeader totalScore={scores.totalScore} />
 
-        {/* Radar Chart Section */}
         <Card className="p-6 bg-black/20 border-gray-800">
           <div className="h-[400px]">
             <TooltipProvider>
@@ -154,7 +131,6 @@ export const AssessmentResults = ({
           </div>
         </Card>
 
-        {/* Pillar Details Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {pillarDetails.map((pillar) => (
             <PillarCard
@@ -165,22 +141,7 @@ export const AssessmentResults = ({
           ))}
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between items-center pt-8">
-          <Button
-            onClick={handleGoToDashboard}
-            className="bg-[#00ffd5] text-black hover:bg-[#00b4d8] transition-colors"
-          >
-            Go to Dashboard
-          </Button>
-          <Button
-            onClick={() => navigate("/assessment")}
-            variant="outline"
-            className="bg-white/10 text-white hover:bg-white/20 border-gray-600"
-          >
-            Retake Assessment
-          </Button>
-        </div>
+        <ResultsNavigation />
       </div>
     </div>
   );
