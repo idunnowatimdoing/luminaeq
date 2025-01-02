@@ -21,21 +21,26 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const checkAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
+        console.log("Initial session check:", session);
         setSession(session);
 
         if (session) {
-          const { data } = await supabase
+          const { data, error } = await supabase
             .from("profiles")
             .select("onboarding_completed")
             .eq("user_id", session.user.id)
             .single();
           
+          if (error) {
+            console.error("Error fetching profile:", error);
+          }
+          
           console.log("Profile data:", data);
           setOnboardingCompleted(data?.onboarding_completed ?? false);
         }
-        setLoading(false);
       } catch (error) {
         console.error("Error checking auth:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -49,21 +54,27 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       setSession(session);
       
       if (session) {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from("profiles")
           .select("onboarding_completed")
           .eq("user_id", session.user.id)
           .single();
         
+        if (error) {
+          console.error("Error fetching profile on auth change:", error);
+        }
+        
         console.log("Updated profile data:", data);
         setOnboardingCompleted(data?.onboarding_completed ?? false);
+      } else {
+        setOnboardingCompleted(null);
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  console.log("Protected route state:", { session, loading, onboardingCompleted });
+  console.log("Protected route state:", { session, loading, onboardingCompleted, path: window.location.pathname });
 
   if (loading) {
     return <div>Loading...</div>;
@@ -73,17 +84,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Only show onboarding on the home route
-  if (!onboardingCompleted && window.location.pathname === '/') {
+  // Show onboarding only on home route and when onboarding is not completed
+  if (window.location.pathname === '/' && onboardingCompleted === false) {
     return <OnboardingFlow />;
   }
 
-  // Allow access to assessment page even if onboarding is not completed
-  if (window.location.pathname === '/assessment') {
-    return <>{children}</>;
-  }
-
-  // For all other routes, show the requested page if onboarding is completed
   return <>{children}</>;
 };
 
@@ -115,7 +120,7 @@ const App = () => (
             }
           />
           
-          {/* Redirect all other routes to home if logged in, or auth if not */}
+          {/* Redirect all other routes to home */}
           <Route
             path="*"
             element={
