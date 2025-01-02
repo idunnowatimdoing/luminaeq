@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { AuthOrb } from "@/components/auth/AuthOrb";
 
@@ -52,26 +52,28 @@ export const AssessmentQuestion = ({
       
       <div className="w-full max-w-2xl space-y-8 relative z-10">
         <div className="space-y-2">
-          <Tooltip>
-            <Tooltip.Trigger asChild>
-              <div className="relative">
-                <h1 className="text-2xl font-semibold tracking-tight text-center text-white mb-2">
-                  Question {currentQuestion} of {totalQuestions}
-                </h1>
-                <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-[#00ffd5] transition-all duration-300"
-                    style={{
-                      width: `${(currentQuestion / totalQuestions) * 100}%`,
-                    }}
-                  />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="relative">
+                  <h1 className="text-2xl font-semibold tracking-tight text-center text-white mb-2">
+                    Question {currentQuestion} of {totalQuestions}
+                  </h1>
+                  <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-[#00ffd5] transition-all duration-300"
+                      style={{
+                        width: `${(currentQuestion / totalQuestions) * 100}%`,
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            </Tooltip.Trigger>
-            <Tooltip.Content>
-              Progress: {Math.round((currentQuestion / totalQuestions) * 100)}%
-            </Tooltip.Content>
-          </Tooltip>
+              </TooltipTrigger>
+              <TooltipContent>
+                Progress: {Math.round((currentQuestion / totalQuestions) * 100)}%
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         <div className="space-y-8 bg-card/20 backdrop-blur-lg border border-white/20 p-8 rounded-lg shadow-lg relative z-10 transition-all duration-300 hover:bg-card/30">
