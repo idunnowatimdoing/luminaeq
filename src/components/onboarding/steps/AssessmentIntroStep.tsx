@@ -22,6 +22,12 @@ export const AssessmentIntroStep = ({
   onSkip,
   onStartAssessment,
 }: AssessmentIntroStepProps) => {
+  const handleStartAssessment = () => {
+    // Set flag in sessionStorage before starting assessment
+    sessionStorage.setItem("startedFromIntro", "true");
+    onStartAssessment();
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#051527] relative overflow-hidden">
       {/* Positioned orb to the right side */}
@@ -51,7 +57,7 @@ export const AssessmentIntroStep = ({
         <CardFooter className="flex flex-col space-y-3 px-6 pb-6">
           <Button
             className="w-full bg-[#00ffd5] text-black hover:bg-[#00b4d8] transition-colors"
-            onClick={onStartAssessment}
+            onClick={handleStartAssessment}
           >
             Start Assessment
           </Button>
