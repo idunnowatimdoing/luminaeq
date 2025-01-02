@@ -1,95 +1,11 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Award, BookOpen, Users } from "lucide-react";
-
-interface DashboardData {
-  current_eq_score: number;
-  self_awareness: number;
-  self_regulation: number;
-  motivation: number;
-  empathy: number;
-  social_skills: number;
-  name?: string;
-}
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDashboardData } from "@/hooks/dashboard/useDashboardData";
+import { PillarCard } from "@/components/dashboard/PillarCard";
 
 export default function HomePage() {
-  const [loading, setLoading] = useState(true);
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    fetchDashboardData();
-    setupRealtimeSubscription();
-  }, []);
-
-  const setupRealtimeSubscription = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const channel = supabase
-      .channel('profiles_updates')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'profiles',
-          filter: `user_id=eq.${user.id}`
-        },
-        (payload) => {
-          setDashboardData({
-            current_eq_score: payload.new.total_eq_score || 0,
-            self_awareness: payload.new.self_awareness || 0,
-            self_regulation: payload.new.self_regulation || 0,
-            motivation: payload.new.motivation || 0,
-            empathy: payload.new.empathy || 0,
-            social_skills: payload.new.social_skills || 0,
-            name: payload.new.name,
-          });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  };
-
-  const fetchDashboardData = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
-
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("total_eq_score, self_awareness, self_regulation, motivation, empathy, social_skills, name")
-        .eq("user_id", user.id)
-        .single();
-
-      if (profileError) throw profileError;
-
-      setDashboardData({
-        current_eq_score: profileData.total_eq_score || 0,
-        self_awareness: profileData.self_awareness || 0,
-        self_regulation: profileData.self_regulation || 0,
-        motivation: profileData.motivation || 0,
-        empathy: profileData.empathy || 0,
-        social_skills: profileData.social_skills || 0,
-        name: profileData.name,
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error fetching dashboard data",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { dashboardData, loading } = useDashboardData();
 
   if (loading) {
     return <div className="p-8"><Skeleton className="w-full h-[600px]" /></div>;
@@ -115,90 +31,36 @@ export default function HomePage() {
 
         {/* Pillar Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Self Awareness */}
-          <div className="flex flex-col items-center">
-            <div className="pillar-orb gradient-selfawareness" />
-            <h3 className="text-center text-white mt-2">Self Awareness</h3>
-            <Card className="w-full bg-glass">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Self Awareness</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.self_awareness}/20</span>
-                  <span>Goal: 20/20</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Self Regulation */}
-          <div className="flex flex-col items-center">
-            <div className="pillar-orb gradient-selfregulation" />
-            <h3 className="text-center text-white mt-2">Self Regulation</h3>
-            <Card className="w-full bg-glass">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Self Regulation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.self_regulation}/20</span>
-                  <span>Goal: 18/20</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Motivation */}
-          <div className="flex flex-col items-center">
-            <div className="pillar-orb gradient-motivation" />
-            <h3 className="text-center text-white mt-2">Motivation</h3>
-            <Card className="w-full bg-glass">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Motivation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.motivation}/20</span>
-                  <span>Goal: 20/20</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Empathy */}
-          <div className="flex flex-col items-center">
-            <div className="pillar-orb gradient-empathy" />
-            <h3 className="text-center text-white mt-2">Empathy</h3>
-            <Card className="w-full bg-glass">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Empathy</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.empathy}/20</span>
-                  <span>Goal: 20/20</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Social Skills */}
-          <div className="flex flex-col items-center">
-            <div className="pillar-orb gradient-socialskills" />
-            <h3 className="text-center text-white mt-2">Social Skills</h3>
-            <Card className="w-full bg-glass">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Social Skills</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.social_skills}/20</span>
-                  <span>Goal: 19/20</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <PillarCard
+            title="Self Awareness"
+            currentValue={dashboardData?.self_awareness || 0}
+            goalValue={20}
+            gradientClass="gradient-selfawareness"
+          />
+          <PillarCard
+            title="Self Regulation"
+            currentValue={dashboardData?.self_regulation || 0}
+            goalValue={18}
+            gradientClass="gradient-selfregulation"
+          />
+          <PillarCard
+            title="Motivation"
+            currentValue={dashboardData?.motivation || 0}
+            goalValue={20}
+            gradientClass="gradient-motivation"
+          />
+          <PillarCard
+            title="Empathy"
+            currentValue={dashboardData?.empathy || 0}
+            goalValue={20}
+            gradientClass="gradient-empathy"
+          />
+          <PillarCard
+            title="Social Skills"
+            currentValue={dashboardData?.social_skills || 0}
+            goalValue={19}
+            gradientClass="gradient-socialskills"
+          />
         </div>
 
         {/* Additional Features */}
