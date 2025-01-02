@@ -10,25 +10,33 @@ interface Profile {
   user_id: string;
 }
 
+interface AuthError {
+  message: string;
+  code?: string;
+}
+
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AuthError | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log("Starting auth check...");
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        console.log("Initial session check:", { session, error: sessionError });
         
         if (sessionError) {
+          console.error("Session error:", sessionError);
           throw sessionError;
         }
 
+        console.log("Session status:", session ? "Active" : "No session");
         setSession(session);
 
         if (session?.user) {
+          console.log("Fetching profile for user:", session.user.id);
           const { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("onboarding_completed")
@@ -36,7 +44,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
             .single();
           
           if (profileError) {
-            console.error("Error fetching profile:", profileError);
+            console.error("Profile fetch error:", profileError);
             throw new Error("Failed to fetch user profile");
           }
           
@@ -44,8 +52,11 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           setOnboardingCompleted(profile?.onboarding_completed ?? false);
         }
       } catch (err: any) {
-        console.error("Error in auth check:", err);
-        setError(err.message);
+        console.error("Auth check error:", err);
+        setError({
+          message: err.message || "An error occurred during authentication",
+          code: err.code
+        });
       } finally {
         setLoading(false);
       }
@@ -56,11 +67,12 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log("Auth state changed:", { event: _event, session });
+      console.log("Auth state changed:", { event: _event, session: session?.user?.id });
       setSession(session);
       
       if (session?.user) {
         try {
+          console.log("Updating profile state for user:", session.user.id);
           const { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("onboarding_completed")
@@ -68,15 +80,18 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
             .single();
           
           if (profileError) {
-            console.error("Error fetching profile on auth change:", profileError);
+            console.error("Profile update error:", profileError);
             throw profileError;
           }
           
           console.log("Updated profile data:", profile);
           setOnboardingCompleted(profile?.onboarding_completed ?? false);
-        } catch (err) {
-          console.error("Error updating profile state:", err);
-          setError("Failed to update profile information");
+        } catch (err: any) {
+          console.error("Profile state update error:", err);
+          setError({
+            message: "Failed to update profile information",
+            code: err.code
+          });
         }
       } else {
         setOnboardingCompleted(null);
@@ -87,11 +102,11 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   console.log("Protected route state:", { 
-    session, 
+    sessionExists: !!session, 
     loading, 
     onboardingCompleted, 
     error,
-    path: window.location.pathname 
+    currentPath: window.location.pathname 
   });
 
   if (loading) {
@@ -110,7 +125,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#051527]">
         <div className="text-center text-red-400">
-          <p>Error: {error}</p>
+          <p>Error: {error.message}</p>
           <button 
             onClick={() => window.location.reload()} 
             className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
