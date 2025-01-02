@@ -117,28 +117,28 @@ export const AssessmentPage = () => {
         socialSkills: 0,
       };
 
-      questions.forEach((question) => {
-        const response = responses[question.id];
-        pillarScores[question.pillar as keyof typeof pillarScores] += (response / 100) * 6.67;
+      // Validate and normalize scores before saving
+      const normalizedResponses = Object.entries(responses).map(([questionId, score]) => {
+        // Ensure score is between 0 and 100
+        const normalizedScore = Math.min(Math.max(Math.round(score), 0), 100);
+        const question = questions.find(q => q.id === parseInt(questionId));
+        if (question) {
+          pillarScores[question.pillar as keyof typeof pillarScores] += (normalizedScore / 100) * 6.67;
+        }
+        return {
+          user_id: session.user.id,
+          question_id: parseInt(questionId),
+          score: normalizedScore,
+          pillar: question?.pillar || '',
+        };
       });
 
-      const totalScore = Math.round(
-        Object.values(pillarScores).reduce((sum, score) => sum + score, 0)
-      );
+      console.log("Calculated scores:", { pillarScores, totalScore: Math.round(Object.values(pillarScores).reduce((sum, score) => sum + score, 0)) });
 
-      console.log("Calculated scores:", { pillarScores, totalScore });
-
-      // Save assessment responses
+      // Save assessment responses with validated scores
       const { error: responsesError } = await supabase
         .from("assessment_responses")
-        .insert(
-          Object.entries(responses).map(([questionId, score]) => ({
-            user_id: session.user.id,
-            question_id: parseInt(questionId),
-            score,
-            pillar: questions.find(q => q.id === parseInt(questionId))?.pillar,
-          }))
-        );
+        .insert(normalizedResponses);
 
       if (responsesError) throw responsesError;
 
@@ -146,7 +146,7 @@ export const AssessmentPage = () => {
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
-          total_eq_score: totalScore,
+          total_eq_score: Math.round(Object.values(pillarScores).reduce((sum, score) => sum + score, 0)),
           self_awareness: Math.round(pillarScores.selfAwareness),
           self_regulation: Math.round(pillarScores.selfRegulation),
           motivation: Math.round(pillarScores.motivation),
@@ -162,7 +162,7 @@ export const AssessmentPage = () => {
       navigate("/", {
         state: {
           assessmentScores: {
-            total: totalScore,
+            total: Math.round(Object.values(pillarScores).reduce((sum, score) => sum + score, 0)),
             ...pillarScores,
           },
         },
