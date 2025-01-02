@@ -17,10 +17,9 @@
   box-shadow: 0 0 40px rgba(155, 135, 245, 0.4);
 }
 
-/* Pillar Orbs */
+/* Pillar Orbs - Updated with responsive sizes */
 .pillar-orb {
-  width: 100px;
-  height: 100px;
+  @apply w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -64,8 +63,7 @@
 
 /* Feature Orbs */
 .feature-orb {
-  width: 80px;
-  height: 80px;
+  @apply w-16 h-16 sm:w-20 sm:h-20;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0px 8px 20px rgba(255, 255, 255, 0.3);
@@ -75,4 +73,11 @@
   font-weight: bold;
   font-size: 1rem;
   color: white;
+}
+
+/* Responsive adjustments for main orb */
+@media (max-width: 640px) {
+  .main-orb {
+    @apply w-32 h-32 text-2xl;
+  }
 }

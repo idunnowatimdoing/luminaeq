@@ -256,7 +256,12 @@ export type Database = {
           challenge_id: number
           completed_at: string | null
           created_at: string | null
+          description: string | null
+          goal: number | null
           id: number
+          pillar: string | null
+          points: number | null
+          progress: number | null
           status: string | null
           user_id: string
         }
@@ -264,7 +269,12 @@ export type Database = {
           challenge_id: number
           completed_at?: string | null
           created_at?: string | null
+          description?: string | null
+          goal?: number | null
           id?: number
+          pillar?: string | null
+          points?: number | null
+          progress?: number | null
           status?: string | null
           user_id: string
         }
@@ -272,7 +282,12 @@ export type Database = {
           challenge_id?: number
           completed_at?: string | null
           created_at?: string | null
+          description?: string | null
+          goal?: number | null
           id?: number
+          pillar?: string | null
+          points?: number | null
+          progress?: number | null
           status?: string | null
           user_id?: string
         }

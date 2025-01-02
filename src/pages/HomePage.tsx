@@ -8,29 +8,29 @@ export default function HomePage() {
   const { dashboardData, loading } = useDashboardData();
 
   if (loading) {
-    return <div className="p-8"><Skeleton className="w-full h-[600px]" /></div>;
+    return <div className="p-4 sm:p-8"><Skeleton className="w-full h-[600px]" /></div>;
   }
 
   return (
-    <div className="min-h-screen bg-[#051527] p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#051527] p-4 sm:p-8">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Welcome Message */}
         <div className="text-center text-white space-y-2">
-          <h1 className="text-3xl font-bold">Welcome back, {dashboardData?.name || 'User'}</h1>
-          <h2 className="text-lg">Your Total EQ Score</h2>
+          <h1 className="text-2xl sm:text-3xl font-bold">Welcome back, {dashboardData?.name || 'User'}</h1>
+          <h2 className="text-base sm:text-lg">Your Total EQ Score</h2>
         </div>
 
         {/* Main EQ Score Orb */}
         <div className="flex justify-center">
           <div className="main-orb">
-            <span className="text-4xl font-bold text-white">
+            <span className="text-2xl sm:text-4xl font-bold text-white">
               {dashboardData?.current_eq_score || 0}/100
             </span>
           </div>
         </div>
 
         {/* Pillar Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-8">
           <PillarCard
             title="Self Awareness"
             currentValue={dashboardData?.self_awareness || 0}
@@ -64,40 +64,40 @@ export default function HomePage() {
         </div>
 
         {/* Additional Features */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-4 sm:p-6">
             <div className="feature-orb">
-              <Trophy className="w-8 h-8" />
+              <Trophy className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
-            <h3 className="text-lg text-white">Challenges</h3>
+            <h3 className="text-base sm:text-lg text-white">Challenges</h3>
           </Card>
-          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-6">
+          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-4 sm:p-6">
             <div className="feature-orb">
-              <Award className="w-8 h-8" />
+              <Award className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
-            <h3 className="text-lg text-white">Badges</h3>
+            <h3 className="text-base sm:text-lg text-white">Badges</h3>
           </Card>
-          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-6">
+          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-4 sm:p-6">
             <div className="feature-orb">
-              <BookOpen className="w-8 h-8" />
+              <BookOpen className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
-            <h3 className="text-lg text-white">Learning</h3>
+            <h3 className="text-base sm:text-lg text-white">Learning</h3>
           </Card>
-          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-6">
+          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-4 sm:p-6">
             <div className="feature-orb">
-              <Users className="w-8 h-8" />
+              <Users className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
-            <h3 className="text-lg text-white">LuminaConnect</h3>
-            <p className="text-gray-300">Coming Soon</p>
+            <h3 className="text-base sm:text-lg text-white">LuminaConnect</h3>
+            <p className="text-sm sm:text-base text-gray-300">Coming Soon</p>
           </Card>
         </div>
 
         {/* EQ Insights */}
-        <Card className="w-full bg-glass rounded-lg shadow-lg mt-8">
+        <Card className="w-full bg-glass rounded-lg shadow-lg mt-6 sm:mt-8">
           <CardHeader>
-            <CardTitle className="text-xl text-white">EQ Insights</CardTitle>
+            <CardTitle className="text-lg sm:text-xl text-white">EQ Insights</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 text-gray-300">
+          <CardContent className="space-y-4 text-sm sm:text-base text-gray-300">
             <div className="flex items-center space-x-2">
               <div className="w-1 h-4 bg-green-500 rounded" />
               <p>Your self-awareness score has increased by 2 points!</p>
