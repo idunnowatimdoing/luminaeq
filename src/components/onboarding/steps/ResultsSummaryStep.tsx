@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface ResultsSummaryStepProps {
@@ -20,7 +21,7 @@ export const ResultsSummaryStep = ({
   const navigate = useNavigate();
 
   // Navigate to results page with scores as state
-  React.useEffect(() => {
+  useEffect(() => {
     navigate("/assessment/results", {
       replace: true,
       state: {
