@@ -30,6 +30,20 @@ export const AssessmentPage = () => {
         if (!session) {
           console.log("No session found, redirecting to auth");
           navigate("/auth");
+          return;
+        }
+
+        // Check if user has already completed the assessment
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('user_id', session.user.id)
+          .single();
+
+        if (profile?.onboarding_completed) {
+          console.log("Assessment already completed, redirecting to home");
+          navigate('/');
+          return;
         }
       } catch (error) {
         console.error("Error initializing assessment:", error);
@@ -41,11 +55,13 @@ export const AssessmentPage = () => {
   }, [navigate]);
 
   const handleResponse = async (value: number) => {
-    if (isSubmitting) return; // Prevent multiple submissions
+    if (isSubmitting) {
+      console.log("Submission in progress, ignoring response");
+      return;
+    }
 
     console.log("Recording response:", { questionIndex: currentQuestionIndex, value });
     
-    // Ensure the value is between 0 and 100 and is an integer
     const normalizedValue = Math.min(Math.max(Math.round(value), 0), 100);
     
     setResponses((prev) => ({
@@ -61,8 +77,13 @@ export const AssessmentPage = () => {
   };
 
   const calculateAndSaveScores = async () => {
-    if (isSubmitting) return; // Prevent multiple submissions
+    if (isSubmitting) {
+      console.log("Already submitting scores, ignoring duplicate call");
+      return;
+    }
+
     setIsSubmitting(true);
+    console.log("Starting score calculation and submission");
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -71,8 +92,9 @@ export const AssessmentPage = () => {
       }
 
       const { pillarScores, totalScore } = calculateScores(responses, shuffledQuestions);
+      console.log("Calculated scores:", { pillarScores, totalScore });
 
-      // Create normalized responses array with validated scores
+      // Create normalized responses array
       const normalizedResponses = Object.entries(responses).map(([questionId, score]) => ({
         user_id: session.user.id,
         question_id: parseInt(questionId),
@@ -80,7 +102,7 @@ export const AssessmentPage = () => {
         pillar: shuffledQuestions.find(q => q.id === parseInt(questionId))?.pillar || '',
       }));
 
-      // Use upsert instead of insert to handle duplicates
+      // Use upsert to handle potential duplicates
       const { error: responsesError } = await supabase
         .from("assessment_responses")
         .upsert(normalizedResponses, {
@@ -92,6 +114,8 @@ export const AssessmentPage = () => {
         console.error("Error saving responses:", responsesError);
         throw responsesError;
       }
+
+      console.log("Successfully saved assessment responses");
 
       // Update user profile with scores
       const { error: profileError } = await supabase
@@ -112,7 +136,9 @@ export const AssessmentPage = () => {
         throw profileError;
       }
 
-      // Navigate back to onboarding with scores
+      console.log("Successfully updated profile with scores");
+
+      // Navigate back to home
       navigate("/", {
         state: {
           assessmentScores: {
