@@ -11,9 +11,8 @@ export const PillarCard = ({ title, currentValue, goalValue, gradientClass }: Pi
   return (
     <div className="flex flex-col items-center">
       <div className={`pillar-orb ${gradientClass}`} />
-      <h3 className="text-center text-white mt-2">{title}</h3>
-      <Card className="w-full bg-glass">
-        <CardHeader>
+      <Card className="w-full bg-glass mt-2">
+        <CardHeader className="text-center">
           <CardTitle className="text-lg text-white">{title}</CardTitle>
         </CardHeader>
         <CardContent>
