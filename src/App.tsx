@@ -18,9 +18,31 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Check session and onboarding status
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+
+      if (session) {
+        const { data } = await supabase
+          .from("profiles")
+          .select("onboarding_completed")
+          .eq("user_id", session.user.id)
+          .single();
+        
+        setOnboardingCompleted(data?.onboarding_completed ?? false);
+      }
+      setLoading(false);
+    };
+
+    checkAuth();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session) {
+        // Re-check onboarding status when auth state changes
         supabase
           .from("profiles")
           .select("onboarding_completed")
@@ -28,34 +50,30 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           .single()
           .then(({ data }) => {
             setOnboardingCompleted(data?.onboarding_completed ?? false);
-            setLoading(false);
           });
-      } else {
-        setLoading(false);
       }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
+  console.log("Auth state:", { session, loading, onboardingCompleted });
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
+  // If no session, redirect to auth
   if (!session) {
-    return <Navigate to="/auth" />;
+    return <Navigate to="/auth" replace />;
   }
 
+  // If not completed onboarding, show onboarding flow
   if (!onboardingCompleted) {
     return <OnboardingFlow />;
   }
 
+  // If authenticated and completed onboarding, show requested page
   return <>{children}</>;
 };
 
@@ -66,6 +84,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Auth page is public */}
+          <Route path="/auth" element={<AuthPage />} />
+          
+          {/* Protected routes */}
           <Route
             path="/"
             element={
@@ -74,13 +96,20 @@ const App = () => (
               </ProtectedRoute>
             }
           />
-          <Route path="/auth" element={<AuthPage />} />
           <Route
             path="/assessment"
             element={
               <ProtectedRoute>
                 <AssessmentPage />
               </ProtectedRoute>
+            }
+          />
+          
+          {/* Redirect all other routes to auth if not logged in, or home if logged in */}
+          <Route
+            path="*"
+            element={
+              <Navigate to="/auth" replace />
             }
           />
         </Routes>
