@@ -26,13 +26,14 @@ export const useAssessmentSubmission = ({
     }
 
     setIsSubmitting(true);
-    console.log("Starting score calculation and submission");
+    console.log("Starting assessment submission with responses:", responses);
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
         throw new Error("No authenticated user found");
       }
+      console.log("User authenticated:", session.user.id);
 
       const { pillarScores, totalScore } = calculateScores(responses, shuffledQuestions);
       console.log("Calculated scores:", { pillarScores, totalScore });
@@ -45,6 +46,7 @@ export const useAssessmentSubmission = ({
         pillar: shuffledQuestions.find(q => q.id === parseInt(questionId))?.pillar || '',
       }));
 
+      console.log("Saving assessment responses:", normalizedResponses);
       const { error: responsesError } = await supabase
         .from("assessment_responses")
         .upsert(normalizedResponses, {
@@ -52,9 +54,18 @@ export const useAssessmentSubmission = ({
           ignoreDuplicates: false
         });
 
-      if (responsesError) throw responsesError;
+      if (responsesError) {
+        console.error("Error saving responses:", responsesError);
+        throw responsesError;
+      }
+      console.log("Assessment responses saved successfully");
 
       // Then update profile with scores and onboarding status
+      console.log("Updating profile with scores:", {
+        totalScore,
+        ...pillarScores,
+      });
+      
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
