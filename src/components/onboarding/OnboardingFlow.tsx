@@ -68,12 +68,12 @@ export const OnboardingFlow = () => {
 
   const handleSkipAssessment = async () => {
     console.log("Skipping assessment...");
+    await handleSubmitProfile(); // Wait for profile update to complete
     toast({
       title: "Assessment Skipped",
       description: "You can complete it anytime from the dashboard to unlock tailored insights and suggestions.",
       duration: 6000,
     });
-    await handleSubmitProfile();
   };
 
   const handleStartAssessment = () => {

@@ -42,7 +42,17 @@ const App = () => (
             path="/assessment/results"
             element={
               <ProtectedRoute>
-                <AssessmentResults />
+                <AssessmentResults 
+                  totalScore={0}
+                  pillarScores={{
+                    selfAwareness: 0,
+                    selfRegulation: 0,
+                    motivation: 0,
+                    empathy: 0,
+                    socialSkills: 0
+                  }}
+                  onContinue={() => {}}
+                />
               </ProtectedRoute>
             }
           />
