@@ -159,38 +159,28 @@ export const AssessmentPage = () => {
     }
   };
 
-  if (shuffledQuestions.length === 0) return <div>Loading...</div>;
-
-  return (
-    <div className="min-h-screen bg-[#051527] flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Positioned orb */}
-      <AuthOrb className="left-2/3 top-1/4 opacity-60" />
-      
-      <div className="w-full max-w-2xl space-y-8 relative z-10">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight text-center text-white">
-            Question {currentQuestionIndex + 1} of {shuffledQuestions.length}
-          </h1>
-          <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[#00ffd5] transition-all duration-300"
-              style={{
-                width: `${((currentQuestionIndex + 1) / shuffledQuestions.length) * 100}%`,
-              }}
-            />
-          </div>
-        </div>
-
-        <div className={`transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-          <AssessmentQuestion
-            question={shuffledQuestions[currentQuestionIndex].text}
-            onResponse={handleResponse}
-            value={responses[shuffledQuestions[currentQuestionIndex].id] || 50}
-            onPrevious={handlePreviousQuestion}
-            showPrevious={currentQuestionIndex > 0}
-          />
+  if (shuffledQuestions.length === 0) {
+    return (
+      <div className="min-h-screen bg-[#051527] flex items-center justify-center">
+        <div className="text-white text-center space-y-4">
+          <div className="animate-spin w-8 h-8 border-4 border-[#00ffd5] border-t-transparent rounded-full mx-auto"></div>
+          <p>Loading your assessment...</p>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className={`transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+      <AssessmentQuestion
+        question={shuffledQuestions[currentQuestionIndex].text}
+        onResponse={handleResponse}
+        value={responses[shuffledQuestions[currentQuestionIndex].id] || 50}
+        onPrevious={handlePreviousQuestion}
+        showPrevious={currentQuestionIndex > 0}
+        currentQuestion={currentQuestionIndex + 1}
+        totalQuestions={shuffledQuestions.length}
+      />
     </div>
   );
 };
