@@ -24,64 +24,62 @@ const queryClient = new QueryClient({
 
 const App = () => {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Routes>
-              {/* Auth page is public */}
-              <Route path="/auth" element={<AuthPage />} />
-              
-              {/* Protected routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <HomePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <OnboardingFlow />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/assessment"
-                element={
-                  <ProtectedRoute>
-                    <AssessmentPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/assessment/results"
-                element={
-                  <ProtectedRoute>
-                    <AssessmentResults />
-                  </ProtectedRoute>
-                }
-              />
-              
-              {/* Redirect unmatched routes based on auth state */}
-              <Route
-                path="*"
-                element={
-                  <ProtectedRoute>
-                    <Navigate to="/dashboard" replace />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </TooltipProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <Routes>
+            {/* Auth page is public */}
+            <Route path="/auth" element={<AuthPage />} />
+            
+            {/* Protected routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <HomePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <OnboardingFlow />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/assessment"
+              element={
+                <ProtectedRoute>
+                  <AssessmentPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/assessment/results"
+              element={
+                <ProtectedRoute>
+                  <AssessmentResults />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Redirect unmatched routes based on auth state */}
+            <Route
+              path="*"
+              element={
+                <ProtectedRoute>
+                  <Navigate to="/dashboard" replace />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </TooltipProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 
