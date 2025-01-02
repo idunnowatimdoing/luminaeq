@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AssessmentQuestion } from "@/components/assessment/AssessmentQuestion";
 import { toast } from "sonner";
+import { AuthOrb } from "@/components/auth/AuthOrb";
 
 interface Question {
   id: number;
@@ -38,6 +39,7 @@ export const AssessmentPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<{ [key: number]: number }>({});
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -61,9 +63,27 @@ export const AssessmentPage = () => {
     }));
 
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1);
+      handleNextQuestion();
     } else {
       calculateAndSaveScores();
+    }
+  };
+
+  const handleNextQuestion = () => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentQuestionIndex((prev) => prev + 1);
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentQuestionIndex((prev) => prev - 1);
+        setIsAnimating(false);
+      }, 300);
     }
   };
 
@@ -142,15 +162,18 @@ export const AssessmentPage = () => {
   if (shuffledQuestions.length === 0) return <div>Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl space-y-8">
+    <div className="min-h-screen bg-[#051527] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Positioned orb */}
+      <AuthOrb className="left-2/3 top-1/4 opacity-60" />
+      
+      <div className="w-full max-w-2xl space-y-8 relative z-10">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight text-center">
+          <h1 className="text-2xl font-semibold tracking-tight text-center text-white">
             Question {currentQuestionIndex + 1} of {shuffledQuestions.length}
           </h1>
-          <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-primary transition-all duration-300"
+              className="h-full bg-[#00ffd5] transition-all duration-300"
               style={{
                 width: `${((currentQuestionIndex + 1) / shuffledQuestions.length) * 100}%`,
               }}
@@ -158,11 +181,15 @@ export const AssessmentPage = () => {
           </div>
         </div>
 
-        <AssessmentQuestion
-          question={shuffledQuestions[currentQuestionIndex].text}
-          onResponse={handleResponse}
-          value={responses[shuffledQuestions[currentQuestionIndex].id] || 50}
-        />
+        <div className={`transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+          <AssessmentQuestion
+            question={shuffledQuestions[currentQuestionIndex].text}
+            onResponse={handleResponse}
+            value={responses[shuffledQuestions[currentQuestionIndex].id] || 50}
+            onPrevious={handlePreviousQuestion}
+            showPrevious={currentQuestionIndex > 0}
+          />
+        </div>
       </div>
     </div>
   );
