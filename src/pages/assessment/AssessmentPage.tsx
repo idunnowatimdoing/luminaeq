@@ -53,7 +53,6 @@ export const AssessmentPage = () => {
           return;
         }
 
-        // Shuffle questions
         const shuffled = [...questions].sort(() => Math.random() - 0.5);
         console.log("Questions shuffled, count:", shuffled.length);
         setShuffledQuestions(shuffled);
@@ -71,9 +70,12 @@ export const AssessmentPage = () => {
   const handleResponse = (value: number) => {
     console.log("Recording response:", { questionIndex: currentQuestionIndex, value });
     
+    // Ensure the value is between 0 and 100 and is an integer
+    const normalizedValue = Math.min(Math.max(Math.round(value), 0), 100);
+    
     setResponses((prev) => ({
       ...prev,
-      [shuffledQuestions[currentQuestionIndex].id]: value,
+      [shuffledQuestions[currentQuestionIndex].id]: normalizedValue,
     }));
 
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
@@ -117,14 +119,16 @@ export const AssessmentPage = () => {
         socialSkills: 0,
       };
 
-      // Validate and normalize scores before saving
+      // Create normalized responses array with validated scores
       const normalizedResponses = Object.entries(responses).map(([questionId, score]) => {
-        // Ensure score is between 0 and 100
+        // Ensure score is between 0 and 100 and is an integer
         const normalizedScore = Math.min(Math.max(Math.round(score), 0), 100);
         const question = questions.find(q => q.id === parseInt(questionId));
+        
         if (question) {
           pillarScores[question.pillar as keyof typeof pillarScores] += (normalizedScore / 100) * 6.67;
         }
+
         return {
           user_id: session.user.id,
           question_id: parseInt(questionId),
@@ -133,20 +137,24 @@ export const AssessmentPage = () => {
         };
       });
 
-      console.log("Calculated scores:", { pillarScores, totalScore: Math.round(Object.values(pillarScores).reduce((sum, score) => sum + score, 0)) });
+      const totalScore = Math.round(Object.values(pillarScores).reduce((sum, score) => sum + score, 0));
+      console.log("Calculated scores:", { pillarScores, totalScore });
 
       // Save assessment responses with validated scores
       const { error: responsesError } = await supabase
         .from("assessment_responses")
         .insert(normalizedResponses);
 
-      if (responsesError) throw responsesError;
+      if (responsesError) {
+        console.error("Error saving responses:", responsesError);
+        throw responsesError;
+      }
 
       // Update user profile with scores
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
-          total_eq_score: Math.round(Object.values(pillarScores).reduce((sum, score) => sum + score, 0)),
+          total_eq_score: totalScore,
           self_awareness: Math.round(pillarScores.selfAwareness),
           self_regulation: Math.round(pillarScores.selfRegulation),
           motivation: Math.round(pillarScores.motivation),
@@ -156,13 +164,16 @@ export const AssessmentPage = () => {
         })
         .eq("user_id", session.user.id);
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error("Error updating profile:", profileError);
+        throw profileError;
+      }
 
       // Navigate back to onboarding with scores
       navigate("/", {
         state: {
           assessmentScores: {
-            total: Math.round(Object.values(pillarScores).reduce((sum, score) => sum + score, 0)),
+            total: totalScore,
             ...pillarScores,
           },
         },
