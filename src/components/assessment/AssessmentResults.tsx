@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PillarCard } from "./results/PillarCard";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface AssessmentResultsProps {
   totalScore: number;
