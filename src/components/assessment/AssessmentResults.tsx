@@ -123,6 +123,11 @@ export const AssessmentResults = ({
     value: detail.score
   }));
 
+  const handleGoToDashboard = () => {
+    console.log("Navigating to dashboard...");
+    navigate("/dashboard", { replace: true });
+  };
+
   return (
     <div className="min-h-screen bg-[#051527] p-8 relative overflow-hidden">
       <AuthOrb className="opacity-70 left-3/4 top-1/4 scale-150" />
@@ -163,7 +168,7 @@ export const AssessmentResults = ({
         {/* Navigation Buttons */}
         <div className="flex justify-between items-center pt-8">
           <Button
-            onClick={() => navigate("/dashboard")}
+            onClick={handleGoToDashboard}
             className="bg-[#00ffd5] text-black hover:bg-[#00b4d8] transition-colors"
           >
             Go to Dashboard
