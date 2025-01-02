@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthOrb } from "@/components/auth/AuthOrb";
 import { RadarChart } from "@/components/assessment/RadarChart";
@@ -6,7 +7,6 @@ import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PillarCard } from "./results/PillarCard";
 import { supabase } from "@/integrations/supabase/client";
-import { useLocation } from "react-router-dom";
 
 interface AssessmentResultsProps {
   totalScore: number;
@@ -32,6 +32,7 @@ export const AssessmentResults = ({
   pillarScores: initialPillarScores,
   onContinue 
 }: AssessmentResultsProps) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const [scores, setScores] = useState({
     totalScore: initialTotalScore,
@@ -39,14 +40,12 @@ export const AssessmentResults = ({
   });
 
   useEffect(() => {
-    // Initialize with state from navigation if available
     if (location.state) {
       const { totalScore, pillarScores } = location.state;
       setScores({ totalScore, pillarScores });
       console.log("Initialized scores from navigation state:", { totalScore, pillarScores });
     }
 
-    // Subscribe to real-time updates
     const channel = supabase
       .channel('profile-updates')
       .on(
@@ -119,18 +118,16 @@ export const AssessmentResults = ({
     }
   ];
 
-  const [selectedPillar, setSelectedPillar] = useState<string | null>(null);
-
   const radarData = pillarDetails.map(detail => ({
     category: detail.pillar,
     value: detail.score
   }));
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start pt-12 bg-[#051527] relative overflow-hidden">
+    <div className="min-h-screen bg-[#051527] p-8 relative overflow-hidden">
       <AuthOrb className="opacity-70 left-3/4 top-1/4 scale-150" />
       
-      <div className="w-full max-w-4xl space-y-8 relative z-10 px-4">
+      <div className="max-w-6xl mx-auto space-y-8 relative z-10">
         {/* Header Section */}
         <div className="text-center space-y-4">
           <h1 className="text-3xl font-bold text-white">Your EQ Assessment Results</h1>
@@ -152,27 +149,31 @@ export const AssessmentResults = ({
           </div>
         </Card>
 
-        {/* Pillar Details Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Pillar Details Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {pillarDetails.map((pillar) => (
             <PillarCard
               key={pillar.pillar}
               {...pillar}
-              onClick={() => setSelectedPillar(pillar.pillar)}
+              onClick={() => {}}
             />
           ))}
         </div>
 
-        {/* Call to Action */}
-        <div className="text-center space-y-4 pt-8">
-          <p className="text-lg text-gray-300">
-            Ready to start your EQ development journey?
-          </p>
+        {/* Navigation Buttons */}
+        <div className="flex justify-between items-center pt-8">
           <Button
-            onClick={onContinue}
+            onClick={() => navigate("/dashboard")}
             className="bg-[#00ffd5] text-black hover:bg-[#00b4d8] transition-colors"
           >
-            Continue to Dashboard
+            Go to Dashboard
+          </Button>
+          <Button
+            onClick={() => navigate("/assessment")}
+            variant="outline"
+            className="bg-white/10 text-white hover:bg-white/20 border-gray-600"
+          >
+            Retake Assessment
           </Button>
         </div>
       </div>
