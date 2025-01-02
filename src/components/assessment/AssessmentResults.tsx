@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AuthOrb } from "@/components/auth/AuthOrb";
 import { RadarChart } from "@/components/assessment/RadarChart";
 import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PillarCard } from "./results/PillarCard";
+import { supabase } from "@/integrations/supabase/client";
+import { useLocation } from "react-router-dom";
 
 interface AssessmentResultsProps {
   totalScore: number;
@@ -26,49 +28,98 @@ const getTotalLevel = (score: number): string => {
 };
 
 export const AssessmentResults = ({ 
-  totalScore, 
-  pillarScores,
+  totalScore: initialTotalScore, 
+  pillarScores: initialPillarScores,
   onContinue 
 }: AssessmentResultsProps) => {
-  const [selectedPillar, setSelectedPillar] = useState<string | null>(null);
+  const location = useLocation();
+  const [scores, setScores] = useState({
+    totalScore: initialTotalScore,
+    pillarScores: initialPillarScores
+  });
+
+  useEffect(() => {
+    // Initialize with state from navigation if available
+    if (location.state) {
+      const { totalScore, pillarScores } = location.state;
+      setScores({ totalScore, pillarScores });
+      console.log("Initialized scores from navigation state:", { totalScore, pillarScores });
+    }
+
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel('profile-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+        },
+        (payload) => {
+          console.log("Received real-time profile update:", payload);
+          const { new: newProfile } = payload;
+          
+          if (newProfile) {
+            setScores({
+              totalScore: newProfile.total_eq_score || 0,
+              pillarScores: {
+                selfAwareness: newProfile.self_awareness || 0,
+                selfRegulation: newProfile.self_regulation || 0,
+                motivation: newProfile.motivation || 0,
+                empathy: newProfile.empathy || 0,
+                socialSkills: newProfile.social_skills || 0
+              }
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [location.state]);
 
   const pillarDetails = [
     {
       pillar: "Self-Awareness",
-      score: pillarScores.selfAwareness,
+      score: scores.pillarScores.selfAwareness,
       description: "Your ability to recognize and understand your own emotions",
       strengths: "You show good awareness of your emotional states",
       improvements: "Practice daily emotion journaling to deepen your self-understanding"
     },
     {
       pillar: "Self-Regulation",
-      score: pillarScores.selfRegulation,
+      score: scores.pillarScores.selfRegulation,
       description: "Your ability to manage and control your emotions",
       strengths: "You demonstrate control over emotional responses",
       improvements: "Try mindfulness exercises to enhance emotional control"
     },
     {
       pillar: "Motivation",
-      score: pillarScores.motivation,
+      score: scores.pillarScores.motivation,
       description: "Your drive to pursue goals and overcome challenges",
       strengths: "You show strong initiative and persistence",
       improvements: "Set specific, measurable goals to maintain momentum"
     },
     {
       pillar: "Empathy",
-      score: pillarScores.empathy,
+      score: scores.pillarScores.empathy,
       description: "Your ability to understand others' emotions",
       strengths: "You demonstrate understanding of others' perspectives",
       improvements: "Practice active listening to deepen empathetic connections"
     },
     {
       pillar: "Social Skills",
-      score: pillarScores.socialSkills,
+      score: scores.pillarScores.socialSkills,
       description: "Your ability to build and maintain relationships",
       strengths: "You show effectiveness in social interactions",
       improvements: "Focus on developing conflict resolution techniques"
     }
   ];
+
+  const [selectedPillar, setSelectedPillar] = useState<string | null>(null);
 
   const radarData = pillarDetails.map(detail => ({
     category: detail.pillar,
@@ -87,8 +138,8 @@ export const AssessmentResults = ({
             Congratulations! Here's a breakdown of your emotional intelligence across five key pillars.
           </p>
           <div className="flex flex-col items-center space-y-2">
-            <span className="text-5xl font-bold text-[#00ffd5]">{totalScore}</span>
-            <span className="text-xl text-gray-300">Overall EQ Score - {getTotalLevel(totalScore)}</span>
+            <span className="text-5xl font-bold text-[#00ffd5]">{scores.totalScore}</span>
+            <span className="text-xl text-gray-300">Overall EQ Score - {getTotalLevel(scores.totalScore)}</span>
           </div>
         </div>
 
