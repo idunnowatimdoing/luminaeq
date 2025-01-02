@@ -1,6 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { AuthOrb } from "@/components/auth/AuthOrb";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface AssessmentIntroStepProps {
   onSkip: () => void;
@@ -44,13 +55,38 @@ export const AssessmentIntroStep = ({
           >
             Start Assessment
           </Button>
-          <Button 
-            variant="outline" 
-            className="w-full bg-white/5 border-white/20 hover:bg-white/10 text-white"
-            onClick={onSkip}
-          >
-            Skip for Now
-          </Button>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="w-full bg-white/5 border-white/20 hover:bg-white/10 text-white"
+              >
+                Skip for Now
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-gray-900 border-gray-800">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-white">Skip Assessment?</AlertDialogTitle>
+                <AlertDialogDescription className="text-gray-300">
+                  Without the assessment, it may take longer to calculate your EQ score. 
+                  You can complete it anytime from the dashboard to unlock tailored insights 
+                  and suggestions.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700">
+                  Go Back
+                </AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={onSkip}
+                  className="bg-[#00ffd5] text-black hover:bg-[#00b4d8]"
+                >
+                  Proceed to Dashboard
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardFooter>
       </Card>
     </div>
