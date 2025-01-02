@@ -51,28 +51,18 @@ const App = () => (
             path="/assessment/results"
             element={
               <ProtectedRoute>
-                <AssessmentResults 
-                  totalScore={0}
-                  pillarScores={{
-                    selfAwareness: 0,
-                    selfRegulation: 0,
-                    motivation: 0,
-                    empathy: 0,
-                    socialSkills: 0
-                  }}
-                  onContinue={() => {
-                    window.location.href = "/dashboard";
-                  }}
-                />
+                <AssessmentResults />
               </ProtectedRoute>
             }
           />
           
-          {/* Redirect all other routes to dashboard if authenticated */}
+          {/* Redirect unmatched routes based on auth state */}
           <Route
             path="*"
             element={
-              <Navigate to="/dashboard" replace />
+              <ProtectedRoute>
+                <Navigate to="/dashboard" replace />
+              </ProtectedRoute>
             }
           />
         </Routes>

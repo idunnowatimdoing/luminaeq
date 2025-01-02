@@ -16,7 +16,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#051527]">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#00ffd5]" />
       </div>
     );
   }
@@ -27,6 +27,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!session) {
+    console.log("No session found, redirecting to auth");
     return <Navigate to="/auth" replace />;
   }
 

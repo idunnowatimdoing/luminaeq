@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthOrb } from "@/components/auth/AuthOrb";
@@ -9,34 +9,33 @@ import { ResultsHeader } from "./results/ResultsHeader";
 import { ResultsNavigation } from "./results/ResultsNavigation";
 import { supabase } from "@/integrations/supabase/client";
 
-interface AssessmentResultsProps {
-  totalScore: number;
-  pillarScores: {
-    selfAwareness: number;
-    selfRegulation: number;
-    motivation: number;
-    empathy: number;
-    socialSkills: number;
-  };
-  onContinue: () => void;
-}
-
-export const AssessmentResults = ({ 
-  totalScore: initialTotalScore, 
-  pillarScores: initialPillarScores,
-  onContinue 
-}: AssessmentResultsProps) => {
+export const AssessmentResults = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [scores, setScores] = useState({
-    totalScore: initialTotalScore,
-    pillarScores: initialPillarScores
+    totalScore: 0,
+    pillarScores: {
+      selfAwareness: 0,
+      selfRegulation: 0,
+      motivation: 0,
+      empathy: 0,
+      socialSkills: 0
+    }
   });
 
   useEffect(() => {
     if (location.state) {
       const { totalScore, pillarScores } = location.state;
-      setScores({ totalScore, pillarScores });
-      console.log("Initialized scores from navigation state:", { totalScore, pillarScores });
+      if (totalScore !== undefined && pillarScores !== undefined) {
+        setScores({ totalScore, pillarScores });
+        console.log("Initialized scores from navigation state:", { totalScore, pillarScores });
+      } else {
+        console.log("No assessment data found in navigation state, redirecting to dashboard");
+        navigate("/dashboard", { replace: true });
+      }
+    } else {
+      console.log("No state found in location, redirecting to dashboard");
+      navigate("/dashboard", { replace: true });
     }
 
     const channel = supabase
@@ -71,7 +70,7 @@ export const AssessmentResults = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [location.state]);
+  }, [location.state, navigate]);
 
   const pillarDetails = [
     {
