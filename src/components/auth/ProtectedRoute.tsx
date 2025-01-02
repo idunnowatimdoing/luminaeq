@@ -16,38 +16,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#051527]">
-        {/* Orb animation */}
-        <div className="orb-animation" />
-      </div>
-    );
-  }
-
-  if (error) {
-    console.error("Auth error:", error);
-    return <Navigate to="/auth" replace />;
-  }
-
-  if (!session) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  if (onboardingCompleted === false) {
-    if (currentPath === "/assessment" && sessionStorage.getItem("startedFromIntro") === "true") {
-      return <>{children}</>;
-    }
-    if (currentPath !== "/") {
-      return <Navigate to="/" replace />;
-    }
-  }
-
-  if (onboardingCompleted === true && (currentPath === "/assessment" || currentPath === "/")) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return <>{children}</>;
-};
-
-      <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
       </div>
     );
@@ -71,12 +39,14 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     
     // If user is not on the welcome/onboarding page, redirect them there
     if (currentPath !== "/") {
+      console.log("Redirecting to onboarding flow");
       return <Navigate to="/" replace />;
     }
   }
 
   // If onboarding is completed but user tries to access onboarding-related pages
   if (onboardingCompleted === true && (currentPath === "/assessment" || currentPath === "/")) {
+    console.log("Onboarding completed, redirecting to dashboard");
     return <Navigate to="/dashboard" replace />;
   }
 

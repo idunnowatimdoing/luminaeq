@@ -54,7 +54,7 @@ export const OnboardingFlow = () => {
         throw error;
       }
 
-      console.log("Profile updated successfully");
+      console.log("Profile updated successfully, navigating to dashboard");
       navigate("/dashboard", { replace: true });
     } catch (error: any) {
       console.error("Submit profile error:", error);
@@ -76,28 +76,32 @@ export const OnboardingFlow = () => {
         throw new Error("No user found");
       }
 
-      // Update profile with onboarding completed status
+      console.log("Updating profile with onboarding completed status");
       const { error } = await supabase
         .from("profiles")
         .update({
           name,
           age_range: ageRange,
-          onboarding_completed: true
+          onboarding_completed: true,
+          total_eq_score: 50 // Default score when skipping assessment
         })
         .eq("user_id", user.id);
 
       if (error) {
+        console.error("Error updating profile:", error);
         throw error;
       }
 
+      console.log("Profile updated successfully, showing toast");
       toast({
         title: "Assessment Skipped",
         description: "You can complete it anytime from the dashboard to unlock tailored insights and suggestions.",
         duration: 6000,
       });
       
+      console.log("Navigating to dashboard");
       navigate("/dashboard", { replace: true });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error skipping assessment:", error);
       toast({
         title: "Error",
