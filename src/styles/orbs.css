@@ -1,13 +1,3 @@
-/* Orb Animation Styles */
-.auth-orb {
-  @apply absolute w-48 h-48 rounded-full;
-  background: linear-gradient(-45deg, #00ffd5, #00b4d8, #0077b6, #00ffd5);
-  background-size: 400% 400%;
-  animation: gradientFlow 8s ease infinite, float 6s ease-in-out infinite;
-  filter: blur(20px);
-  opacity: 0.8;
-}
-
 /* Main EQ Score Orb */
 .main-orb {
   @apply w-32 h-32 sm:w-48 sm:h-48 rounded-full flex items-center justify-center mb-4 sm:mb-8;
@@ -17,60 +7,52 @@
   box-shadow: 0 0 40px rgba(155, 135, 245, 0.4);
 }
 
-/* Pillar Orbs - Updated with better mobile sizes */
+/* Pillar Orbs */
 .pillar-orb {
-  @apply w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1rem;
-  color: white;
-  animation: float 6s ease-in-out infinite;
+  @apply w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full flex items-center justify-center;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
 }
 
-/* Updated Gradient Styling for Pillar Orbs */
+/* Gradient classes for pillar orbs */
 .gradient-selfawareness {
-  background: linear-gradient(45deg, #003366, #00FFFF);
-  box-shadow: 0 0 50px rgba(0, 255, 255, 0.4),
-              inset 0 0 30px rgba(0, 102, 204, 0.3);
+  background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
 }
 
 .gradient-selfregulation {
-  background: linear-gradient(45deg, #88D498, #FFD700);
-  box-shadow: 0 0 50px rgba(255, 215, 0, 0.4),
-              inset 0 0 30px rgba(136, 212, 152, 0.3);
+  background: linear-gradient(45deg, #4ECDC4, #45B7AF);
 }
 
 .gradient-motivation {
-  background: linear-gradient(45deg, #FF4500, #FFD700);
-  box-shadow: 0 0 50px rgba(255, 69, 0, 0.4),
-              inset 0 0 30px rgba(255, 215, 0, 0.3);
+  background: linear-gradient(45deg, #FFD93D, #FFE566);
 }
 
 .gradient-empathy {
-  background: linear-gradient(45deg, #FF5E7E, #DDA0DD);
-  box-shadow: 0 0 50px rgba(255, 94, 126, 0.4),
-              inset 0 0 30px rgba(221, 160, 221, 0.3);
+  background: linear-gradient(45deg, #6C5CE7, #8983F3);
 }
 
 .gradient-socialskills {
-  background: linear-gradient(45deg, #6A0DAD, #FF00FF);
-  box-shadow: 0 0 50px rgba(255, 0, 255, 0.4),
-              inset 0 0 30px rgba(106, 13, 173, 0.3);
+  background: linear-gradient(45deg, #A8E6CF, #DCEDC1);
 }
 
 /* Feature Orbs */
 .feature-orb {
-  @apply w-12 h-12 sm:w-16 sm:h-16;
-  border-radius: 50%;
+  @apply w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center;
   background-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0px 8px 20px rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  backdrop-filter: blur(10px);
   font-weight: bold;
   font-size: 1rem;
   color: white;
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

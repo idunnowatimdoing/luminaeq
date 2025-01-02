@@ -8,16 +8,33 @@ export default function HomePage() {
   const { dashboardData, loading } = useDashboardData();
 
   if (loading) {
-    return <div className="p-4 sm:p-8"><Skeleton className="w-full h-[600px]" /></div>;
+    return (
+      <div className="min-h-screen bg-[#051527] p-4 sm:p-8">
+        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+          <Skeleton className="h-20 w-full max-w-md mx-auto" />
+          <div className="flex justify-center">
+            <Skeleton className="w-32 h-32 sm:w-48 sm:h-48 rounded-full" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-8">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="space-y-2">
+                <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 rounded-full mx-auto" />
+                <Skeleton className="h-32 w-full" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-[#051527] p-4 sm:p-8">
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Welcome Message */}
-        <div className="text-center text-white space-y-2">
+        <div className="text-center text-white">
           <h1 className="text-2xl sm:text-3xl font-bold">Welcome back, {dashboardData?.name || 'User'}</h1>
-          <h2 className="text-base sm:text-lg">Your Total EQ Score</h2>
+          <h2 className="text-base sm:text-lg mt-2">Your Total EQ Score</h2>
         </div>
 
         {/* Main EQ Score Orb */}
@@ -93,7 +110,7 @@ export default function HomePage() {
         </div>
 
         {/* EQ Insights */}
-        <Card className="w-full bg-glass rounded-lg shadow-lg mt-6 sm:mt-8">
+        <Card className="w-full bg-glass rounded-lg shadow-lg">
           <CardHeader>
             <CardTitle className="text-lg sm:text-xl text-white">EQ Insights</CardTitle>
           </CardHeader>
