@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,65 +11,77 @@ import { AssessmentResults } from "./components/assessment/AssessmentResults";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { OnboardingFlow } from "./components/onboarding/OnboardingFlow";
 
-const queryClient = new QueryClient();
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Auth page is public */}
-          <Route path="/auth" element={<AuthPage />} />
-          
-          {/* Protected routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <OnboardingFlow />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/assessment"
-            element={
-              <ProtectedRoute>
-                <AssessmentPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/assessment/results"
-            element={
-              <ProtectedRoute>
-                <AssessmentResults />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* Redirect unmatched routes based on auth state */}
-          <Route
-            path="*"
-            element={
-              <ProtectedRoute>
-                <Navigate to="/dashboard" replace />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Auth page is public */}
+              <Route path="/auth" element={<AuthPage />} />
+              
+              {/* Protected routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <HomePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <OnboardingFlow />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/assessment"
+                element={
+                  <ProtectedRoute>
+                    <AssessmentPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/assessment/results"
+                element={
+                  <ProtectedRoute>
+                    <AssessmentResults />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Redirect unmatched routes based on auth state */}
+              <Route
+                path="*"
+                element={
+                  <ProtectedRoute>
+                    <Navigate to="/dashboard" replace />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
+};
 
 export default App;

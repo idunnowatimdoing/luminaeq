@@ -17,7 +17,7 @@ export const JournalEntryModal = ({ isOpen, onClose, pillar }: JournalEntryModal
   const [entryText, setEntryText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { session } = useAuth();
 
   const handleSubmit = async () => {
     if (!entryText.trim()) {
@@ -29,12 +29,21 @@ export const JournalEntryModal = ({ isOpen, onClose, pillar }: JournalEntryModal
       return;
     }
 
+    if (!session?.user?.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to create a journal entry",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const { error } = await supabase
         .from("journal_entries")
         .insert({
-          user_id: user?.id,
+          user_id: session.user.id,
           entry_text: entryText,
           pillar: pillar.toLowerCase(),
         });
