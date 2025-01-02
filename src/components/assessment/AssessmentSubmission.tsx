@@ -2,7 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Question } from "@/pages/assessment/types";
-import { calculateScores } from "@/pages/assessment/utils/calculateScores";
+import { useAssessmentScores } from "@/hooks/assessment/useAssessmentScores";
+import { useProfileUpdate } from "@/hooks/assessment/useProfileUpdate";
+import { useResponseSubmission } from "@/hooks/assessment/useResponseSubmission";
 
 interface AssessmentSubmissionProps {
   responses: { [key: number]: number };
@@ -18,6 +20,9 @@ export const useAssessmentSubmission = ({
   setIsSubmitting,
 }: AssessmentSubmissionProps) => {
   const navigate = useNavigate();
+  const { calculateAssessmentScores } = useAssessmentScores(responses, shuffledQuestions);
+  const { updateProfile } = useProfileUpdate();
+  const { submitResponses } = useResponseSubmission();
 
   const handleSubmitAssessment = async () => {
     if (isSubmitting) {
@@ -35,56 +40,10 @@ export const useAssessmentSubmission = ({
       }
       console.log("User authenticated:", session.user.id);
 
-      const { pillarScores, totalScore } = calculateScores(responses, shuffledQuestions);
-      console.log("Calculated scores:", { pillarScores, totalScore });
-
-      // First update assessment responses
-      const normalizedResponses = Object.entries(responses).map(([questionId, score]) => ({
-        user_id: session.user.id,
-        question_id: parseInt(questionId),
-        score: Math.min(Math.max(Math.round(score), 0), 100),
-        pillar: shuffledQuestions.find(q => q.id === parseInt(questionId))?.pillar || '',
-      }));
-
-      console.log("Saving assessment responses:", normalizedResponses);
-      const { error: responsesError } = await supabase
-        .from("assessment_responses")
-        .upsert(normalizedResponses, {
-          onConflict: 'user_id,question_id',
-          ignoreDuplicates: false
-        });
-
-      if (responsesError) {
-        console.error("Error saving responses:", responsesError);
-        throw responsesError;
-      }
-      console.log("Assessment responses saved successfully");
-
-      // Then update profile with scores and onboarding status
-      console.log("Updating profile with scores:", {
-        totalScore,
-        ...pillarScores,
-      });
+      const { pillarScores, totalScore } = calculateAssessmentScores();
       
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({
-          total_eq_score: totalScore,
-          self_awareness: Math.round(pillarScores.selfAwareness),
-          self_regulation: Math.round(pillarScores.selfRegulation),
-          motivation: Math.round(pillarScores.motivation),
-          empathy: Math.round(pillarScores.empathy),
-          social_skills: Math.round(pillarScores.socialSkills),
-          onboarding_completed: true,
-        })
-        .eq("user_id", session.user.id);
-
-      if (profileError) {
-        console.error("Profile update error:", profileError);
-        throw profileError;
-      }
-
-      console.log("Profile updated successfully with assessment scores");
+      await submitResponses(session.user.id, responses, shuffledQuestions);
+      await updateProfile(session.user.id, { totalScore, ...pillarScores });
 
       // Navigate to results with state
       navigate("/assessment/results", {
