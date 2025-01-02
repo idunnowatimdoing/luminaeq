@@ -18,11 +18,36 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Check session and onboarding status
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
 
+        if (session) {
+          const { data } = await supabase
+            .from("profiles")
+            .select("onboarding_completed")
+            .eq("user_id", session.user.id)
+            .single();
+          
+          console.log("Profile data:", data);
+          setOnboardingCompleted(data?.onboarding_completed ?? false);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error checking auth:", error);
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      console.log("Auth state changed:", { event: _event, session });
+      setSession(session);
+      
       if (session) {
         const { data } = await supabase
           .from("profiles")
@@ -30,50 +55,35 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
           .eq("user_id", session.user.id)
           .single();
         
+        console.log("Updated profile data:", data);
         setOnboardingCompleted(data?.onboarding_completed ?? false);
-      }
-      setLoading(false);
-    };
-
-    checkAuth();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) {
-        // Re-check onboarding status when auth state changes
-        supabase
-          .from("profiles")
-          .select("onboarding_completed")
-          .eq("user_id", session.user.id)
-          .single()
-          .then(({ data }) => {
-            setOnboardingCompleted(data?.onboarding_completed ?? false);
-          });
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  console.log("Auth state:", { session, loading, onboardingCompleted });
+  console.log("Protected route state:", { session, loading, onboardingCompleted });
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  // If no session, redirect to auth
   if (!session) {
     return <Navigate to="/auth" replace />;
   }
 
-  // If not completed onboarding, show onboarding flow
-  if (!onboardingCompleted) {
+  // Only show onboarding on the home route
+  if (!onboardingCompleted && window.location.pathname === '/') {
     return <OnboardingFlow />;
   }
 
-  // If authenticated and completed onboarding, show requested page
+  // Allow access to assessment page even if onboarding is not completed
+  if (window.location.pathname === '/assessment') {
+    return <>{children}</>;
+  }
+
+  // For all other routes, show the requested page if onboarding is completed
   return <>{children}</>;
 };
 
@@ -105,11 +115,11 @@ const App = () => (
             }
           />
           
-          {/* Redirect all other routes to auth if not logged in, or home if logged in */}
+          {/* Redirect all other routes to home if logged in, or auth if not */}
           <Route
             path="*"
             element={
-              <Navigate to="/auth" replace />
+              <Navigate to="/" replace />
             }
           />
         </Routes>
