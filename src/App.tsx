@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/auth/AuthPage";
 import { AssessmentPage } from "./pages/assessment/AssessmentPage";
+import { AssessmentResults } from "./components/assessment/AssessmentResults";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AssessmentPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/assessment/results"
+            element={
+              <ProtectedRoute>
+                <AssessmentResults />
               </ProtectedRoute>
             }
           />

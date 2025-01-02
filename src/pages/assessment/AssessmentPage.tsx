@@ -138,8 +138,8 @@ export const AssessmentPage = () => {
 
       console.log("Successfully updated profile with scores");
 
-      // Navigate back to home
-      navigate("/", {
+      // Navigate to the assessment results page with the scores
+      navigate("/assessment/results", {
         state: {
           assessmentScores: {
             total: totalScore,
