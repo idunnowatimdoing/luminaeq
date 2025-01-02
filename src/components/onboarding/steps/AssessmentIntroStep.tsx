@@ -46,7 +46,7 @@ export const AssessmentIntroStep = ({
           </Button>
           <Button 
             variant="outline" 
-            className="w-full border-white/20 hover:bg-white/10 text-white"
+            className="w-full bg-white/5 border-white/20 hover:bg-white/10 text-white"
             onClick={onSkip}
           >
             Skip for Now
