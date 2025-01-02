@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Trophy, Award, BookOpen, Users } from "lucide-react";
 
 interface DashboardData {
   current_eq_score: number;
@@ -11,6 +12,7 @@ interface DashboardData {
   motivation: number;
   empathy: number;
   social_skills: number;
+  name?: string;
 }
 
 export default function HomePage() {
@@ -20,7 +22,34 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchDashboardData();
+    setupRealtimeSubscription();
   }, []);
+
+  const setupRealtimeSubscription = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const subscription = supabase
+      .from("profiles")
+      .on("UPDATE", (payload) => {
+        if (payload.new.user_id === user.id) {
+          setDashboardData({
+            current_eq_score: payload.new.total_eq_score || 0,
+            self_awareness: payload.new.self_awareness || 0,
+            self_regulation: payload.new.self_regulation || 0,
+            motivation: payload.new.motivation || 0,
+            empathy: payload.new.empathy || 0,
+            social_skills: payload.new.social_skills || 0,
+            name: payload.new.name,
+          });
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeSubscription(subscription);
+    };
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -29,7 +58,7 @@ export default function HomePage() {
 
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select("total_eq_score, self_awareness, self_regulation, motivation, empathy, social_skills")
+        .select("total_eq_score, self_awareness, self_regulation, motivation, empathy, social_skills, name")
         .eq("user_id", user.id)
         .single();
 
@@ -42,6 +71,7 @@ export default function HomePage() {
         motivation: profileData.motivation || 0,
         empathy: profileData.empathy || 0,
         social_skills: profileData.social_skills || 0,
+        name: profileData.name,
       });
     } catch (error: any) {
       toast({
@@ -61,22 +91,28 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#051527] p-8">
       <div className="max-w-7xl mx-auto space-y-8">
+        {/* Welcome Message */}
+        <div className="text-center text-white space-y-2">
+          <h1 className="text-3xl font-bold">Welcome back, {dashboardData?.name || 'User'}</h1>
+          <h2 className="text-lg">Your Total EQ Score</h2>
+        </div>
+
         {/* Main EQ Score Orb */}
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="main-orb flex items-center justify-center">
-            <span className="text-4xl font-bold">
+        <div className="flex justify-center">
+          <div className="main-orb">
+            <span className="text-4xl font-bold text-white">
               {dashboardData?.current_eq_score || 0}/100
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Your EQ Score</h1>
         </div>
 
-        {/* Pillar Orbs and Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        {/* Pillar Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Self Awareness */}
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex flex-col items-center">
             <div className="pillar-orb gradient-selfawareness" />
-            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
+            <h3 className="text-center text-white mt-2">Self Awareness</h3>
+            <Card className="w-full bg-glass">
               <CardHeader>
                 <CardTitle className="text-lg text-white">Self Awareness</CardTitle>
               </CardHeader>
@@ -90,9 +126,10 @@ export default function HomePage() {
           </div>
 
           {/* Self Regulation */}
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex flex-col items-center">
             <div className="pillar-orb gradient-selfregulation" />
-            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
+            <h3 className="text-center text-white mt-2">Self Regulation</h3>
+            <Card className="w-full bg-glass">
               <CardHeader>
                 <CardTitle className="text-lg text-white">Self Regulation</CardTitle>
               </CardHeader>
@@ -106,9 +143,10 @@ export default function HomePage() {
           </div>
 
           {/* Motivation */}
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex flex-col items-center">
             <div className="pillar-orb gradient-motivation" />
-            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
+            <h3 className="text-center text-white mt-2">Motivation</h3>
+            <Card className="w-full bg-glass">
               <CardHeader>
                 <CardTitle className="text-lg text-white">Motivation</CardTitle>
               </CardHeader>
@@ -122,9 +160,10 @@ export default function HomePage() {
           </div>
 
           {/* Empathy */}
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex flex-col items-center">
             <div className="pillar-orb gradient-empathy" />
-            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
+            <h3 className="text-center text-white mt-2">Empathy</h3>
+            <Card className="w-full bg-glass">
               <CardHeader>
                 <CardTitle className="text-lg text-white">Empathy</CardTitle>
               </CardHeader>
@@ -138,9 +177,10 @@ export default function HomePage() {
           </div>
 
           {/* Social Skills */}
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex flex-col items-center">
             <div className="pillar-orb gradient-socialskills" />
-            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
+            <h3 className="text-center text-white mt-2">Social Skills</h3>
+            <Card className="w-full bg-glass">
               <CardHeader>
                 <CardTitle className="text-lg text-white">Social Skills</CardTitle>
               </CardHeader>
@@ -154,8 +194,37 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Insights Section */}
-        <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
+        {/* Additional Features */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-6">
+            <div className="feature-orb">
+              <Trophy className="w-8 h-8" />
+            </div>
+            <h3 className="text-lg text-white">Challenges</h3>
+          </Card>
+          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-6">
+            <div className="feature-orb">
+              <Award className="w-8 h-8" />
+            </div>
+            <h3 className="text-lg text-white">Badges</h3>
+          </Card>
+          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-6">
+            <div className="feature-orb">
+              <BookOpen className="w-8 h-8" />
+            </div>
+            <h3 className="text-lg text-white">Learning</h3>
+          </Card>
+          <Card className="w-full bg-glass flex flex-col items-center space-y-4 p-6">
+            <div className="feature-orb">
+              <Users className="w-8 h-8" />
+            </div>
+            <h3 className="text-lg text-white">LuminaConnect</h3>
+            <p className="text-gray-300">Coming Soon</p>
+          </Card>
+        </div>
+
+        {/* EQ Insights */}
+        <Card className="w-full bg-glass rounded-lg shadow-lg mt-8">
           <CardHeader>
             <CardTitle className="text-xl text-white">EQ Insights</CardTitle>
           </CardHeader>
