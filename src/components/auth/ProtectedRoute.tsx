@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuthState } from "./hooks/useAuthState";
-import { AuthError } from "./components/AuthError";
+import { AuthErrorComponent } from "./components/AuthError";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, loading, onboardingCompleted, error } = useAuthState();
@@ -22,7 +22,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (error) {
-    return <AuthError error={error} />;
+    return <AuthErrorComponent error={error} />;
   }
 
   if (!session) {

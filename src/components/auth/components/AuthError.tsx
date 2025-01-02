@@ -1,10 +1,10 @@
-import { AuthError } from "../types/auth";
+import { type AuthError as AuthErrorType } from "../types/auth";
 
-interface AuthErrorProps {
-  error: AuthError;
+interface AuthErrorComponentProps {
+  error: AuthErrorType;
 }
 
-export const AuthError = ({ error }: AuthErrorProps) => (
+export const AuthErrorComponent = ({ error }: AuthErrorComponentProps) => (
   <div className="min-h-screen flex items-center justify-center bg-[#051527]">
     <div className="text-center text-red-400">
       <p>Error: {error.message}</p>
