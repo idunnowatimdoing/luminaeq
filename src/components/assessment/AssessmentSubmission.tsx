@@ -37,6 +37,7 @@ export const useAssessmentSubmission = ({
       const { pillarScores, totalScore } = calculateScores(responses, shuffledQuestions);
       console.log("Calculated scores:", { pillarScores, totalScore });
 
+      // First update assessment responses
       const normalizedResponses = Object.entries(responses).map(([questionId, score]) => ({
         user_id: session.user.id,
         question_id: parseInt(questionId),
@@ -53,6 +54,7 @@ export const useAssessmentSubmission = ({
 
       if (responsesError) throw responsesError;
 
+      // Then update profile with scores and onboarding status
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -66,8 +68,14 @@ export const useAssessmentSubmission = ({
         })
         .eq("user_id", session.user.id);
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error("Profile update error:", profileError);
+        throw profileError;
+      }
 
+      console.log("Profile updated successfully with assessment scores");
+
+      // Navigate to results with state
       navigate("/assessment/results", {
         replace: true,
         state: {

@@ -30,6 +30,16 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/auth" replace />;
   }
 
+  // Special case for assessment results page
+  if (currentPath === "/assessment/results") {
+    const hasAssessmentState = window.history.state?.usr?.totalScore !== undefined;
+    if (!hasAssessmentState) {
+      console.log("No assessment state found, redirecting to dashboard");
+      return <Navigate to="/dashboard" replace />;
+    }
+    return <>{children}</>;
+  }
+
   // If onboarding is not completed
   if (onboardingCompleted === false) {
     // Allow access to assessment page only if user came from assessment intro
