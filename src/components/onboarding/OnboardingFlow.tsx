@@ -1,5 +1,4 @@
-// Critical Component DO NOT MODIFY
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +23,10 @@ export const OnboardingFlow = () => {
 
   const handleSubmitProfile = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData?.session?.user;
+      
+      console.log("Current session user:", user);
       
       if (!user) {
         throw new Error("No user found");
@@ -47,10 +49,15 @@ export const OnboardingFlow = () => {
         })
         .eq("user_id", user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Profile update error:", error);
+        throw error;
+      }
 
+      console.log("Profile updated successfully");
       navigate("/");
     } catch (error: any) {
+      console.error("Submit profile error:", error);
       toast({
         title: "Error",
         description: error.message,
@@ -59,16 +66,23 @@ export const OnboardingFlow = () => {
     }
   };
 
-  const handleSkipAssessment = () => {
+  const handleSkipAssessment = async () => {
+    console.log("Skipping assessment...");
     toast({
       title: "Assessment Skipped",
-      description: "You've chosen to skip the assessment. It may take longer to calculate your EQ score. You can complete it anytime from the dashboard to unlock tailored insights and suggestions.",
+      description: "You can complete it anytime from the dashboard to unlock tailored insights and suggestions.",
       duration: 6000,
     });
-    handleSubmitProfile();
+    await handleSubmitProfile();
+  };
+
+  const handleStartAssessment = () => {
+    console.log("Starting assessment...");
+    navigate("/assessment");
   };
 
   const handleCompleteAssessment = async (scores: typeof assessmentScores) => {
+    console.log("Assessment completed with scores:", scores);
     setAssessmentScores(scores);
     setStep(3);
   };
@@ -89,7 +103,7 @@ export const OnboardingFlow = () => {
     return (
       <AssessmentIntroStep
         onSkip={handleSkipAssessment}
-        onStartAssessment={() => navigate("/assessment")}
+        onStartAssessment={handleStartAssessment}
       />
     );
   }

@@ -40,11 +40,21 @@ export const AssessmentPage = () => {
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
 
   useEffect(() => {
-    // Shuffle questions on component mount
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+    };
+    
+    checkAuth();
     setShuffledQuestions([...questions].sort(() => Math.random() - 0.5));
-  }, []);
+  }, [navigate]);
 
   const handleResponse = (value: number) => {
+    console.log("Recording response:", { questionIndex: currentQuestionIndex, value });
+    
     setResponses((prev) => ({
       ...prev,
       [shuffledQuestions[currentQuestionIndex].id]: value,
@@ -58,38 +68,38 @@ export const AssessmentPage = () => {
   };
 
   const calculateAndSaveScores = async () => {
-    // Calculate pillar scores (max 20 points per pillar)
-    const pillarScores = {
-      selfAwareness: 0,
-      selfRegulation: 0,
-      motivation: 0,
-      empathy: 0,
-      socialSkills: 0,
-    };
-
-    // Calculate scores for each pillar
-    questions.forEach((question) => {
-      const response = responses[question.id];
-      // Each question can contribute up to 6.67 points (20 points / 3 questions)
-      pillarScores[question.pillar as keyof typeof pillarScores] += (response / 100) * 6.67;
-    });
-
-    // Calculate total EQ score (sum of all pillar scores, max 100)
-    const totalScore = Math.round(
-      Object.values(pillarScores).reduce((sum, score) => sum + score, 0)
-    );
-
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) throw new Error("No user found");
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error("No authenticated user found");
+      }
+
+      // Calculate pillar scores
+      const pillarScores = {
+        selfAwareness: 0,
+        selfRegulation: 0,
+        motivation: 0,
+        empathy: 0,
+        socialSkills: 0,
+      };
+
+      questions.forEach((question) => {
+        const response = responses[question.id];
+        pillarScores[question.pillar as keyof typeof pillarScores] += (response / 100) * 6.67;
+      });
+
+      const totalScore = Math.round(
+        Object.values(pillarScores).reduce((sum, score) => sum + score, 0)
+      );
+
+      console.log("Calculated scores:", { pillarScores, totalScore });
 
       // Save assessment responses
       const { error: responsesError } = await supabase
         .from("assessment_responses")
         .insert(
           Object.entries(responses).map(([questionId, score]) => ({
-            user_id: user.id,
+            user_id: session.user.id,
             question_id: parseInt(questionId),
             score,
             pillar: questions.find(q => q.id === parseInt(questionId))?.pillar,
@@ -108,8 +118,9 @@ export const AssessmentPage = () => {
           motivation: Math.round(pillarScores.motivation),
           empathy: Math.round(pillarScores.empathy),
           social_skills: Math.round(pillarScores.socialSkills),
+          onboarding_completed: true,
         })
-        .eq("user_id", user.id);
+        .eq("user_id", session.user.id);
 
       if (profileError) throw profileError;
 
@@ -118,11 +129,7 @@ export const AssessmentPage = () => {
         state: {
           assessmentScores: {
             total: totalScore,
-            selfAwareness: Math.round(pillarScores.selfAwareness),
-            selfRegulation: Math.round(pillarScores.selfRegulation),
-            motivation: Math.round(pillarScores.motivation),
-            empathy: Math.round(pillarScores.empathy),
-            socialSkills: Math.round(pillarScores.socialSkills),
+            ...pillarScores,
           },
         },
       });
