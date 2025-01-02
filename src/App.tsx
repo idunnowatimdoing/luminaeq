@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import Index from "./pages/Index";
+import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/auth/AuthPage";
 import { OnboardingFlow } from "./components/onboarding/OnboardingFlow";
 import { AssessmentPage } from "./pages/assessment/AssessmentPage";
@@ -21,7 +21,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) {
-        // Check onboarding status
         supabase
           .from("profiles")
           .select("onboarding_completed")
@@ -71,7 +70,7 @@ const App = () => (
             path="/"
             element={
               <ProtectedRoute>
-                <Index />
+                <HomePage />
               </ProtectedRoute>
             }
           />
