@@ -1,4 +1,4 @@
-import { AssessmentResults } from "@/components/assessment/AssessmentResults";
+import { useNavigate } from "react-router-dom";
 
 interface ResultsSummaryStepProps {
   name: string;
@@ -17,11 +17,24 @@ export const ResultsSummaryStep = ({
   assessmentScores,
   onContinue,
 }: ResultsSummaryStepProps) => {
-  return (
-    <AssessmentResults
-      totalScore={assessmentScores.total}
-      pillarScores={assessmentScores}
-      onContinue={onContinue}
-    />
-  );
+  const navigate = useNavigate();
+
+  // Navigate to results page with scores as state
+  React.useEffect(() => {
+    navigate("/assessment/results", {
+      replace: true,
+      state: {
+        totalScore: assessmentScores.total,
+        pillarScores: {
+          selfAwareness: assessmentScores.selfAwareness,
+          selfRegulation: assessmentScores.selfRegulation,
+          motivation: assessmentScores.motivation,
+          empathy: assessmentScores.empathy,
+          socialSkills: assessmentScores.socialSkills
+        }
+      }
+    });
+  }, [navigate, assessmentScores]);
+
+  return null; // Component will redirect immediately
 };
