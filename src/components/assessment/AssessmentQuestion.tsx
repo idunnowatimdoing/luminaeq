@@ -44,6 +44,8 @@ export const AssessmentQuestion = ({
     onResponse(sliderValue);
   };
 
+  const isLastQuestion = currentQuestion === totalQuestions;
+
   return (
     <div className="min-h-screen bg-[#051527] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Positioned orbs */}
@@ -138,7 +140,7 @@ export const AssessmentQuestion = ({
                 onClick={handleContinue}
                 className="flex-1 bg-[#00ffd5] text-black hover:bg-[#00b4d8] transition-colors"
               >
-                Continue
+                {isLastQuestion ? "Complete Assessment" : "Continue"}
               </Button>
             </div>
           </div>
