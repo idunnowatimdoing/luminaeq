@@ -29,7 +29,7 @@ export const AssessmentPage = () => {
         
         if (!session) {
           console.log("No session found, redirecting to auth");
-          navigate("/auth");
+          navigate("/auth", { replace: true });
           return;
         }
 
@@ -42,7 +42,7 @@ export const AssessmentPage = () => {
 
         if (profile?.onboarding_completed) {
           console.log("Assessment already completed, redirecting to home");
-          navigate('/');
+          navigate('/', { replace: true });
           return;
         }
       } catch (error) {
@@ -102,7 +102,7 @@ export const AssessmentPage = () => {
         pillar: shuffledQuestions.find(q => q.id === parseInt(questionId))?.pillar || '',
       }));
 
-      // Use upsert to handle potential duplicates
+      // Save responses
       const { error: responsesError } = await supabase
         .from("assessment_responses")
         .upsert(normalizedResponses, {
@@ -111,11 +111,8 @@ export const AssessmentPage = () => {
         });
 
       if (responsesError) {
-        console.error("Error saving responses:", responsesError);
         throw responsesError;
       }
-
-      console.log("Successfully saved assessment responses");
 
       // Update user profile with scores
       const { error: profileError } = await supabase
@@ -132,24 +129,27 @@ export const AssessmentPage = () => {
         .eq("user_id", session.user.id);
 
       if (profileError) {
-        console.error("Error updating profile:", profileError);
         throw profileError;
       }
 
-      console.log("Successfully updated profile with scores");
-
-      // Navigate to the assessment results page with the scores
+      // Navigate to results with scores
       navigate("/assessment/results", {
+        replace: true,
         state: {
-          assessmentScores: {
-            total: totalScore,
-            ...pillarScores,
-          },
-        },
+          totalScore,
+          pillarScores: {
+            selfAwareness: Math.round(pillarScores.selfAwareness),
+            selfRegulation: Math.round(pillarScores.selfRegulation),
+            motivation: Math.round(pillarScores.motivation),
+            empathy: Math.round(pillarScores.empathy),
+            socialSkills: Math.round(pillarScores.socialSkills)
+          }
+        }
       });
     } catch (error: any) {
       console.error("Error saving assessment results:", error);
       toast.error("Failed to save assessment results. Please try again.");
+    } finally {
       setIsSubmitting(false);
     }
   };

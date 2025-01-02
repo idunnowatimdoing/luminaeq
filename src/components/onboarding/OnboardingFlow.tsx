@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -55,7 +55,7 @@ export const OnboardingFlow = () => {
       }
 
       console.log("Profile updated successfully");
-      navigate("/");
+      navigate("/", { replace: true });
     } catch (error: any) {
       console.error("Submit profile error:", error);
       toast({
@@ -68,17 +68,21 @@ export const OnboardingFlow = () => {
 
   const handleSkipAssessment = async () => {
     console.log("Skipping assessment...");
-    await handleSubmitProfile(); // Wait for profile update to complete
-    toast({
-      title: "Assessment Skipped",
-      description: "You can complete it anytime from the dashboard to unlock tailored insights and suggestions.",
-      duration: 6000,
-    });
+    try {
+      await handleSubmitProfile();
+      toast({
+        title: "Assessment Skipped",
+        description: "You can complete it anytime from the dashboard to unlock tailored insights and suggestions.",
+        duration: 6000,
+      });
+    } catch (error) {
+      console.error("Error skipping assessment:", error);
+    }
   };
 
   const handleStartAssessment = () => {
     console.log("Starting assessment...");
-    navigate("/assessment");
+    navigate("/assessment", { replace: true });
   };
 
   const handleCompleteAssessment = async (scores: typeof assessmentScores) => {

@@ -51,7 +51,9 @@ const App = () => (
                     empathy: 0,
                     socialSkills: 0
                   }}
-                  onContinue={() => {}}
+                  onContinue={() => {
+                    window.location.href = "/";
+                  }}
                 />
               </ProtectedRoute>
             }
