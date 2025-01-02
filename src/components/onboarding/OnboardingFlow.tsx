@@ -1,3 +1,4 @@
+// Critical Component DO NOT MODIFY
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { RadarChart } from "@/components/assessment/RadarChart";
 
 const ageRanges = [
   "Under 18",
@@ -19,6 +21,14 @@ export const OnboardingFlow = () => {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [ageRange, setAgeRange] = useState("");
+  const [assessmentScores, setAssessmentScores] = useState<{
+    total: number;
+    selfAwareness: number;
+    selfRegulation: number;
+    motivation: number;
+    empathy: number;
+    socialSkills: number;
+  } | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -35,13 +45,21 @@ export const OnboardingFlow = () => {
         .update({
           name,
           age_range: ageRange,
-          onboarding_completed: true
+          onboarding_completed: true,
+          ...(assessmentScores && {
+            total_eq_score: assessmentScores.total,
+            self_awareness: assessmentScores.selfAwareness,
+            self_regulation: assessmentScores.selfRegulation,
+            motivation: assessmentScores.motivation,
+            empathy: assessmentScores.empathy,
+            social_skills: assessmentScores.socialSkills,
+          }),
         })
         .eq("user_id", user.id);
 
       if (error) throw error;
 
-      setStep(3);
+      navigate("/");
     } catch (error: any) {
       toast({
         title: "Error",
@@ -51,12 +69,18 @@ export const OnboardingFlow = () => {
     }
   };
 
-  const handleStartAssessment = () => {
-    navigate("/assessment");
+  const handleSkipAssessment = () => {
+    toast({
+      title: "Assessment Skipped",
+      description: "You've chosen to skip the assessment. It may take longer to calculate your EQ score. You can complete it anytime from the dashboard to unlock tailored insights and suggestions.",
+      duration: 6000,
+    });
+    handleSubmitProfile();
   };
 
-  const handleSkipAssessment = () => {
-    navigate("/");
+  const handleCompleteAssessment = async (scores: typeof assessmentScores) => {
+    setAssessmentScores(scores);
+    setStep(3);
   };
 
   if (step === 1) {
@@ -111,7 +135,7 @@ export const OnboardingFlow = () => {
               });
               return;
             }
-            handleSubmitProfile();
+            setStep(2);
           }}
         >
           Continue
@@ -141,7 +165,7 @@ export const OnboardingFlow = () => {
         <div className="space-y-4">
           <Button
             className="w-full bg-[#00ffd5] text-black hover:bg-[#00b4d8]"
-            onClick={handleStartAssessment}
+            onClick={() => navigate("/assessment")}
           >
             Start Assessment
           </Button>
@@ -153,6 +177,49 @@ export const OnboardingFlow = () => {
             Skip for Now
           </Button>
         </div>
+      </div>
+    );
+  }
+
+  if (step === 3 && assessmentScores) {
+    return (
+      <div className="w-full max-w-md space-y-6 p-6 rounded-lg bg-card">
+        <div className="space-y-2 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Great job, {name}! You've completed the EQ assessment.
+          </h2>
+          <p className="text-muted-foreground">
+            Here's your baseline EQ score, which you can build upon to improve self-awareness, communication, and more.
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          <div className="text-center">
+            <div className="text-4xl font-bold text-[#00ffd5]">
+              {assessmentScores.total}
+            </div>
+            <div className="text-sm text-muted-foreground">Overall EQ Score</div>
+          </div>
+
+          <div className="h-64">
+            <RadarChart
+              data={[
+                { category: "Category 1", value: assessmentScores.selfAwareness },
+                { category: "Category 2", value: assessmentScores.selfRegulation },
+                { category: "Category 3", value: assessmentScores.motivation },
+                { category: "Category 4", value: assessmentScores.empathy },
+                { category: "Category 5", value: assessmentScores.socialSkills },
+              ]}
+            />
+          </div>
+        </div>
+
+        <Button
+          className="w-full bg-[#00ffd5] text-black hover:bg-[#00b4d8]"
+          onClick={handleSubmitProfile}
+        >
+          Continue to Dashboard
+        </Button>
       </div>
     );
   }
