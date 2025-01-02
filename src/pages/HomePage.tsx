@@ -29,10 +29,17 @@ export default function HomePage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const subscription = supabase
-      .from("profiles")
-      .on("UPDATE", (payload) => {
-        if (payload.new.user_id === user.id) {
+    const channel = supabase
+      .channel('profiles_updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
           setDashboardData({
             current_eq_score: payload.new.total_eq_score || 0,
             self_awareness: payload.new.self_awareness || 0,
@@ -43,11 +50,11 @@ export default function HomePage() {
             name: payload.new.name,
           });
         }
-      })
+      )
       .subscribe();
 
     return () => {
-      supabase.removeSubscription(subscription);
+      supabase.removeChannel(channel);
     };
   };
 
