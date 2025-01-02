@@ -31,7 +31,21 @@ const AuthPage = () => {
             },
           },
         });
-        if (error) throw error;
+        
+        if (error) {
+          // Handle specific error cases
+          if (error.message.includes("User already registered")) {
+            toast({
+              title: "Account Exists",
+              description: "An account with this email already exists. Please sign in instead.",
+              variant: "destructive",
+            });
+            setIsSignUp(false); // Switch to sign in mode
+            return;
+          }
+          throw error;
+        }
+        
         toast({
           title: "Success!",
           description: "Please check your email to verify your account.",
