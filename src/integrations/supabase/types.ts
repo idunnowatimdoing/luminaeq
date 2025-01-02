@@ -319,27 +319,7 @@ export type Database = {
       }
     }
     Views: {
-      pillar_progress: {
-        Row: {
-          latest_created_at: string | null
-          latest_score: number | null
-          pillar: string | null
-          user_id: string | null
-        }
-        Insert: {
-          latest_created_at?: string | null
-          latest_score?: number | null
-          pillar?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          latest_created_at?: string | null
-          latest_score?: number | null
-          pillar?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       mock_auth_uid: {
