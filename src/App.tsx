@@ -2,12 +2,12 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { Sonner } from "@/components/ui/sonner";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { AuthPage } from "@/pages/auth/AuthPage";
-import { HomePage } from "@/pages/HomePage";
+import AuthPage from "@/pages/auth/AuthPage";
+import HomePage from "@/pages/HomePage";
 import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
 import { AssessmentPage } from "@/pages/assessment/AssessmentPage";
 import { AssessmentResults } from "@/components/assessment/AssessmentResults";
