@@ -1,6 +1,5 @@
 import { Navigate } from "react-router-dom";
 import { useAuthState } from "./hooks/useAuthState";
-import { AuthErrorComponent } from "./components/AuthError";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, loading, onboardingCompleted, error } = useAuthState();
@@ -16,28 +15,29 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#051527]">
-        <div className="animate-pulse text-white">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
       </div>
     );
   }
 
   if (error) {
-    return <AuthErrorComponent error={error} />;
+    console.error("Auth error:", error);
+    return <Navigate to="/auth" replace />;
   }
 
   if (!session) {
     return <Navigate to="/auth" replace />;
   }
 
-  // If onboarding is not completed and user is not already in the onboarding flow
+  // If onboarding is not completed
   if (onboardingCompleted === false) {
     // Allow access to assessment page only if user came from assessment intro
     if (currentPath === "/assessment" && sessionStorage.getItem("startedFromIntro") === "true") {
       return <>{children}</>;
     }
     
-    // If user is not on the welcome page, redirect them there
+    // If user is not on the welcome/onboarding page, redirect them there
     if (currentPath !== "/") {
       return <Navigate to="/" replace />;
     }

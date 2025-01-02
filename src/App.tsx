@@ -8,6 +8,7 @@ import AuthPage from "./pages/auth/AuthPage";
 import { AssessmentPage } from "./pages/assessment/AssessmentPage";
 import { AssessmentResults } from "./components/assessment/AssessmentResults";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { OnboardingFlow } from "./components/onboarding/OnboardingFlow";
 
 const queryClient = new QueryClient();
 
@@ -23,10 +24,18 @@ const App = () => (
           
           {/* Protected routes */}
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <OnboardingFlow />
               </ProtectedRoute>
             }
           />
@@ -52,18 +61,18 @@ const App = () => (
                     socialSkills: 0
                   }}
                   onContinue={() => {
-                    window.location.href = "/";
+                    window.location.href = "/dashboard";
                   }}
                 />
               </ProtectedRoute>
             }
           />
           
-          {/* Redirect all other routes to home */}
+          {/* Redirect all other routes to dashboard if authenticated */}
           <Route
             path="*"
             element={
-              <Navigate to="/" replace />
+              <Navigate to="/dashboard" replace />
             }
           />
         </Routes>

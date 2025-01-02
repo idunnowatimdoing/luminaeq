@@ -110,18 +110,52 @@
   opacity: 0.8;
 }
 
+/* Main EQ Score Orb */
+.main-orb {
+  @apply w-48 h-48 rounded-full flex items-center justify-center bg-purple-500 mb-8;
+  background: linear-gradient(-45deg, #9b87f5, #8B5CF6, #D946EF, #9b87f5);
+  background-size: 400% 400%;
+  animation: gradientFlow 8s ease infinite;
+  box-shadow: 0 0 40px rgba(155, 135, 245, 0.4);
+}
+
+/* Pillar Orbs */
+.pillar-orb {
+  @apply w-24 h-24 rounded-full mb-4;
+  animation: float 6s ease-in-out infinite;
+}
+
+.gradient-selfawareness {
+  background: linear-gradient(-45deg, #00ffd5, #00b4d8, #0077b6, #00ffd5);
+  box-shadow: 0 0 30px rgba(0, 255, 213, 0.4);
+}
+
+.gradient-selfregulation {
+  background: linear-gradient(-45deg, #F2FCE2, #A3E635, #84CC16, #F2FCE2);
+  box-shadow: 0 0 30px rgba(163, 230, 53, 0.4);
+}
+
+.gradient-motivation {
+  background: linear-gradient(-45deg, #FEF7CD, #FACC15, #EAB308, #FEF7CD);
+  box-shadow: 0 0 30px rgba(250, 204, 21, 0.4);
+}
+
+.gradient-empathy {
+  background: linear-gradient(-45deg, #FEC6A1, #FB923C, #EA580C, #FEC6A1);
+  box-shadow: 0 0 30px rgba(251, 146, 60, 0.4);
+}
+
+.gradient-socialskills {
+  background: linear-gradient(-45deg, #D946EF, #A855F7, #7C3AED, #D946EF);
+  box-shadow: 0 0 30px rgba(217, 70, 239, 0.4);
+}
+
 @keyframes gradientFlow {
   0% {
     background-position: 0% 50%;
   }
-  25% {
-    background-position: 100% 50%;
-  }
   50% {
-    background-position: 50% 100%;
-  }
-  75% {
-    background-position: 0% 50%;
+    background-position: 100% 50%;
   }
   100% {
     background-position: 0% 50%;
@@ -137,10 +171,8 @@
   }
 }
 
-.auth-orb:hover {
-  box-shadow: 0 0 200px rgba(0, 255, 213, 0.4),
-              0 0 150px rgba(0, 180, 216, 0.3),
-              inset 0 0 60px rgba(0, 119, 182, 0.3);
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }
 
 @keyframes shake {
@@ -149,13 +181,12 @@
   75% { transform: translateX(4px); }
 }
 
-.animate-shake {
-  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-}
-
 /* Responsive adjustments */
 @media (max-width: 640px) {
-  .auth-orb {
+  .main-orb {
     @apply w-32 h-32;
+  }
+  .pillar-orb {
+    @apply w-16 h-16;
   }
 }
