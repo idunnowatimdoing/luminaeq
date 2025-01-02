@@ -31,7 +31,7 @@ export const AssessmentIntroStep = ({
           <p className="text-sm text-gray-300">
             This involves 15 questions and takes about 5 minutes.
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-white/80">
             The assessment is recommended for a tailored experience, but it's not
             required.
           </p>
@@ -46,7 +46,7 @@ export const AssessmentIntroStep = ({
           </Button>
           <Button 
             variant="outline" 
-            className="w-full border-white/20 hover:bg-white/10 text-gray-200"
+            className="w-full border-white/20 hover:bg-white/10 text-white"
             onClick={onSkip}
           >
             Skip for Now
