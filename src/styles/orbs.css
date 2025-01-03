@@ -3,7 +3,7 @@
   @apply w-32 h-32 sm:w-48 sm:h-48 rounded-full flex items-center justify-center mb-4 sm:mb-8;
   background: linear-gradient(-45deg, #9b87f5, #8B5CF6, #D946EF, #9b87f5);
   background-size: 400% 400%;
-  animation: gradientFlow 8s ease infinite;
+  animation: gradientFlow 8s ease infinite, float 4s ease-in-out infinite;
   box-shadow: 0 0 40px rgba(155, 135, 245, 0.4);
 }
 
@@ -13,7 +13,12 @@
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
 }
 
-/* Gradient classes for pillar orbs */
+.pillar-orb:hover {
+  transform: scale(1.1);
+  animation: float 2s ease-in-out infinite;
+}
+
+/* Gradient Classes */
 .gradient-selfawareness {
   background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
 }
@@ -21,6 +26,19 @@
 .gradient-selfregulation {
   background: linear-gradient(45deg, #4ECDC4, #45B7AF);
 }
+
+.gradient-motivation {
+  background: linear-gradient(45deg, #FFD93D, #FFE566);
+}
+
+.gradient-empathy {
+  background: linear-gradient(45deg, #6C5CE7, #8983F3);
+}
+
+.gradient-socialskills {
+  background: linear-gradient(45deg, #A8E6CF, #DCEDC1);
+}
+
 
 .gradient-motivation {
   background: linear-gradient(45deg, #FFD93D, #FFE566);
