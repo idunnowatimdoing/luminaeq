@@ -42,7 +42,7 @@ export default function HomePage() {
         <div className="flex justify-center">
           <div className="main-orb">
             <span className="text-2xl sm:text-4xl font-bold text-white">
-              {dashboardData?.current_eq_score || 0}/100
+              {dashboardData?.current_eq_score || 0}/500
             </span>
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function HomePage() {
           <PillarCard
             title="Self Awareness"
             currentValue={dashboardData?.self_awareness || 0}
-            goalValue={20}
+            goalValue={100}
             gradientClass="gradient-selfawareness"
           >
             <Orb size="80px" color="#FF6F61" glow={true} />
@@ -60,7 +60,7 @@ export default function HomePage() {
           <PillarCard
             title="Self Regulation"
             currentValue={dashboardData?.self_regulation || 0}
-            goalValue={18}
+            goalValue={100}
             gradientClass="gradient-selfregulation"
           >
             <Orb size="80px" color="#6BCB77" glow={true} />
@@ -68,7 +68,7 @@ export default function HomePage() {
           <PillarCard
             title="Motivation"
             currentValue={dashboardData?.motivation || 0}
-            goalValue={20}
+            goalValue={100}
             gradientClass="gradient-motivation"
           >
             <Orb size="80px" color="#4F86F7" glow={true} />
@@ -76,7 +76,7 @@ export default function HomePage() {
           <PillarCard
             title="Empathy"
             currentValue={dashboardData?.empathy || 0}
-            goalValue={20}
+            goalValue={100}
             gradientClass="gradient-empathy"
           >
             <Orb size="80px" color="#FFD700" glow={true} />
@@ -84,7 +84,7 @@ export default function HomePage() {
           <PillarCard
             title="Social Skills"
             currentValue={dashboardData?.social_skills || 0}
-            goalValue={19}
+            goalValue={100}
             gradientClass="gradient-socialskills"
           >
             <Orb size="80px" color="#A020F0" glow={true} />
