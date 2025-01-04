@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardData } from "@/hooks/dashboard/useDashboardData";
 import { PillarCard } from "@/components/dashboard/PillarCard";
-import Orb from "@/components/Orb"; //
-
+import Orb from "@/components/orb";
 
 export default function HomePage() {
   const { dashboardData, loading } = useDashboardData();
@@ -39,66 +38,58 @@ export default function HomePage() {
           <h2 className="text-base sm:text-lg mt-2">Your Total EQ Score</h2>
         </div>
 
-       {/* Main EQ Score Orb */}
-<div className="flex justify-center">
-  <Orb
-    size="150px"
-    color="#4F86F7"
-    glow={true}
-    floating={true}
-    type="main"
-  >
-    <span className="text-2xl sm:text-4xl font-bold text-white">
-      {dashboardData?.current_eq_score || 0}/100
-    </span>
-  </Orb>
-</div>
+        {/* Main EQ Score Orb */}
+        <div className="flex justify-center">
+          <div className="main-orb">
+            <span className="text-2xl sm:text-4xl font-bold text-white">
+              {dashboardData?.current_eq_score || 0}/100
+            </span>
+          </div>
+        </div>
 
-
-       {/* Pillar Cards */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-8">
-  <PillarCard
-    title="Self Awareness"
-    currentValue={dashboardData?.self_awareness || 0}
-    goalValue={20}
-    gradientClass="gradient-selfawareness"
-  >
-    <Orb size="80px" color="#FF6F61" glow={true} type="pillar" />
-  </PillarCard>
-  <PillarCard
-    title="Self Regulation"
-    currentValue={dashboardData?.self_regulation || 0}
-    goalValue={18}
-    gradientClass="gradient-selfregulation"
-  >
-    <Orb size="80px" color="#6BCB77" glow={true} type="pillar" />
-  </PillarCard>
-  <PillarCard
-    title="Motivation"
-    currentValue={dashboardData?.motivation || 0}
-    goalValue={20}
-    gradientClass="gradient-motivation"
-  >
-    <Orb size="80px" color="#4F86F7" glow={true} type="pillar" />
-  </PillarCard>
-  <PillarCard
-    title="Empathy"
-    currentValue={dashboardData?.empathy || 0}
-    goalValue={20}
-    gradientClass="gradient-empathy"
-  >
-    <Orb size="80px" color="#FFD700" glow={true} type="pillar" />
-  </PillarCard>
-  <PillarCard
-    title="Social Skills"
-    currentValue={dashboardData?.social_skills || 0}
-    goalValue={19}
-    gradientClass="gradient-socialskills"
-  >
-    <Orb size="80px" color="#A020F0" glow={true} type="pillar" />
-  </PillarCard>
-</div>
-
+        {/* Pillar Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-8">
+          <PillarCard
+            title="Self Awareness"
+            currentValue={dashboardData?.self_awareness || 0}
+            goalValue={20}
+            gradientClass="gradient-selfawareness"
+          >
+            <Orb size="80px" color="#FF6F61" glow={true} />
+          </PillarCard>
+          <PillarCard
+            title="Self Regulation"
+            currentValue={dashboardData?.self_regulation || 0}
+            goalValue={18}
+            gradientClass="gradient-selfregulation"
+          >
+            <Orb size="80px" color="#6BCB77" glow={true} />
+          </PillarCard>
+          <PillarCard
+            title="Motivation"
+            currentValue={dashboardData?.motivation || 0}
+            goalValue={20}
+            gradientClass="gradient-motivation"
+          >
+            <Orb size="80px" color="#4F86F7" glow={true} />
+          </PillarCard>
+          <PillarCard
+            title="Empathy"
+            currentValue={dashboardData?.empathy || 0}
+            goalValue={20}
+            gradientClass="gradient-empathy"
+          >
+            <Orb size="80px" color="#FFD700" glow={true} />
+          </PillarCard>
+          <PillarCard
+            title="Social Skills"
+            currentValue={dashboardData?.social_skills || 0}
+            goalValue={19}
+            gradientClass="gradient-socialskills"
+          >
+            <Orb size="80px" color="#A020F0" glow={true} />
+          </PillarCard>
+        </div>
 
         {/* Additional Features */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
