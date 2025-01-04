@@ -11,7 +11,9 @@
 .pillar-orb {
   @apply w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full flex items-center justify-center relative;
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
-  overflow: visible;
+  animation: float 4s ease-in-out infinite;
+  transition: transform 0.3s ease;
+  background-size: 200% 200%;
 }
 
 .pillar-orb > * {
@@ -22,28 +24,32 @@
 
 .pillar-orb:hover {
   transform: scale(1.1);
-  animation: float 2s ease-in-out infinite;
 }
 
 /* Gradient Classes */
 .gradient-selfawareness {
-  background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+  background: linear-gradient(-45deg, #FF6B6B, #FF8E8E);
+  animation: gradientFlow 8s ease infinite, float 4s ease-in-out infinite;
 }
 
 .gradient-selfregulation {
-  background: linear-gradient(45deg, #4ECDC4, #45B7AF);
+  background: linear-gradient(-45deg, #4ECDC4, #45B7AF);
+  animation: gradientFlow 8s ease infinite, float 4s ease-in-out infinite;
 }
 
 .gradient-motivation {
-  background: linear-gradient(45deg, #FFD93D, #FFE566);
+  background: linear-gradient(-45deg, #FFD93D, #FFE566);
+  animation: gradientFlow 8s ease infinite, float 4s ease-in-out infinite;
 }
 
 .gradient-empathy {
-  background: linear-gradient(45deg, #6C5CE7, #8983F3);
+  background: linear-gradient(-45deg, #6C5CE7, #8983F3);
+  animation: gradientFlow 8s ease infinite, float 4s ease-in-out infinite;
 }
 
 .gradient-socialskills {
-  background: linear-gradient(45deg, #A8E6CF, #DCEDC1);
+  background: linear-gradient(-45deg, #A8E6CF, #DCEDC1);
+  animation: gradientFlow 8s ease infinite, float 4s ease-in-out infinite;
 }
 
 /* Feature Orbs */
@@ -57,14 +63,13 @@
   color: white;
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
 @keyframes gradientFlow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
