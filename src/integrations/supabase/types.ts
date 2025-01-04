@@ -254,6 +254,7 @@ export type Database = {
       user_challenges: {
         Row: {
           challenge_id: number
+          challenge_name: string | null
           completed_at: string | null
           created_at: string | null
           description: string | null
@@ -267,6 +268,7 @@ export type Database = {
         }
         Insert: {
           challenge_id: number
+          challenge_name?: string | null
           completed_at?: string | null
           created_at?: string | null
           description?: string | null
@@ -280,6 +282,7 @@ export type Database = {
         }
         Update: {
           challenge_id?: number
+          challenge_name?: string | null
           completed_at?: string | null
           created_at?: string | null
           description?: string | null
