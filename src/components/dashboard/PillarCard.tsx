@@ -21,8 +21,8 @@ export const PillarCard = ({ title, currentValue, goalValue, gradientClass, chil
         </CardHeader>
         <CardContent className="py-2">
           <div className="flex justify-between text-xs sm:text-sm text-gray-300">
-            <span>Current: {currentValue}/20</span>
-            <span>Goal: {goalValue}/20</span>
+            <span>Current: {currentValue}/100</span>
+            <span>Goal: {goalValue}/100</span>
           </div>
         </CardContent>
       </Card>
