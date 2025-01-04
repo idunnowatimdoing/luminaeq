@@ -1,5 +1,4 @@
 import React from 'react';
-import '../styling/orb.css';
 
 const Orb = ({ size = '100px', color = '#4F86F7', glow = true }) => {
   return (
