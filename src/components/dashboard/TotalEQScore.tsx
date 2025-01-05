@@ -2,7 +2,7 @@ import React from 'react';
 
 interface TotalEQScoreProps {
   score: number;
-  name?: string;
+  name?: string | null;  // Updated to allow null values
 }
 
 export const TotalEQScore = ({ score, name }: TotalEQScoreProps) => {
