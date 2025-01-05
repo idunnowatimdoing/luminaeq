@@ -9,11 +9,15 @@ interface PillarGridProps {
 }
 
 export const PillarGrid = ({ dashboardData }: PillarGridProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activePillar, setActivePillar] = useState<{
-    title: string;
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    pillar: string;
     gradientClass: string;
-  } | null>(null);
+  }>({
+    isOpen: false,
+    pillar: '',
+    gradientClass: '',
+  });
 
   const pillars = [
     {
@@ -49,13 +53,21 @@ export const PillarGrid = ({ dashboardData }: PillarGridProps) => {
   ];
 
   const handleOpenModal = (title: string, gradientClass: string) => {
-    setActivePillar({ title, gradientClass });
-    setIsModalOpen(true);
+    console.log('Opening modal for:', title);
+    setModalState({
+      isOpen: true,
+      pillar: title,
+      gradientClass,
+    });
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setActivePillar(null);
+    console.log('Closing modal');
+    setModalState({
+      isOpen: false,
+      pillar: '',
+      gradientClass: '',
+    });
   };
 
   return (
@@ -68,21 +80,23 @@ export const PillarGrid = ({ dashboardData }: PillarGridProps) => {
             currentValue={pillar.value || 0}
             goalValue={100}
             gradientClass={pillar.gradientClass}
-            onJournalClick={() => handleOpenModal(pillar.title, pillar.gradientClass)}
+            onJournalClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleOpenModal(pillar.title, pillar.gradientClass);
+            }}
           >
             <Orb size="80px" color={pillar.color} glow={true} />
           </PillarCard>
         ))}
       </div>
 
-      {activePillar && (
-        <JournalEntryModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          pillar={activePillar.title}
-          gradientClass={activePillar.gradientClass}
-        />
-      )}
+      <JournalEntryModal
+        isOpen={modalState.isOpen}
+        onClose={handleCloseModal}
+        pillar={modalState.pillar}
+        gradientClass={modalState.gradientClass}
+      />
     </>
   );
 };

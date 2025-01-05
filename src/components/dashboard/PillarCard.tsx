@@ -9,7 +9,7 @@ interface PillarCardProps {
   goalValue: number;
   gradientClass: string;
   children?: ReactNode;
-  onJournalClick: () => void;
+  onJournalClick: (e: React.MouseEvent) => void;
 }
 
 export const PillarCard = ({ 
@@ -30,10 +30,7 @@ export const PillarCard = ({
           variant="ghost"
           size="icon"
           className="absolute top-2 right-2 rounded-full hover:bg-white/10 z-10"
-          onClick={(e) => {
-            e.stopPropagation();
-            onJournalClick();
-          }}
+          onClick={onJournalClick}
           aria-label={`Open journal entry for ${title}`}
         >
           <Plus className="h-4 w-4 text-white" />
