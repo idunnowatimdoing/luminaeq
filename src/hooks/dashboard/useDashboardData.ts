@@ -9,7 +9,7 @@ export interface DashboardData {
   motivation: number;
   empathy: number;
   social_skills: number;
-  name?: string;
+  name?: string | null;  // Updated type to allow null
 }
 
 export const useDashboardData = () => {
