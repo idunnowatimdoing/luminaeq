@@ -14,9 +14,15 @@ interface JournalEntryModalProps {
   isOpen: boolean;
   onClose: () => void;
   pillar: string;
+  gradientClass?: string;
 }
 
-export const JournalEntryModal = ({ isOpen, onClose, pillar }: JournalEntryModalProps) => {
+export const JournalEntryModal = ({ 
+  isOpen, 
+  onClose, 
+  pillar,
+  gradientClass 
+}: JournalEntryModalProps) => {
   const [entryText, setEntryText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -100,7 +106,9 @@ export const JournalEntryModal = ({ isOpen, onClose, pillar }: JournalEntryModal
       onOpenChange={(open) => !open && onClose()}
     >
       <DialogContent 
-        className="sm:max-w-[600px] animate-in fade-in-0 zoom-in-95"
+        className={`sm:max-w-[600px] animate-in fade-in-0 zoom-in-95 ${
+          gradientClass ? `modal-glow-${gradientClass}` : ''
+        }`}
         aria-labelledby="journal-modal-title"
       >
         <DialogHeader>

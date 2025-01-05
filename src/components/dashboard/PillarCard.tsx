@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { ReactNode, useState } from "react";
-import { JournalEntryModal } from "@/components/assessment/results/JournalEntryModal";
+import { ReactNode } from "react";
 
 interface PillarCardProps {
   title: string;
@@ -10,11 +9,17 @@ interface PillarCardProps {
   goalValue: number;
   gradientClass: string;
   children?: ReactNode;
+  onJournalClick: () => void;
 }
 
-export const PillarCard = ({ title, currentValue, goalValue, gradientClass, children }: PillarCardProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+export const PillarCard = ({ 
+  title, 
+  currentValue, 
+  goalValue, 
+  gradientClass, 
+  children,
+  onJournalClick 
+}: PillarCardProps) => {
   return (
     <div className="flex flex-col items-center space-y-2">
       <div className="relative">
@@ -27,7 +32,7 @@ export const PillarCard = ({ title, currentValue, goalValue, gradientClass, chil
           className="absolute top-2 right-2 rounded-full hover:bg-white/10 z-10"
           onClick={(e) => {
             e.stopPropagation();
-            setIsModalOpen(true);
+            onJournalClick();
           }}
           aria-label={`Open journal entry for ${title}`}
         >
@@ -46,12 +51,6 @@ export const PillarCard = ({ title, currentValue, goalValue, gradientClass, chil
           </div>
         </CardContent>
       </Card>
-
-      <JournalEntryModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        pillar={title}
-      />
     </div>
   );
 };

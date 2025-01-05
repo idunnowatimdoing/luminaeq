@@ -91,3 +91,24 @@
     background-position: 0% 50%;
   }
 }
+
+/* Modal Glow Effects */
+.modal-glow-gradient-selfawareness {
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
+}
+
+.modal-glow-gradient-selfregulation {
+  box-shadow: 0 0 20px rgba(78, 205, 196, 0.2);
+}
+
+.modal-glow-gradient-motivation {
+  box-shadow: 0 0 20px rgba(255, 217, 61, 0.2);
+}
+
+.modal-glow-gradient-empathy {
+  box-shadow: 0 0 20px rgba(108, 92, 231, 0.2);
+}
+
+.modal-glow-gradient-socialskills {
+  box-shadow: 0 0 20px rgba(168, 230, 207, 0.2);
+}
