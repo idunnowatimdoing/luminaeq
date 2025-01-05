@@ -9,15 +9,32 @@ interface AuthOrbProps {
 export const AuthOrb = ({ className }: AuthOrbProps) => {
   const isMobile = useIsMobile();
 
-  // Animation variants
-  const floatAnimation = {
-    initial: { y: 0 },
+  // Combined animation variants
+  const combinedAnimation = {
+    initial: { 
+      y: 0,
+      background: "linear-gradient(135deg, #00ffd5 0%, #0077b6 100%)"
+    },
     animate: {
       y: [-20, 0, -20],
+      background: [
+        "linear-gradient(135deg, #00ffd5 0%, #0077b6 100%)",
+        "linear-gradient(225deg, #00ffd5 0%, #0077b6 100%)",
+        "linear-gradient(315deg, #00ffd5 0%, #0077b6 100%)",
+        "linear-gradient(45deg, #00ffd5 0%, #0077b6 100%)",
+        "linear-gradient(135deg, #00ffd5 0%, #0077b6 100%)",
+      ],
       transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut"
+        y: {
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        },
+        background: {
+          duration: 10,
+          repeat: Infinity,
+          ease: "linear"
+        }
       }
     }
   };
@@ -34,22 +51,6 @@ export const AuthOrb = ({ className }: AuthOrbProps) => {
     transition: { duration: 0.1 }
   };
 
-  // Gradient animation
-  const gradientTransition = {
-    background: [
-      "linear-gradient(135deg, #00ffd5 0%, #0077b6 100%)",
-      "linear-gradient(225deg, #00ffd5 0%, #0077b6 100%)",
-      "linear-gradient(315deg, #00ffd5 0%, #0077b6 100%)",
-      "linear-gradient(45deg, #00ffd5 0%, #0077b6 100%)",
-      "linear-gradient(135deg, #00ffd5 0%, #0077b6 100%)",
-    ],
-    transition: {
-      duration: 10,
-      repeat: Infinity,
-      ease: "linear"
-    }
-  };
-
   return (
     <motion.div 
       className={cn(
@@ -58,13 +59,9 @@ export const AuthOrb = ({ className }: AuthOrbProps) => {
       )}
       initial="initial"
       animate="animate"
-      variants={floatAnimation}
+      variants={combinedAnimation}
       whileHover={!isMobile ? hoverAnimation : undefined}
       whileTap={tapAnimation}
-      style={{
-        background: "linear-gradient(135deg, #00ffd5 0%, #0077b6 100%)",
-      }}
-      animate={gradientTransition}
     />
   );
 };
