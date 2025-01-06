@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { JournalEntryModal } from "@/components/journal/JournalEntryModal";
 
 interface DashboardData {
   current_eq_score: number;
@@ -65,9 +66,12 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#051527] p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Welcome Message */}
-        <h1 className="text-3xl font-bold text-white mb-8">
-          Welcome back, {dashboardData?.userName || 'User'}
-        </h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-white">
+            Welcome back, {dashboardData?.userName || 'User'}
+          </h1>
+          <JournalEntryModal />
+        </div>
 
         {/* Main EQ Score Orb */}
         <div className="flex flex-col items-center justify-center space-y-4">
@@ -78,6 +82,9 @@ export default function HomePage() {
             </span>
           </div>
         </div>
+
+        {/* Pillar Section Title */}
+        <h2 className="text-2xl font-bold text-white text-center">EQ Pillar Scores</h2>
 
         {/* Pillar Orbs and Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
