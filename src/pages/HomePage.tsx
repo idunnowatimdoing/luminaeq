@@ -64,7 +64,7 @@ export default function HomePage() {
         {/* Main EQ Score Orb */}
         <div className="flex flex-col items-center justify-center space-y-4">
           <div className="main-orb flex items-center justify-center">
-            <span className="text-4xl font-bold">
+            <span className="text-3xl font-bold text-white">
               {dashboardData?.current_eq_score || 0}/500
             </span>
           </div>
@@ -77,7 +77,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center space-y-4">
             <div className="pillar-orb gradient-selfawareness" />
             <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-              <CardHeader>
+              <CardHeader className="text-center">
                 <CardTitle className="text-lg text-white">Self Awareness</CardTitle>
               </CardHeader>
               <CardContent>
@@ -93,7 +93,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center space-y-4">
             <div className="pillar-orb gradient-selfregulation" />
             <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-              <CardHeader>
+              <CardHeader className="text-center">
                 <CardTitle className="text-lg text-white">Self Regulation</CardTitle>
               </CardHeader>
               <CardContent>
@@ -109,7 +109,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center space-y-4">
             <div className="pillar-orb gradient-motivation" />
             <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-              <CardHeader>
+              <CardHeader className="text-center">
                 <CardTitle className="text-lg text-white">Motivation</CardTitle>
               </CardHeader>
               <CardContent>
@@ -125,7 +125,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center space-y-4">
             <div className="pillar-orb gradient-empathy" />
             <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-              <CardHeader>
+              <CardHeader className="text-center">
                 <CardTitle className="text-lg text-white">Empathy</CardTitle>
               </CardHeader>
               <CardContent>
@@ -141,7 +141,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center space-y-4">
             <div className="pillar-orb gradient-socialskills" />
             <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-              <CardHeader>
+              <CardHeader className="text-center">
                 <CardTitle className="text-lg text-white">Social Skills</CardTitle>
               </CardHeader>
               <CardContent>
