@@ -38,8 +38,8 @@ export const AssessmentResults = () => {
       navigate("/dashboard", { replace: true });
     }
 
-    const channel = supabase
-      .channel('profile-updates')
+    // Set up real-time subscription
+    const channel = supabase.channel('profile-updates')
       .on(
         'postgres_changes',
         {
