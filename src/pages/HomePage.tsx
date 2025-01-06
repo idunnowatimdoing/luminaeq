@@ -7,7 +7,11 @@ import { TotalEQScore } from "@/components/dashboard/TotalEQScore";
 import { PillarScores } from "@/components/dashboard/PillarScores";
 import { Insights } from "@/components/dashboard/Insights";
 import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { EntryHistory } from "@/components/dashboard/EntryHistory";
+import { Settings } from "@/components/dashboard/Settings";
+import { JournalEntryModal } from "@/components/journal/JournalEntryModal";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
 
 interface DashboardData {
   current_eq_score: number;
@@ -95,8 +99,17 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#051527] p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <DashboardHeader userName={dashboardData.userName} />
-        <WelcomeHeader userName={dashboardData.userName} />
+        <div className="flex justify-between items-center">
+          <WelcomeHeader userName={dashboardData.userName} />
+          <JournalEntryModal
+            trigger={
+              <Button>
+                <PlusCircle className="mr-2" />
+                New Journal Entry
+              </Button>
+            }
+          />
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="space-y-8">
@@ -107,6 +120,8 @@ export default function HomePage() {
           
           <div className="space-y-8">
             <NotificationsPanel />
+            <EntryHistory />
+            <Settings />
           </div>
         </div>
       </div>
