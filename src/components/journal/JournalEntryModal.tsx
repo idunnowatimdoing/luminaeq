@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Mic, Video, Type } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -17,13 +19,64 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
   const [entryText, setEntryText] = useState("");
   const [pillar, setPillar] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [videoBlob, setVideoBlob] = useState<Blob | null>(null);
   const { toast } = useToast();
 
+  const startRecording = async (mediaType: 'audio' | 'video') => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: mediaType === 'video'
+      });
+      
+      const mediaRecorder = new MediaRecorder(stream);
+      const chunks: BlobPart[] = [];
+      
+      mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { 
+          type: mediaType === 'audio' ? 'audio/webm' : 'video/webm' 
+        });
+        if (mediaType === 'audio') {
+          setAudioBlob(blob);
+        } else {
+          setVideoBlob(blob);
+        }
+      };
+      
+      mediaRecorder.start();
+      setIsRecording(true);
+      
+      // Stop recording after 3 minutes
+      setTimeout(() => {
+        if (mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+          stream.getTracks().forEach(track => track.stop());
+          setIsRecording(false);
+        }
+      }, 180000);
+      
+    } catch (error: any) {
+      console.error('Recording error:', error);
+      toast({
+        title: "Recording Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const stopRecording = () => {
+    setIsRecording(false);
+  };
+
   const handleSubmit = async () => {
-    if (!entryText || !pillar) {
+    if (!pillar) {
       toast({
         title: "Missing fields",
-        description: "Please fill in all required fields",
+        description: "Please select an EQ pillar",
         variant: "destructive",
       });
       return;
@@ -34,12 +87,42 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
+      let entry_text = entryText;
+      let entry_audio = null;
+      
+      // Process audio if present
+      if (audioBlob) {
+        const base64Audio = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64 = reader.result as string;
+            resolve(base64.split(',')[1]);
+          };
+          reader.readAsDataURL(audioBlob);
+        });
+
+        const { data: transcriptionData } = await supabase.functions.invoke('transcribe-audio', {
+          body: { audio: base64Audio }
+        });
+        
+        if (transcriptionData?.text) {
+          entry_text = transcriptionData.text;
+        }
+      }
+
+      // Get sentiment analysis
+      const { data: sentimentData } = await supabase.functions.invoke('analyze-sentiment', {
+        body: { text: entry_text }
+      });
+
       const { error } = await supabase
         .from("journal_entries")
         .insert({
           user_id: user.id,
-          entry_text: entryText,
-          pillar: pillar,
+          entry_text,
+          entry_audio,
+          pillar,
+          sentiment_data: sentimentData
         });
 
       if (error) throw error;
@@ -52,8 +135,11 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
       setOpen(false);
       setEntryText("");
       setPillar("");
+      setAudioBlob(null);
+      setVideoBlob(null);
       onEntrySubmitted?.();
     } catch (error: any) {
+      console.error('Submission error:', error);
       toast({
         title: "Error saving journal entry",
         description: error.message,
@@ -89,16 +175,59 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
               </SelectContent>
             </Select>
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="entry">Journal Entry</Label>
-            <Textarea
-              id="entry"
-              value={entryText}
-              onChange={(e) => setEntryText(e.target.value)}
-              placeholder="Write your thoughts here..."
-              className="h-32"
-            />
-          </div>
+          
+          <Tabs defaultValue="text" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="text" className="flex items-center gap-2">
+                <Type className="h-4 w-4" /> Text
+              </TabsTrigger>
+              <TabsTrigger value="audio" className="flex items-center gap-2">
+                <Mic className="h-4 w-4" /> Audio
+              </TabsTrigger>
+              <TabsTrigger value="video" className="flex items-center gap-2">
+                <Video className="h-4 w-4" /> Video
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="text">
+              <Textarea
+                id="entry"
+                value={entryText}
+                onChange={(e) => setEntryText(e.target.value)}
+                placeholder="Write your thoughts here..."
+                className="h-32"
+              />
+            </TabsContent>
+            
+            <TabsContent value="audio">
+              <div className="flex flex-col items-center gap-4">
+                <Button 
+                  onClick={() => isRecording ? stopRecording() : startRecording('audio')}
+                  variant={isRecording ? "destructive" : "default"}
+                >
+                  {isRecording ? "Stop Recording" : "Start Recording"}
+                </Button>
+                {audioBlob && (
+                  <audio controls src={URL.createObjectURL(audioBlob)} />
+                )}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="video">
+              <div className="flex flex-col items-center gap-4">
+                <Button 
+                  onClick={() => isRecording ? stopRecording() : startRecording('video')}
+                  variant={isRecording ? "destructive" : "default"}
+                >
+                  {isRecording ? "Stop Recording" : "Start Recording"}
+                </Button>
+                {videoBlob && (
+                  <video controls src={URL.createObjectURL(videoBlob)} className="w-full" />
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+          
           <Button 
             onClick={handleSubmit} 
             disabled={isSubmitting}
