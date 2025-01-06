@@ -27,7 +27,8 @@ export const useAuthState = (): AuthState => {
       return profile;
     } catch (err) {
       console.error("Profile fetch failed:", err);
-      throw err;
+      // Set a default value for onboarding_completed if profile fetch fails
+      return { onboarding_completed: false };
     }
   };
 
@@ -37,7 +38,6 @@ export const useAuthState = (): AuthState => {
     const checkAuth = async () => {
       try {
         console.log("Starting auth check...");
-        // Get the initial session state
         const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
@@ -56,11 +56,16 @@ export const useAuthState = (): AuthState => {
               setOnboardingCompleted(profile?.onboarding_completed ?? false);
             } catch (err) {
               console.error("Initial profile fetch error:", err);
+              // Set default values even if profile fetch fails
+              setOnboardingCompleted(false);
               setError({
                 message: "Failed to load user profile",
                 code: "PROFILE_FETCH_ERROR"
               });
             }
+          } else {
+            // No session means we're definitely not loading
+            setOnboardingCompleted(null);
           }
           setLoading(false);
         }
@@ -71,6 +76,7 @@ export const useAuthState = (): AuthState => {
             message: err.message || "An error occurred during authentication",
             code: err.code
           });
+          // Ensure loading is set to false even on error
           setLoading(false);
         }
       }
@@ -90,6 +96,8 @@ export const useAuthState = (): AuthState => {
             setOnboardingCompleted(profile?.onboarding_completed ?? false);
           } catch (err: any) {
             console.error("Profile state update error:", err);
+            // Set default values even if profile fetch fails
+            setOnboardingCompleted(false);
             setError({
               message: "Failed to update profile information",
               code: err.code
@@ -98,6 +106,8 @@ export const useAuthState = (): AuthState => {
         } else {
           setOnboardingCompleted(null);
         }
+        // Ensure loading is set to false after auth state change
+        setLoading(false);
       }
     });
 
