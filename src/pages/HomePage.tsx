@@ -11,6 +11,7 @@ interface DashboardData {
   motivation: number;
   empathy: number;
   social_skills: number;
+  userName?: string;
 }
 
 export default function HomePage() {
@@ -27,9 +28,10 @@ export default function HomePage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
+      // Fetch profile data including the user's name
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select("total_eq_score, self_awareness, self_regulation, motivation, empathy, social_skills")
+        .select("total_eq_score, self_awareness, self_regulation, motivation, empathy, social_skills, name")
         .eq("user_id", user.id)
         .single();
 
@@ -42,6 +44,7 @@ export default function HomePage() {
         motivation: profileData.motivation || 0,
         empathy: profileData.empathy || 0,
         social_skills: profileData.social_skills || 0,
+        userName: profileData.name
       });
     } catch (error: any) {
       toast({
@@ -61,6 +64,11 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#051527] p-8">
       <div className="max-w-7xl mx-auto space-y-8">
+        {/* Welcome Message */}
+        <h1 className="text-3xl font-bold text-white mb-8">
+          Welcome back, {dashboardData?.userName || 'User'}
+        </h1>
+
         {/* Main EQ Score Orb */}
         <div className="flex flex-col items-center justify-center space-y-4">
           <div className="main-orb flex items-center justify-center">
@@ -68,7 +76,7 @@ export default function HomePage() {
               {dashboardData?.current_eq_score || 0}/500
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Your EQ Score</h1>
+          <h2 className="text-2xl font-bold text-white">Your EQ Score</h2>
         </div>
 
         {/* Pillar Orbs and Cards */}
