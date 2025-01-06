@@ -75,14 +75,19 @@ export const useOnboarding = () => {
         throw new Error("No user found");
       }
 
-      console.log("Updating profile with onboarding completed status");
+      console.log("Updating profile with default scores and onboarding completed status");
       const { error } = await supabase
         .from("profiles")
         .update({
           name,
           age_range: ageRange,
           onboarding_completed: true,
-          total_eq_score: 50 // Default score when skipping assessment
+          total_eq_score: 50, // Default score when skipping assessment
+          self_awareness: 10,  // Default pillar scores
+          self_regulation: 10,
+          motivation: 10,
+          empathy: 10,
+          social_skills: 10
         })
         .eq("user_id", user.id);
 
@@ -91,10 +96,23 @@ export const useOnboarding = () => {
         throw error;
       }
 
+      // Insert a welcome message for skipped assessment
+      const { error: messageError } = await supabase
+        .from("messages")
+        .insert({
+          user_id: user.id,
+          title: "Welcome to Your EQ Journey! 🌟",
+          content: "You've been given a default EQ benchmark score of 50. To improve your scores, try participating in challenges and journaling regularly. You can always take the full assessment later to get a more accurate measure of your emotional intelligence."
+        });
+
+      if (messageError) {
+        console.error("Error creating welcome message:", messageError);
+      }
+
       console.log("Profile updated successfully, showing toast");
       toast({
         title: "Assessment Skipped",
-        description: "You can complete it anytime from the dashboard to unlock tailored insights and suggestions.",
+        description: "You've been given a default EQ benchmark. Improve your scores by participating in challenges and journaling!",
         duration: 6000,
       });
       
