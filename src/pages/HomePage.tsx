@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { JournalEntryModal } from "@/components/journal/JournalEntryModal";
+import { WelcomeHeader } from "@/components/dashboard/WelcomeHeader";
+import { TotalEQScore } from "@/components/dashboard/TotalEQScore";
+import { PillarScores } from "@/components/dashboard/PillarScores";
+import { Insights } from "@/components/dashboard/Insights";
 
 interface DashboardData {
   current_eq_score: number;
@@ -22,14 +24,36 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchDashboardData();
+    setupRealtimeSubscription();
   }, []);
+
+  const setupRealtimeSubscription = () => {
+    const channel = supabase
+      .channel('dashboard-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles'
+        },
+        (payload) => {
+          console.log('Profile update received:', payload);
+          fetchDashboardData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
 
   const fetchDashboardData = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
-      // Fetch profile data including the user's name
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("total_eq_score, self_awareness, self_regulation, motivation, empathy, social_skills, name")
@@ -62,133 +86,17 @@ export default function HomePage() {
     return <div className="p-8"><Skeleton className="w-full h-[600px]" /></div>;
   }
 
+  if (!dashboardData) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-[#051527] p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Welcome Message */}
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-white">
-            Welcome back, {dashboardData?.userName || 'User'}
-          </h1>
-          <JournalEntryModal />
-        </div>
-
-        {/* Main EQ Score Orb */}
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <h2 className="text-2xl font-bold text-white">Total EQ Score</h2>
-          <div className="main-orb flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">
-              {dashboardData?.current_eq_score || 0}/500
-            </span>
-          </div>
-        </div>
-
-        {/* Pillar Section Title */}
-        <h2 className="text-2xl font-bold text-white text-center">EQ Pillar Scores</h2>
-
-        {/* Pillar Orbs and Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          {/* Self Awareness */}
-          <div className="flex flex-col items-center space-y-4">
-            <div className="pillar-orb gradient-selfawareness" />
-            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-              <CardHeader className="text-center">
-                <CardTitle className="text-lg text-white">Self Awareness</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.self_awareness}/100</span>
-                  <span>Goal: 100/100</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Self Regulation */}
-          <div className="flex flex-col items-center space-y-4">
-            <div className="pillar-orb gradient-selfregulation" />
-            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-              <CardHeader className="text-center">
-                <CardTitle className="text-lg text-white">Self Regulation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.self_regulation}/100</span>
-                  <span>Goal: 90/100</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Motivation */}
-          <div className="flex flex-col items-center space-y-4">
-            <div className="pillar-orb gradient-motivation" />
-            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-              <CardHeader className="text-center">
-                <CardTitle className="text-lg text-white">Motivation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.motivation}/100</span>
-                  <span>Goal: 100/100</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Empathy */}
-          <div className="flex flex-col items-center space-y-4">
-            <div className="pillar-orb gradient-empathy" />
-            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-              <CardHeader className="text-center">
-                <CardTitle className="text-lg text-white">Empathy</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.empathy}/100</span>
-                  <span>Goal: 100/100</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Social Skills */}
-          <div className="flex flex-col items-center space-y-4">
-            <div className="pillar-orb gradient-socialskills" />
-            <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-              <CardHeader className="text-center">
-                <CardTitle className="text-lg text-white">Social Skills</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.social_skills}/100</span>
-                  <span>Goal: 95/100</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Insights Section */}
-        <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-xl text-white">EQ Insights</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-gray-300">
-            <div className="flex items-center space-x-2">
-              <div className="w-1 h-4 bg-green-500 rounded" />
-              <p>Your self-awareness score has increased by 10 points!</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-1 h-4 bg-orange-500 rounded" />
-              <p>You've maintained a 5-day journal entry streak. Great job!</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-1 h-4 bg-purple-500 rounded" />
-              <p>Try active listening exercises to further improve your empathy score.</p>
-            </div>
-          </CardContent>
-        </Card>
+        <WelcomeHeader userName={dashboardData.userName} />
+        <TotalEQScore score={dashboardData.current_eq_score} />
+        <PillarScores scores={dashboardData} />
+        <Insights />
       </div>
     </div>
   );
