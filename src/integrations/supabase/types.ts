@@ -67,24 +67,39 @@ export type Database = {
         Row: {
           current_eq_score: number | null
           emotional_trends: Json | null
+          empathy_goal: number | null
           goal_eq_score: number | null
           id: string
+          motivation_goal: number | null
+          self_awareness_goal: number | null
+          self_regulation_goal: number | null
+          social_skills_goal: number | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
           current_eq_score?: number | null
           emotional_trends?: Json | null
+          empathy_goal?: number | null
           goal_eq_score?: number | null
           id?: string
+          motivation_goal?: number | null
+          self_awareness_goal?: number | null
+          self_regulation_goal?: number | null
+          social_skills_goal?: number | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
           current_eq_score?: number | null
           emotional_trends?: Json | null
+          empathy_goal?: number | null
           goal_eq_score?: number | null
           id?: string
+          motivation_goal?: number | null
+          self_awareness_goal?: number | null
+          self_regulation_goal?: number | null
+          social_skills_goal?: number | null
           updated_at?: string | null
           user_id?: string | null
         }
