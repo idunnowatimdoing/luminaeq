@@ -65,7 +65,7 @@ export default function HomePage() {
         <div className="flex flex-col items-center justify-center space-y-4">
           <div className="main-orb flex items-center justify-center">
             <span className="text-4xl font-bold">
-              {dashboardData?.current_eq_score || 0}/100
+              {dashboardData?.current_eq_score || 0}/500
             </span>
           </div>
           <h1 className="text-2xl font-bold text-white">Your EQ Score</h1>
@@ -82,8 +82,8 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.self_awareness}/20</span>
-                  <span>Goal: 20/20</span>
+                  <span>Current: {dashboardData?.self_awareness}/100</span>
+                  <span>Goal: 100/100</span>
                 </div>
               </CardContent>
             </Card>
@@ -98,8 +98,8 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.self_regulation}/20</span>
-                  <span>Goal: 18/20</span>
+                  <span>Current: {dashboardData?.self_regulation}/100</span>
+                  <span>Goal: 90/100</span>
                 </div>
               </CardContent>
             </Card>
@@ -114,8 +114,8 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.motivation}/20</span>
-                  <span>Goal: 20/20</span>
+                  <span>Current: {dashboardData?.motivation}/100</span>
+                  <span>Goal: 100/100</span>
                 </div>
               </CardContent>
             </Card>
@@ -130,8 +130,8 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.empathy}/20</span>
-                  <span>Goal: 20/20</span>
+                  <span>Current: {dashboardData?.empathy}/100</span>
+                  <span>Goal: 100/100</span>
                 </div>
               </CardContent>
             </Card>
@@ -146,8 +146,8 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between text-gray-300">
-                  <span>Current: {dashboardData?.social_skills}/20</span>
-                  <span>Goal: 19/20</span>
+                  <span>Current: {dashboardData?.social_skills}/100</span>
+                  <span>Goal: 95/100</span>
                 </div>
               </CardContent>
             </Card>
@@ -162,7 +162,7 @@ export default function HomePage() {
           <CardContent className="space-y-4 text-gray-300">
             <div className="flex items-center space-x-2">
               <div className="w-1 h-4 bg-green-500 rounded" />
-              <p>Your self-awareness score has increased by 2 points!</p>
+              <p>Your self-awareness score has increased by 10 points!</p>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-1 h-4 bg-orange-500 rounded" />
