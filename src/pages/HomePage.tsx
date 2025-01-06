@@ -71,12 +71,12 @@ export default function HomePage() {
 
         {/* Main EQ Score Orb */}
         <div className="flex flex-col items-center justify-center space-y-4">
+          <h2 className="text-2xl font-bold text-white">Total EQ Score</h2>
           <div className="main-orb flex items-center justify-center">
             <span className="text-2xl font-bold text-white">
               {dashboardData?.current_eq_score || 0}/500
             </span>
           </div>
-          <h2 className="text-2xl font-bold text-white">Your EQ Score</h2>
         </div>
 
         {/* Pillar Orbs and Cards */}
