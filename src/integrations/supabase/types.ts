@@ -120,6 +120,27 @@ export type Database = {
         }
         Relationships: []
       }
+      loading_messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: number
+          message_type: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: number
+          message_type: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: number
+          message_type?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
