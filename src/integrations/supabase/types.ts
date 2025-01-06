@@ -96,7 +96,6 @@ export type Database = {
           entry_audio: string | null
           entry_text: string | null
           id: string
-          pillar: string | null
           sentiment_data: Json | null
           user_id: string | null
         }
@@ -105,7 +104,6 @@ export type Database = {
           entry_audio?: string | null
           entry_text?: string | null
           id?: string
-          pillar?: string | null
           sentiment_data?: Json | null
           user_id?: string | null
         }
@@ -114,7 +112,6 @@ export type Database = {
           entry_audio?: string | null
           entry_text?: string | null
           id?: string
-          pillar?: string | null
           sentiment_data?: Json | null
           user_id?: string | null
         }
@@ -254,43 +251,25 @@ export type Database = {
       user_challenges: {
         Row: {
           challenge_id: number
-          challenge_name: string | null
           completed_at: string | null
           created_at: string | null
-          description: string | null
-          goal: number | null
           id: number
-          pillar: string | null
-          points: number | null
-          progress: number | null
           status: string | null
           user_id: string
         }
         Insert: {
           challenge_id: number
-          challenge_name?: string | null
           completed_at?: string | null
           created_at?: string | null
-          description?: string | null
-          goal?: number | null
           id?: number
-          pillar?: string | null
-          points?: number | null
-          progress?: number | null
           status?: string | null
           user_id: string
         }
         Update: {
           challenge_id?: number
-          challenge_name?: string | null
           completed_at?: string | null
           created_at?: string | null
-          description?: string | null
-          goal?: number | null
           id?: number
-          pillar?: string | null
-          points?: number | null
-          progress?: number | null
           status?: string | null
           user_id?: string
         }

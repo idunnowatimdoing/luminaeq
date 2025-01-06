@@ -5,9 +5,9 @@ interface ResultsHeaderProps {
 }
 
 const getTotalLevel = (score: number): string => {
-  if (score >= 450) return "Advanced";
-  if (score >= 375) return "Proficient";
-  if (score >= 300) return "Intermediate";
+  if (score >= 90) return "Advanced";
+  if (score >= 75) return "Proficient";
+  if (score >= 60) return "Intermediate";
   return "Beginner";
 };
 
