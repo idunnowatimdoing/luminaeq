@@ -64,7 +64,7 @@ export default function HomePage() {
         {/* Main EQ Score Orb */}
         <div className="flex flex-col items-center justify-center space-y-4">
           <div className="main-orb flex items-center justify-center">
-            <span className="text-3xl font-bold text-white">
+            <span className="text-2xl font-bold text-white">
               {dashboardData?.current_eq_score || 0}/500
             </span>
           </div>
