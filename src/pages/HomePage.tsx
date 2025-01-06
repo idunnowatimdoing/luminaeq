@@ -93,19 +93,19 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#051527] p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#051527] p-4 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-8">
         <HeaderIcons />
         <WelcomeHeader userName={dashboardData.userName} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
+          <div className="space-y-4 md:space-y-8">
             <TotalEQScore score={dashboardData.current_eq_score} />
             <PillarScores scores={dashboardData} />
             <Insights />
           </div>
           
-          <div className="space-y-8">
+          <div className="space-y-4 md:space-y-8">
             <NotificationsPanel />
           </div>
         </div>
