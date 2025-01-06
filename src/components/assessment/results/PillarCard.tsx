@@ -10,9 +10,9 @@ interface PillarCardProps {
 }
 
 const getPillarLevel = (score: number): string => {
-  if (score >= 18) return "Advanced";
-  if (score >= 15) return "Proficient";
-  if (score >= 12) return "Intermediate";
+  if (score >= 90) return "Advanced";     // Was 18
+  if (score >= 75) return "Proficient";   // Was 15
+  if (score >= 60) return "Intermediate"; // Was 12
   return "Beginner";
 };
 
@@ -32,7 +32,7 @@ export const PillarCard = ({
       <h3 className="text-xl font-semibold text-white mb-2">{pillar}</h3>
       <div className="flex items-center space-x-2 mb-4">
         <span className="text-2xl font-bold text-[#00ffd5]">{score}</span>
-        <span className="text-gray-400">/ 20</span>
+        <span className="text-gray-400">/ 100</span>
         <span className="text-sm text-gray-400 ml-2">
           ({getPillarLevel(score)})
         </span>

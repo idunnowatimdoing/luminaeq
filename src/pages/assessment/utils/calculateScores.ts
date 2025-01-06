@@ -9,17 +9,19 @@ export const calculateScores = (responses: { [key: number]: number }, questions:
     socialSkills: 0,
   };
 
-  // Calculate pillar scores
+  // Calculate pillar scores - now scaled to max 100 per pillar
   Object.entries(responses).forEach(([questionId, score]) => {
     const question = questions.find(q => q.id === parseInt(questionId));
     if (question) {
-      pillarScores[question.pillar as keyof PillarScores] += (score / 100) * 6.67;
+      // Multiply by 33.33 instead of 6.67 to get to 100 max per pillar
+      pillarScores[question.pillar as keyof PillarScores] += (score / 100) * 33.33;
     }
   });
 
+  // Total score is now out of 500 (sum of all pillar scores)
   const totalScore = Math.round(Object.values(pillarScores).reduce((sum, score) => sum + score, 0));
   
-  console.log("Calculated scores:", { pillarScores, totalScore });
+  console.log("Calculated scores with new ranges:", { pillarScores, totalScore });
   
   return { pillarScores, totalScore };
 };
