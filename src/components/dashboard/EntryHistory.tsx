@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 interface JournalEntry {
   id: string;
   entry_text: string;
-  pillar: string;
+  pillar: string | null;
   created_at: string;
 }
 
@@ -56,6 +56,11 @@ export const EntryHistory = () => {
     };
   };
 
+  const formatPillar = (pillar: string | null): string => {
+    if (!pillar) return "General";
+    return pillar.replace("_", " ");
+  };
+
   return (
     <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -73,7 +78,7 @@ export const EntryHistory = () => {
             >
               <div className="flex justify-between items-start">
                 <span className="text-sm font-medium text-white capitalize">
-                  {entry.pillar.replace("_", " ")}
+                  {formatPillar(entry.pillar)}
                 </span>
                 <span className="text-sm text-gray-400">
                   {new Date(entry.created_at).toLocaleDateString()}
