@@ -1,6 +1,8 @@
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain, Heart, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { About } from "@/components/landing/About";
+import { FounderMessage } from "@/components/landing/FounderMessage";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -9,7 +11,6 @@ const LandingPage = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Animated gradient orb in the background */}
         <div className="absolute w-[500px] h-[500px] bg-gradient-to-r from-[#00ffd5]/20 via-[#00b4d8]/20 to-[#0077b6]/20 rounded-full blur-3xl opacity-10 animate-float" />
         
         <div className="container mx-auto px-4 text-center relative z-10">
@@ -51,38 +52,11 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Features Section */}
-      <div id="features" className="container mx-auto px-4 py-20">
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-[#0a1f35] p-8 rounded-xl border border-[#1e3951] space-y-4">
-            <div className="w-12 h-12 bg-[#00ffd5]/10 rounded-full flex items-center justify-center">
-              <Brain className="text-[#00ffd5]" />
-            </div>
-            <h3 className="text-xl font-semibold text-white">AI-Powered Journal</h3>
-            <p className="text-gray-400">
-              Transform your thoughts into emotional insights with our intelligent journaling system
-            </p>
-          </div>
-          <div className="bg-[#0a1f35] p-8 rounded-xl border border-[#1e3951] space-y-4">
-            <div className="w-12 h-12 bg-[#00ffd5]/10 rounded-full flex items-center justify-center">
-              <Heart className="text-[#00ffd5]" />
-            </div>
-            <h3 className="text-xl font-semibold text-white">EQ Assessment</h3>
-            <p className="text-gray-400">
-              Get personalized insights into your emotional intelligence with our comprehensive assessment
-            </p>
-          </div>
-          <div className="bg-[#0a1f35] p-8 rounded-xl border border-[#1e3951] space-y-4">
-            <div className="w-12 h-12 bg-[#00ffd5]/10 rounded-full flex items-center justify-center">
-              <Sparkles className="text-[#00ffd5]" />
-            </div>
-            <h3 className="text-xl font-semibold text-white">Growth Tracking</h3>
-            <p className="text-gray-400">
-              Monitor your emotional growth with detailed analytics and progress tracking
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* About Section */}
+      <About />
+
+      {/* Founder Message */}
+      <FounderMessage />
     </div>
   );
 };
