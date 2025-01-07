@@ -29,17 +29,7 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Root route redirects to dashboard if authenticated, auth if not */}
-            <Route 
-              path="/" 
-              element={
-                <ProtectedRoute>
-                  <Navigate to="/dashboard" replace />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Public route - redirects to dashboard if already authenticated */}
+            {/* Public route */}
             <Route path="/auth" element={<AuthPage />} />
             
             {/* Protected routes */}
@@ -52,7 +42,7 @@ const App = () => {
               }
             />
             <Route
-              path="/onboarding"
+              path="/"
               element={
                 <ProtectedRoute>
                   <OnboardingFlow />
@@ -79,7 +69,9 @@ const App = () => {
             {/* Fallback route */}
             <Route
               path="*"
-              element={<Navigate to="/auth" replace />}
+              element={
+                <Navigate to="/auth" replace />
+              }
             />
           </Routes>
         </BrowserRouter>
