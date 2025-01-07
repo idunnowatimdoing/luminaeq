@@ -10,65 +10,74 @@ import { AssessmentResults } from "./components/assessment/AssessmentResults";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { OnboardingFlow } from "./components/onboarding/OnboardingFlow";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Auth page is public */}
-          <Route path="/auth" element={<AuthPage />} />
-          
-          {/* Protected routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <OnboardingFlow />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/assessment"
-            element={
-              <ProtectedRoute>
-                <AssessmentPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/assessment/results"
-            element={
-              <ProtectedRoute>
-                <AssessmentResults />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* Redirect unmatched routes based on auth state */}
-          <Route
-            path="*"
-            element={
-              <ProtectedRoute>
-                <Navigate to="/dashboard" replace />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  console.log("App component rendering");
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public route */}
+            <Route path="/auth" element={<AuthPage />} />
+            
+            {/* Protected routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <HomePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <OnboardingFlow />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/assessment"
+              element={
+                <ProtectedRoute>
+                  <AssessmentPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/assessment/results"
+              element={
+                <ProtectedRoute>
+                  <AssessmentResults />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Fallback route */}
+            <Route
+              path="*"
+              element={
+                <Navigate to="/auth" replace />
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
