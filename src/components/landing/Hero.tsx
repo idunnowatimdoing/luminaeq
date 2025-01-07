@@ -1,9 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export const Hero = () => {
-  const navigate = useNavigate();
-  
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white">
       {/* Animated gradient orb in the background with reduced opacity */}
@@ -26,19 +24,22 @@ export const Hero = () => {
         </p>
         
         <div className="space-y-4 md:space-y-0 md:space-x-4">
-          <Button 
-            size="lg" 
-            onClick={() => navigate("/auth")}
-            className="bg-lumina-blue hover:bg-lumina-blue/90 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105"
-          >
-            Get Started
-          </Button>
+          <Link to="/auth">
+            <Button 
+              size="lg" 
+              className="bg-lumina-blue hover:bg-lumina-blue/90 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105"
+            >
+              Get Started
+            </Button>
+          </Link>
           <Button 
             variant="outline" 
             size="lg"
             onClick={() => {
               const featuresSection = document.querySelector("#features");
-              featuresSection?.scrollIntoView({ behavior: "smooth" });
+              if (featuresSection) {
+                featuresSection.scrollIntoView({ behavior: "smooth" });
+              }
             }}
             className="border-lumina-blue text-lumina-blue hover:bg-lumina-blue/10 px-8 py-6 text-lg rounded-full transition-all duration-300 hover:shadow-lg"
           >
