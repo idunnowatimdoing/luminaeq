@@ -49,9 +49,9 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     }
     
     // If user is not on the welcome/onboarding page, redirect them there
-    if (currentPath !== "/") {
+    if (currentPath !== "/onboarding") {
       console.log("Redirecting to onboarding flow - onboarding not completed");
-      return <Navigate to="/" replace />;
+      return <Navigate to="/onboarding" replace />;
     }
   }
 

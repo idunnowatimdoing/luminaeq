@@ -1,5 +1,4 @@
-// Critical Component DO NOT MODIFY
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,22 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Add auth state change listener
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", { event, sessionExists: !!session });
+      
+      if (session) {
+        console.log("Session exists, redirecting to dashboard");
+        navigate("/dashboard");
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -33,14 +48,13 @@ const AuthPage = () => {
         });
         
         if (error) {
-          // Handle specific error cases
           if (error.message.includes("User already registered")) {
             toast({
               title: "Account Exists",
               description: "An account with this email already exists. Please sign in instead.",
               variant: "destructive",
             });
-            setIsSignUp(false); // Switch to sign in mode
+            setIsSignUp(false);
             return;
           }
           throw error;
@@ -56,7 +70,7 @@ const AuthPage = () => {
           password,
         });
         if (error) throw error;
-        navigate("/");
+        // Removed direct navigation here as it's handled by the auth state change listener
       }
     } catch (error: any) {
       toast({
@@ -72,7 +86,7 @@ const AuthPage = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${window.location.origin}/dashboard`,
         },
       });
       if (error) throw error;
