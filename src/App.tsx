@@ -29,10 +29,17 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Root route redirects to auth by default */}
-            <Route path="/" element={<Navigate to="/auth" replace />} />
+            {/* Root route redirects to dashboard if authenticated, auth if not */}
+            <Route 
+              path="/" 
+              element={
+                <ProtectedRoute>
+                  <Navigate to="/dashboard" replace />
+                </ProtectedRoute>
+              } 
+            />
             
-            {/* Public route */}
+            {/* Public route - redirects to dashboard if already authenticated */}
             <Route path="/auth" element={<AuthPage />} />
             
             {/* Protected routes */}
