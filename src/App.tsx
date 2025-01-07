@@ -29,6 +29,9 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Root route redirects to auth by default */}
+            <Route path="/" element={<Navigate to="/auth" replace />} />
+            
             {/* Public route */}
             <Route path="/auth" element={<AuthPage />} />
             
@@ -42,7 +45,7 @@ const App = () => {
               }
             />
             <Route
-              path="/"
+              path="/onboarding"
               element={
                 <ProtectedRoute>
                   <OnboardingFlow />
@@ -69,9 +72,7 @@ const App = () => {
             {/* Fallback route */}
             <Route
               path="*"
-              element={
-                <Navigate to="/auth" replace />
-              }
+              element={<Navigate to="/auth" replace />}
             />
           </Routes>
         </BrowserRouter>
