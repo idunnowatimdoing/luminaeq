@@ -193,6 +193,8 @@ export type Database = {
           id: string
           in_app_notifications: boolean | null
           journaling_prompts: boolean | null
+          language: string | null
+          last_payment_method: Json | null
           leaderboard_opt_out: boolean | null
           motivation: number | null
           name: string | null
@@ -202,8 +204,11 @@ export type Database = {
           self_regulation: number | null
           settings: Json | null
           social_skills: number | null
+          storage_preference: string | null
           subscription_plan: string | null
+          subscription_status: string | null
           subscription_tier: string | null
+          theme: string | null
           total_eq_score: number | null
           user_id: string
         }
@@ -216,6 +221,8 @@ export type Database = {
           id?: string
           in_app_notifications?: boolean | null
           journaling_prompts?: boolean | null
+          language?: string | null
+          last_payment_method?: Json | null
           leaderboard_opt_out?: boolean | null
           motivation?: number | null
           name?: string | null
@@ -225,8 +232,11 @@ export type Database = {
           self_regulation?: number | null
           settings?: Json | null
           social_skills?: number | null
+          storage_preference?: string | null
           subscription_plan?: string | null
+          subscription_status?: string | null
           subscription_tier?: string | null
+          theme?: string | null
           total_eq_score?: number | null
           user_id: string
         }
@@ -239,6 +249,8 @@ export type Database = {
           id?: string
           in_app_notifications?: boolean | null
           journaling_prompts?: boolean | null
+          language?: string | null
+          last_payment_method?: Json | null
           leaderboard_opt_out?: boolean | null
           motivation?: number | null
           name?: string | null
@@ -248,8 +260,11 @@ export type Database = {
           self_regulation?: number | null
           settings?: Json | null
           social_skills?: number | null
+          storage_preference?: string | null
           subscription_plan?: string | null
+          subscription_status?: string | null
           subscription_tier?: string | null
+          theme?: string | null
           total_eq_score?: number | null
           user_id?: string
         }
