@@ -99,7 +99,14 @@ export default function HomePage() {
         
         {/* Total EQ Score in a distinct container */}
         <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
-          <TotalEQScore score={dashboardData.current_eq_score} />
+          <TotalEQScore 
+            score={dashboardData.current_eq_score}
+            self_awareness={dashboardData.self_awareness}
+            self_regulation={dashboardData.self_regulation}
+            motivation={dashboardData.motivation}
+            empathy={dashboardData.empathy}
+            social_skills={dashboardData.social_skills}
+          />
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
