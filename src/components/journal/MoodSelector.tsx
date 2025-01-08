@@ -1,4 +1,4 @@
-import { Smile, Frown, Meh, Angry, AlertCircle } from "lucide-react";
+import { Smile, Frown, Meh, Angry } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MoodSelectorProps {
@@ -11,7 +11,6 @@ const moods = [
   { icon: Meh, value: "neutral", label: "Neutral" },
   { icon: Frown, value: "sad", label: "Sad" },
   { icon: Angry, value: "angry", label: "Angry" },
-  { icon: AlertCircle, value: "anxious", label: "Anxious" },
 ];
 
 export function MoodSelector({ value, onChange }: MoodSelectorProps) {
