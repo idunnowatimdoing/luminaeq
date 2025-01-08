@@ -6,6 +6,7 @@ import { TotalEQScore } from "@/components/dashboard/TotalEQScore";
 import { PillarScores } from "@/components/dashboard/PillarScores";
 import { Insights } from "@/components/dashboard/Insights";
 import { HeaderIcons } from "@/components/dashboard/HeaderIcons";
+import { PersonalizedTips } from "@/components/dashboard/PersonalizedTips";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardData {
@@ -84,6 +85,26 @@ export default function HomePage() {
     }
   };
 
+  const findExtremeScores = (data: DashboardData) => {
+    const scores = {
+      self_awareness: data.self_awareness,
+      self_regulation: data.self_regulation,
+      motivation: data.motivation,
+      empathy: data.empathy,
+      social_skills: data.social_skills
+    };
+
+    let highestPillar = Object.entries(scores)[0];
+    let lowestPillar = Object.entries(scores)[0];
+
+    Object.entries(scores).forEach(([pillar, score]) => {
+      if (score > highestPillar[1]) highestPillar = [pillar, score];
+      if (score < lowestPillar[1]) lowestPillar = [pillar, score];
+    });
+
+    return { highestPillar, lowestPillar };
+  };
+
   if (loading) {
     return <div className="p-8"><Skeleton className="w-full h-[600px]" /></div>;
   }
@@ -92,13 +113,15 @@ export default function HomePage() {
     return null;
   }
 
+  const { highestPillar, lowestPillar } = findExtremeScores(dashboardData);
+
   return (
     <div className={`min-h-screen bg-[#051527] ${isMobile ? 'p-4 pb-24' : 'p-8'}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         <HeaderIcons />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Total EQ Score Section - Takes up 4 columns on desktop */}
+          {/* Total EQ Score Section */}
           <div className="lg:col-span-4">
             <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800 h-full">
               <TotalEQScore 
@@ -112,7 +135,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Pillar Scores and Insights Section - Takes up 8 columns on desktop */}
+          {/* Pillar Scores and Insights Section */}
           <div className="lg:col-span-8 space-y-8">
             <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
               <PillarScores scores={dashboardData} />
@@ -120,6 +143,20 @@ export default function HomePage() {
             
             <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
               <Insights />
+            </div>
+
+            {/* Personalized Tips Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <PersonalizedTips 
+                pillar={highestPillar[0]}
+                score={highestPillar[1]}
+                type="strength"
+              />
+              <PersonalizedTips 
+                pillar={lowestPillar[0]}
+                score={lowestPillar[1]}
+                type="focus"
+              />
             </div>
           </div>
         </div>

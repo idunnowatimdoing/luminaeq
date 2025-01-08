@@ -36,6 +36,36 @@ export type Database = {
         }
         Relationships: []
       }
+      benefits_tips: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          pillar_tags: string[]
+          popularity_score: number | null
+          skill_level: Database["public"]["Enums"]["skill_level"]
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          pillar_tags: string[]
+          popularity_score?: number | null
+          skill_level: Database["public"]["Enums"]["skill_level"]
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          pillar_tags?: string[]
+          popularity_score?: number | null
+          skill_level?: Database["public"]["Enums"]["skill_level"]
+          title?: string
+        }
+        Relationships: []
+      }
       challenges: {
         Row: {
           created_at: string | null
@@ -365,6 +395,41 @@ export type Database = {
           },
         ]
       }
+      user_tip_interactions: {
+        Row: {
+          created_at: string | null
+          feedback: string | null
+          id: string
+          is_completed: boolean | null
+          tip_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          is_completed?: boolean | null
+          tip_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          is_completed?: boolean | null
+          tip_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_tip_interactions_tip_id_fkey"
+            columns: ["tip_id"]
+            isOneToOne: false
+            referencedRelation: "benefits_tips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string | null
@@ -405,7 +470,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      skill_level: "beginner" | "intermediate" | "advanced" | "proficient"
     }
     CompositeTypes: {
       [_ in never]: never
