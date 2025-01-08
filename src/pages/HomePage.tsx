@@ -7,6 +7,7 @@ import { PillarScores } from "@/components/dashboard/PillarScores";
 import { Insights } from "@/components/dashboard/Insights";
 import { HeaderIcons } from "@/components/dashboard/HeaderIcons";
 import { PersonalizedTips } from "@/components/dashboard/PersonalizedTips";
+import { StatCards } from "@/components/dashboard/StatCards";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardData {
@@ -119,6 +120,9 @@ export default function HomePage() {
     <div className={`min-h-screen bg-[#051527] ${isMobile ? 'p-4 pb-24' : 'p-8'}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         <HeaderIcons />
+        
+        {/* Stats Cards Section */}
+        <StatCards />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Total EQ Score Section with Integrated Tips */}
