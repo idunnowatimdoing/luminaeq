@@ -6,6 +6,7 @@ import { TotalEQScore } from "@/components/dashboard/TotalEQScore";
 import { PillarScores } from "@/components/dashboard/PillarScores";
 import { Insights } from "@/components/dashboard/Insights";
 import { HeaderIcons } from "@/components/dashboard/HeaderIcons";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardData {
   current_eq_score: number;
@@ -21,6 +22,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchDashboardData();
@@ -91,7 +93,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#051527] p-4 md:p-8">
+    <div className={`min-h-screen bg-[#051527] p-4 md:p-8 ${isMobile ? 'pb-24' : ''}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         <HeaderIcons />
         
