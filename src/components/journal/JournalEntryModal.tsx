@@ -59,10 +59,13 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
 
       console.log("Starting journal entry submission...");
 
-      // Get sentiment analysis
+      // Get sentiment analysis using new unified endpoint
       console.log("Requesting sentiment analysis...");
-      const { data: sentimentData, error: sentimentError } = await supabase.functions.invoke('analyze-sentiment', {
-        body: { text: entryText }
+      const { data: sentimentData, error: sentimentError } = await supabase.functions.invoke('ai-processing', {
+        body: { 
+          text: entryText,
+          type: 'sentiment'
+        }
       });
 
       if (sentimentError) {
@@ -128,9 +131,12 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
         reader.readAsDataURL(blob);
       });
 
-      // Get transcription
-      const { data: transcriptionData, error: transcriptionError } = await supabase.functions.invoke('transcribe-audio', {
-        body: { audio: base64Audio }
+      // Get transcription using new unified endpoint
+      const { data: transcriptionData, error: transcriptionError } = await supabase.functions.invoke('ai-processing', {
+        body: { 
+          audio: base64Audio,
+          type: 'transcribe'
+        }
       });
       
       if (transcriptionError) {
