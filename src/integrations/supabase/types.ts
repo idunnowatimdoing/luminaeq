@@ -111,6 +111,7 @@ export type Database = {
           entry_audio: string | null
           entry_text: string | null
           id: string
+          mood: string | null
           pillar: string | null
           sentiment_data: Json | null
           user_id: string | null
@@ -120,6 +121,7 @@ export type Database = {
           entry_audio?: string | null
           entry_text?: string | null
           id?: string
+          mood?: string | null
           pillar?: string | null
           sentiment_data?: Json | null
           user_id?: string | null
@@ -129,6 +131,7 @@ export type Database = {
           entry_audio?: string | null
           entry_text?: string | null
           id?: string
+          mood?: string | null
           pillar?: string | null
           sentiment_data?: Json | null
           user_id?: string | null

@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { AudioRecorder } from "./AudioRecorder";
 import { VideoRecorder } from "./VideoRecorder";
 import { PillarSelect } from "./PillarSelect";
+import { MoodSelector } from "./MoodSelector";
 
 interface JournalEntryModalProps {
   trigger?: React.ReactNode;
@@ -19,6 +20,7 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
   const [open, setOpen] = useState(false);
   const [entryText, setEntryText] = useState("");
   const [pillar, setPillar] = useState("");
+  const [mood, setMood] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -27,6 +29,15 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
       toast({
         title: "Missing fields",
         description: "Please select an EQ pillar",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!mood) {
+      toast({
+        title: "Missing fields",
+        description: "Please select your current mood",
         variant: "destructive",
       });
       return;
@@ -48,6 +59,7 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
           user_id: user.id,
           entry_text: entryText,
           pillar,
+          mood,
           sentiment_data: sentimentData
         });
 
@@ -61,6 +73,7 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
       setOpen(false);
       setEntryText("");
       setPillar("");
+      setMood("");
       onEntrySubmitted?.();
     } catch (error: any) {
       console.error('Submission error:', error);
@@ -114,7 +127,14 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
           <DialogTitle>Create Journal Entry</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <PillarSelect value={pillar} onValueChange={setPillar} />
+          <div className="space-y-4">
+            <PillarSelect value={pillar} onValueChange={setPillar} />
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">How are you feeling?</label>
+              <MoodSelector value={mood} onChange={setMood} />
+            </div>
+          </div>
           
           <Tabs defaultValue="text" className="w-full">
             <TabsList className="grid w-full grid-cols-3">

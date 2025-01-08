@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollText } from "lucide-react";
+import { ScrollText, Smile, Frown, Meh, Angry, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -8,8 +8,17 @@ interface JournalEntry {
   id: string;
   entry_text: string;
   pillar: string | null;
+  mood: string | null;
   created_at: string;
 }
+
+const moodIcons = {
+  happy: Smile,
+  sad: Frown,
+  neutral: Meh,
+  angry: Angry,
+  anxious: AlertCircle,
+};
 
 export const EntryHistory = () => {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -58,7 +67,13 @@ export const EntryHistory = () => {
 
   const formatPillar = (pillar: string | null): string => {
     if (!pillar) return "General";
-    return pillar.replace("_", " ");
+    return pillar.charAt(0).toUpperCase() + pillar.slice(1).replace("_", " ");
+  };
+
+  const getMoodIcon = (mood: string | null) => {
+    if (!mood || !(mood in moodIcons)) return null;
+    const Icon = moodIcons[mood as keyof typeof moodIcons];
+    return <Icon className="h-5 w-5" />;
   };
 
   return (
@@ -77,9 +92,16 @@ export const EntryHistory = () => {
               className="p-4 rounded-lg bg-gray-700/30"
             >
               <div className="flex justify-between items-start">
-                <span className="text-sm font-medium text-white capitalize">
-                  {formatPillar(entry.pillar)}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-white capitalize">
+                    {formatPillar(entry.pillar)}
+                  </span>
+                  {entry.mood && (
+                    <span className="text-gray-400">
+                      {getMoodIcon(entry.mood)}
+                    </span>
+                  )}
+                </div>
                 <span className="text-sm text-gray-400">
                   {new Date(entry.created_at).toLocaleDateString()}
                 </span>
