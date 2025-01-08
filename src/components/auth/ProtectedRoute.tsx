@@ -10,9 +10,11 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     loading, 
     onboardingCompleted, 
     currentPath,
-    error 
+    error,
+    sessionData: session
   });
 
+  // Show loading state while checking auth
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#051527]">
@@ -21,13 +23,15 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
+  // Handle auth errors
   if (error) {
     console.error("Auth error:", error);
     return <Navigate to="/auth" replace />;
   }
 
-  if (!session) {
-    console.log("No session found, redirecting to auth");
+  // Check for valid session
+  if (!session?.user) {
+    console.log("No valid session found, redirecting to auth");
     return <Navigate to="/auth" replace />;
   }
 
@@ -41,23 +45,21 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <>{children}</>;
   }
 
-  // If onboarding status is explicitly false (not null or undefined)
+  // Handle onboarding flow
   if (onboardingCompleted === false) {
-    // Allow access to assessment page only if user came from assessment intro
     if (currentPath === "/assessment" && sessionStorage.getItem("startedFromIntro") === "true") {
       return <>{children}</>;
     }
     
-    // If user is not on the welcome/onboarding page, redirect them there
     if (currentPath !== "/onboarding") {
       console.log("Redirecting to onboarding flow - onboarding not completed");
       return <Navigate to="/onboarding" replace />;
     }
   }
 
-  // If onboarding is completed but user tries to access onboarding-related pages
+  // Redirect completed users from onboarding pages
   if (onboardingCompleted === true) {
-    if (currentPath === "/assessment" || currentPath === "/") {
+    if (currentPath === "/assessment" || currentPath === "/onboarding") {
       console.log("Onboarding completed, redirecting to dashboard");
       return <Navigate to="/dashboard" replace />;
     }
