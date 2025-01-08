@@ -111,10 +111,18 @@
 
 /* Main EQ Score Orb */
 .main-orb {
-  @apply w-48 h-48 rounded-full flex items-center justify-center bg-purple-500 mb-8;
-  background: linear-gradient(-45deg, #9b87f5, #8B5CF6, #D946EF, #9b87f5);
-  background-size: 400% 400%;
-  animation: gradientFlow 8s ease infinite;
+  @apply w-48 h-48 rounded-full flex items-center justify-center mb-8;
+  background: linear-gradient(
+    -45deg,
+    #00ffd5, /* Self Awareness */
+    #A3E635, /* Self Regulation */
+    #FACC15, /* Motivation */
+    #FB923C, /* Empathy */
+    #D946EF, /* Social Skills */
+    #00ffd5  /* Back to start */
+  );
+  background-size: 600% 600%;
+  animation: gradientFlow 12s linear infinite;
   box-shadow: 0 0 40px rgba(155, 135, 245, 0.4);
 }
 
