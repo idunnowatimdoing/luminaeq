@@ -1,29 +1,40 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { AuthError, AuthState } from "../types/auth";
+import { useLocation } from "react-router-dom";
 
-export const useAuthState = (): AuthState => {
+interface AuthError {
+  message: string;
+  code?: string;
+}
+
+interface Profile {
+  onboarding_completed?: boolean;
+}
+
+export const useAuthState = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
   const [error, setError] = useState<AuthError | null>(null);
+  const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string): Promise<Profile | null> => {
+    console.log("Fetching profile for user:", userId);
     try {
-      console.log("Fetching profile for user:", userId);
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("onboarding_completed")
         .eq("user_id", userId)
         .single();
-      
+
       if (profileError) {
         console.error("Profile fetch error:", profileError);
         throw profileError;
       }
-      
-      console.log("Profile data:", profile);
+
+      console.log("Profile fetched successfully:", profile);
       return profile;
     } catch (err) {
       console.error("Profile fetch failed:", err);
@@ -34,21 +45,23 @@ export const useAuthState = (): AuthState => {
   useEffect(() => {
     let mounted = true;
 
-    const checkAuth = async () => {
+    const initializeAuth = async () => {
       try {
-        console.log("Starting auth check...");
+        console.log("Initializing auth state...");
         const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
-          console.error("Session error:", sessionError);
           throw sessionError;
         }
 
-        console.log("Initial session status:", initialSession ? "Active" : "No session");
-        
         if (mounted) {
-          setSession(initialSession);
+          console.log("Initial session state:", { 
+            hasSession: !!initialSession,
+            userId: initialSession?.user?.id 
+          });
           
+          setSession(initialSession);
+
           if (initialSession?.user) {
             try {
               const profile = await fetchProfile(initialSession.user.id);
@@ -67,7 +80,7 @@ export const useAuthState = (): AuthState => {
           setLoading(false);
         }
       } catch (err: any) {
-        console.error("Auth check error:", err);
+        console.error("Auth initialization error:", err);
         if (mounted) {
           setError({
             message: err.message || "An error occurred during authentication",
@@ -78,7 +91,6 @@ export const useAuthState = (): AuthState => {
       }
     };
 
-    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       console.log("Auth state changed:", { event: _event, sessionId: session?.user?.id });
       
@@ -87,7 +99,6 @@ export const useAuthState = (): AuthState => {
         
         if (session?.user) {
           try {
-            console.log("Updating profile state for user:", session.user.id);
             const profile = await fetchProfile(session.user.id);
             setOnboardingCompleted(profile?.onboarding_completed ?? false);
           } catch (err: any) {
@@ -105,15 +116,20 @@ export const useAuthState = (): AuthState => {
       }
     });
 
-    // Initialize auth state
-    checkAuth();
+    initializeAuth();
 
-    // Cleanup function
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
   }, []);
 
-  return { session, loading, onboardingCompleted, error };
+  return {
+    session,
+    loading,
+    error,
+    onboardingCompleted,
+    currentPath,
+    sessionData: session
+  };
 };

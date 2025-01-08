@@ -9,11 +9,27 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     detectSessionInUrl: true,
     storageKey: 'eq-app-auth',
-    storage: window.localStorage
+    storage: localStorage,
+    flowType: 'pkce'
   },
   realtime: {
     params: {
       eventsPerSecond: 10
     }
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'eq-app'
+    }
   }
+});
+
+// Log session state changes for debugging
+supabase.auth.onAuthStateChange((event, session) => {
+  console.log('Supabase Auth Event:', event);
+  console.log('Session state:', {
+    isAuthenticated: !!session?.user,
+    userId: session?.user?.id,
+    expiresAt: session?.expires_at
+  });
 });
