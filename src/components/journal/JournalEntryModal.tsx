@@ -25,6 +25,15 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
   const { toast } = useToast();
 
   const handleSubmit = async () => {
+    if (!entryText.trim()) {
+      toast({
+        title: "Missing fields",
+        description: "Please enter some text for your journal entry",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!pillar) {
       toast({
         title: "Missing fields",
@@ -48,29 +57,42 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
-      console.log("Submitting journal entry:", {
-        user_id: user.id,
-        entry_text: entryText,
-        pillar,
-        mood
-      });
+      console.log("Starting journal entry submission...");
 
       // Get sentiment analysis
-      const { data: sentimentData } = await supabase.functions.invoke('analyze-sentiment', {
+      console.log("Requesting sentiment analysis...");
+      const { data: sentimentData, error: sentimentError } = await supabase.functions.invoke('analyze-sentiment', {
         body: { text: entryText }
       });
 
-      const { error } = await supabase
-        .from("journal_entries")
-        .insert({
-          user_id: user.id,
-          entry_text: entryText,
-          pillar,
-          mood,
-          sentiment_data: sentimentData
-        });
+      if (sentimentError) {
+        console.error("Sentiment analysis error:", sentimentError);
+        throw new Error("Failed to analyze sentiment");
+      }
 
-      if (error) throw error;
+      console.log("Sentiment analysis completed:", sentimentData);
+
+      // Prepare the entry data
+      const entryData = {
+        user_id: user.id,
+        entry_text: entryText,
+        pillar,
+        mood,
+        sentiment_data: sentimentData
+      };
+
+      console.log("Inserting journal entry:", entryData);
+
+      const { error: insertError } = await supabase
+        .from("journal_entries")
+        .insert(entryData);
+
+      if (insertError) {
+        console.error("Database insertion error:", insertError);
+        throw insertError;
+      }
+
+      console.log("Journal entry saved successfully");
 
       toast({
         title: "Success",
@@ -107,9 +129,13 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
       });
 
       // Get transcription
-      const { data: transcriptionData } = await supabase.functions.invoke('transcribe-audio', {
+      const { data: transcriptionData, error: transcriptionError } = await supabase.functions.invoke('transcribe-audio', {
         body: { audio: base64Audio }
       });
+      
+      if (transcriptionError) {
+        throw transcriptionError;
+      }
       
       if (transcriptionData?.text) {
         setEntryText(transcriptionData.text);
