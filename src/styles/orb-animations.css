@@ -10,7 +10,7 @@
 
 /* Main EQ Score Orb */
 .main-orb {
-  @apply w-48 h-48 rounded-full flex items-center justify-center mb-8 relative;
+  @apply w-48 h-48 rounded-full relative;
   background: linear-gradient(
     -45deg,
     #00ffd5, /* Self Awareness */
@@ -21,8 +21,7 @@
     #00ffd5  /* Back to start */
   );
   background-size: 600% 600%;
-  animation: gradientFlow 12s linear infinite, pulse 4s ease-in-out infinite;
-  box-shadow: 0 0 60px rgba(0, 255, 213, 0.6);
+  animation: gradientFlow 12s linear infinite;
 }
 
 .main-orb::before {
@@ -60,6 +59,8 @@
 /* Gradient Classes */
 .gradient-selfawareness {
   background: linear-gradient(-45deg, #00ffd5, #00b4d8, #0077b6, #00ffd5);
+  background-size: 400% 400%;
+  animation: gradientFlow 8s linear infinite;
   box-shadow: 
     0 0 40px rgba(0, 255, 213, 0.7),
     0 0 80px rgba(0, 180, 216, 0.5),
@@ -68,6 +69,8 @@
 
 .gradient-selfregulation {
   background: linear-gradient(-45deg, #F2FCE2, #A3E635, #84CC16, #F2FCE2);
+  background-size: 400% 400%;
+  animation: gradientFlow 8s linear infinite;
   box-shadow: 
     0 0 40px rgba(163, 230, 53, 0.7),
     0 0 80px rgba(132, 204, 22, 0.5),
@@ -76,6 +79,8 @@
 
 .gradient-motivation {
   background: linear-gradient(-45deg, #FEF7CD, #FACC15, #EAB308, #FEF7CD);
+  background-size: 400% 400%;
+  animation: gradientFlow 8s linear infinite;
   box-shadow: 
     0 0 40px rgba(250, 204, 21, 0.7),
     0 0 80px rgba(234, 179, 8, 0.5),
@@ -84,6 +89,8 @@
 
 .gradient-empathy {
   background: linear-gradient(-45deg, #FEC6A1, #FB923C, #EA580C, #FEC6A1);
+  background-size: 400% 400%;
+  animation: gradientFlow 8s linear infinite;
   box-shadow: 
     0 0 40px rgba(251, 146, 60, 0.7),
     0 0 80px rgba(234, 88, 12, 0.5),
@@ -92,6 +99,8 @@
 
 .gradient-socialskills {
   background: linear-gradient(-45deg, #D946EF, #A855F7, #7C3AED, #D946EF);
+  background-size: 400% 400%;
+  animation: gradientFlow 8s linear infinite;
   box-shadow: 
     0 0 40px rgba(217, 70, 239, 0.7),
     0 0 80px rgba(168, 85, 247, 0.5),
@@ -116,15 +125,6 @@
   }
   50% {
     transform: translateY(-20px);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
   }
 }
 
