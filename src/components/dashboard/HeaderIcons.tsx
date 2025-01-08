@@ -17,7 +17,6 @@ export const HeaderIcons = () => {
 
   const IconContent = () => (
     <>
-      {/* Journal Entry Modal */}
       <JournalEntryModal
         trigger={
           <PlusCircle 
@@ -26,7 +25,6 @@ export const HeaderIcons = () => {
         }
       />
 
-      {/* History Modal */}
       <Dialog>
         <DialogTrigger>
           <History 
@@ -38,7 +36,6 @@ export const HeaderIcons = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Notifications Modal */}
       <Dialog>
         <DialogTrigger>
           <Bell 
@@ -50,7 +47,6 @@ export const HeaderIcons = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Settings Modal */}
       <Dialog>
         <DialogTrigger>
           <Settings 
@@ -71,38 +67,38 @@ export const HeaderIcons = () => {
           <DropdownMenuTrigger className="p-2">
             <Menu className="h-8 w-8 text-white" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-gray-800/95 backdrop-blur-lg border-gray-700 mt-2">
-            <DropdownMenuItem className="flex justify-center focus:bg-gray-700/50">
+          <DropdownMenuContent align="end" className="bg-transparent border-none mt-2">
+            <DropdownMenuItem className="flex justify-center focus:bg-transparent hover:bg-transparent">
               <JournalEntryModal
                 trigger={
-                  <PlusCircle className="h-8 w-8 text-white" />
+                  <PlusCircle className="h-8 w-8 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
                 }
               />
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex justify-center focus:bg-gray-700/50">
+            <DropdownMenuItem className="flex justify-center focus:bg-transparent hover:bg-transparent">
               <Dialog>
                 <DialogTrigger>
-                  <History className="h-6 w-6 text-white" />
+                  <History className="h-6 w-6 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
                 </DialogTrigger>
                 <DialogContent className="max-w-[95vw] max-h-[80vh] overflow-y-auto">
                   <EntryHistory />
                 </DialogContent>
               </Dialog>
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex justify-center focus:bg-gray-700/50">
+            <DropdownMenuItem className="flex justify-center focus:bg-transparent hover:bg-transparent">
               <Dialog>
                 <DialogTrigger>
-                  <Bell className="h-6 w-6 text-white" />
+                  <Bell className="h-6 w-6 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
                 </DialogTrigger>
                 <DialogContent className="max-w-[95vw] max-h-[80vh] overflow-y-auto">
                   <NotificationsPanel />
                 </DialogContent>
               </Dialog>
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex justify-center focus:bg-gray-700/50">
+            <DropdownMenuItem className="flex justify-center focus:bg-transparent hover:bg-transparent">
               <Dialog>
                 <DialogTrigger>
-                  <Settings className="h-6 w-6 text-white" />
+                  <Settings className="h-6 w-6 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
                 </DialogTrigger>
                 <DialogContent className="max-w-[95vw] max-h-[80vh] overflow-y-auto">
                   <SettingsPanel />

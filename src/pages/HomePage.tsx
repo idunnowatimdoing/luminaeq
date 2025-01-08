@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TotalEQScore } from "@/components/dashboard/TotalEQScore";
 import { PillarScores } from "@/components/dashboard/PillarScores";
 import { Insights } from "@/components/dashboard/Insights";
-import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
 import { HeaderIcons } from "@/components/dashboard/HeaderIcons";
 
 interface DashboardData {
@@ -105,10 +104,6 @@ export default function HomePage() {
           <div className="space-y-8">
             <PillarScores scores={dashboardData} />
             <Insights />
-          </div>
-          
-          <div className="space-y-8">
-            <NotificationsPanel />
           </div>
         </div>
       </div>
