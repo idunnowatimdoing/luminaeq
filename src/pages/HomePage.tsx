@@ -121,9 +121,6 @@ export default function HomePage() {
       <div className="max-w-7xl mx-auto space-y-8">
         <HeaderIcons />
         
-        {/* Stats Cards Section */}
-        <StatCards />
-        
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Total EQ Score Section with Integrated Tips */}
           <div className="lg:col-span-4">
@@ -161,6 +158,9 @@ export default function HomePage() {
             <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
               <Insights />
             </div>
+
+            {/* Stats Cards Section - Now positioned under Insights */}
+            <StatCards />
           </div>
         </div>
       </div>
