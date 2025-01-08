@@ -111,7 +111,7 @@
 
 /* Main EQ Score Orb */
 .main-orb {
-  @apply w-48 h-48 rounded-full flex items-center justify-center mb-8;
+  @apply w-48 h-48 rounded-full flex items-center justify-center mb-8 relative;
   background: linear-gradient(
     -45deg,
     #00ffd5, /* Self Awareness */
@@ -123,38 +123,72 @@
   );
   background-size: 600% 600%;
   animation: gradientFlow 12s linear infinite;
-  box-shadow: 0 0 40px rgba(155, 135, 245, 0.4);
+  box-shadow: 
+    0 0 60px rgba(0, 255, 213, 0.6),
+    0 0 100px rgba(163, 230, 53, 0.4),
+    0 0 140px rgba(250, 204, 21, 0.3);
+}
+
+.main-orb::after {
+  content: '';
+  @apply absolute inset-0 rounded-full;
+  background: inherit;
+  filter: blur(15px);
+  opacity: 0.7;
 }
 
 /* Pillar Orbs */
 .pillar-orb {
-  @apply w-24 h-24 rounded-full mb-4;
+  @apply w-24 h-24 rounded-full mb-4 relative;
   animation: float 6s ease-in-out infinite;
+}
+
+.pillar-orb::after {
+  content: '';
+  @apply absolute inset-0 rounded-full;
+  background: inherit;
+  filter: blur(12px);
+  opacity: 0.7;
 }
 
 .gradient-selfawareness {
   background: linear-gradient(-45deg, #00ffd5, #00b4d8, #0077b6, #00ffd5);
-  box-shadow: 0 0 30px rgba(0, 255, 213, 0.4);
+  box-shadow: 
+    0 0 40px rgba(0, 255, 213, 0.7),
+    0 0 80px rgba(0, 180, 216, 0.5),
+    0 0 120px rgba(0, 119, 182, 0.3);
 }
 
 .gradient-selfregulation {
   background: linear-gradient(-45deg, #F2FCE2, #A3E635, #84CC16, #F2FCE2);
-  box-shadow: 0 0 30px rgba(163, 230, 53, 0.4);
+  box-shadow: 
+    0 0 40px rgba(163, 230, 53, 0.7),
+    0 0 80px rgba(132, 204, 22, 0.5),
+    0 0 120px rgba(242, 252, 226, 0.3);
 }
 
 .gradient-motivation {
   background: linear-gradient(-45deg, #FEF7CD, #FACC15, #EAB308, #FEF7CD);
-  box-shadow: 0 0 30px rgba(250, 204, 21, 0.4);
+  box-shadow: 
+    0 0 40px rgba(250, 204, 21, 0.7),
+    0 0 80px rgba(234, 179, 8, 0.5),
+    0 0 120px rgba(254, 247, 205, 0.3);
 }
 
 .gradient-empathy {
   background: linear-gradient(-45deg, #FEC6A1, #FB923C, #EA580C, #FEC6A1);
-  box-shadow: 0 0 30px rgba(251, 146, 60, 0.4);
+  box-shadow: 
+    0 0 40px rgba(251, 146, 60, 0.7),
+    0 0 80px rgba(234, 88, 12, 0.5),
+    0 0 120px rgba(254, 198, 161, 0.3);
 }
 
 .gradient-socialskills {
   background: linear-gradient(-45deg, #D946EF, #A855F7, #7C3AED, #D946EF);
-  box-shadow: 0 0 30px rgba(217, 70, 239, 0.4);
+  box-shadow: 
+    0 0 40px rgba(217, 70, 239, 0.7),
+    0 0 80px rgba(168, 85, 247, 0.5),
+    0 0 120px rgba(124, 58, 237, 0.3);
 }
 
 @keyframes gradientFlow {
@@ -176,27 +210,6 @@
   50% {
     transform: translateY(-20px);
   }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
-}
-
-.animate-shake {
-  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
 }
 
 /* Responsive adjustments */
