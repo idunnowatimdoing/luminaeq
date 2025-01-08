@@ -1,7 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+import { GoogleGenerativeAI } from "npm:@google/generative-ai";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,56 +16,42 @@ serve(async (req) => {
     const { text, type, audio } = await req.json();
     console.log(`Processing ${type} request with content:`, type === 'sentiment' ? text : 'audio file');
 
+    const apiKey = Deno.env.get('EQCompanion-Gemini');
+    if (!apiKey) {
+      throw new Error('Gemini API key not configured');
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
+
     if (type === 'sentiment') {
-      console.log('Sending request to OpenAI for sentiment analysis');
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a sentiment analysis assistant. Return a JSON object with sentiment (positive/negative/neutral), score (0-1), and dominant_emotion (joy/sadness/anger/fear/neutral). Example: {"sentiment": "positive", "score": 0.8, "dominant_emotion": "joy"}'
-            },
-            { role: 'user', content: text }
-          ],
-          temperature: 0.3, // Lower temperature for more consistent results
-        }),
-      });
+      console.log('Sending request to Gemini for sentiment analysis');
+      
+      const prompt = `Analyze the sentiment of the following text and return ONLY a JSON object with these exact fields:
+      - sentiment: either "positive", "negative", or "neutral"
+      - score: a number between 0 and 1 indicating the strength of the sentiment
+      - dominant_emotion: one of "joy", "sadness", "anger", "fear", or "neutral"
+      
+      Text to analyze: "${text}"
+      
+      Return only the JSON object, no other text.`;
 
-      if (!response.ok) {
-        console.error('OpenAI API error:', await response.text());
-        throw new Error('Failed to get response from OpenAI API');
-      }
-
-      const data = await response.json();
-      console.log('Raw OpenAI response:', data);
-
-      if (!data.choices?.[0]?.message?.content) {
-        console.error('Invalid OpenAI response structure:', data);
-        throw new Error('Invalid response structure from OpenAI');
-      }
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const responseText = response.text();
+      
+      console.log('Raw Gemini response:', responseText);
 
       try {
-        let sentimentData;
-        const content = data.choices[0].message.content;
-        
-        // Try to extract JSON if it's wrapped in text
-        const jsonMatch = content.match(/\{[\s\S]*\}/);
-        const jsonStr = jsonMatch ? jsonMatch[0] : content;
-        
-        try {
-          sentimentData = JSON.parse(jsonStr);
-        } catch (e) {
-          console.error('Failed to parse JSON directly:', e);
-          throw new Error('Invalid JSON format in OpenAI response');
+        // Extract JSON from the response
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+          throw new Error('No JSON found in response');
         }
 
-        // Validate the required fields
+        const sentimentData = JSON.parse(jsonMatch[0]);
+
+        // Validate the data structure
         if (!sentimentData.sentiment || 
             !sentimentData.score || 
             !sentimentData.dominant_emotion ||
@@ -77,7 +62,7 @@ serve(async (req) => {
           throw new Error('Invalid sentiment data structure');
         }
 
-        // Ensure values are within expected ranges
+        // Normalize values
         const validSentiments = ['positive', 'negative', 'neutral'];
         const validEmotions = ['joy', 'sadness', 'anger', 'fear', 'neutral'];
 
@@ -100,10 +85,12 @@ serve(async (req) => {
     }
 
     if (type === 'transcribe') {
-      console.log('Sending request to OpenAI for transcription');
-      const formData = new FormData();
-      formData.append('model', 'whisper-1');
-      
+      console.log('Transcription requests are still handled by OpenAI Whisper');
+      const openAIKey = Deno.env.get('OPENAI_API_KEY');
+      if (!openAIKey) {
+        throw new Error('OpenAI API key not configured');
+      }
+
       // Convert base64 to blob
       const binaryString = atob(audio);
       const bytes = new Uint8Array(binaryString.length);
@@ -111,12 +98,15 @@ serve(async (req) => {
         bytes[i] = binaryString.charCodeAt(i);
       }
       const audioBlob = new Blob([bytes], { type: 'audio/mp3' });
+
+      const formData = new FormData();
+      formData.append('model', 'whisper-1');
       formData.append('file', audioBlob, 'audio.mp3');
 
       const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${openAIApiKey}`,
+          'Authorization': `Bearer ${openAIKey}`,
         },
         body: formData,
       });
