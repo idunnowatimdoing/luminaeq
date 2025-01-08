@@ -68,53 +68,55 @@ export const HeaderIcons = () => {
 
   if (isMobile) {
     return (
-      <div className="flex justify-end items-center pb-4">
+      <div className="fixed top-0 right-0 z-50 p-4">
         <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <DropdownMenuTrigger className="p-2">
             {!isMenuOpen && <Menu className="h-8 w-8 text-white" />}
           </DropdownMenuTrigger>
           <DropdownMenuContent 
-            align="end" 
-            className="bg-transparent border-none mt-2 flex flex-row gap-4 fixed top-0 right-0 left-0 justify-center items-center p-4"
+            align="end"
+            className="fixed top-0 left-0 right-0 flex justify-center items-center h-16 bg-lumina-dark/80 backdrop-blur-lg border-b border-white/10 z-50"
             onCloseAutoFocus={handleMenuItemClick}
           >
-            <DropdownMenuItem className="focus:bg-transparent hover:bg-transparent p-0" onClick={handleMenuItemClick}>
-              <JournalEntryModal
-                trigger={
-                  <PlusCircle className="h-8 w-8 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
-                }
-              />
-            </DropdownMenuItem>
-            <DropdownMenuItem className="focus:bg-transparent hover:bg-transparent p-0" onClick={handleMenuItemClick}>
-              <Dialog>
-                <DialogTrigger>
-                  <History className="h-6 w-6 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
-                </DialogTrigger>
-                <DialogContent className="max-w-[95vw] max-h-[80vh] overflow-y-auto">
-                  <EntryHistory />
-                </DialogContent>
-              </Dialog>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="focus:bg-transparent hover:bg-transparent p-0" onClick={handleMenuItemClick}>
-              <Dialog>
-                <DialogTrigger>
-                  <Bell className="h-6 w-6 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
-                </DialogTrigger>
-                <DialogContent className="max-w-[95vw] max-h-[80vh] overflow-y-auto">
-                  <NotificationsPanel />
-                </DialogContent>
-              </Dialog>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="focus:bg-transparent hover:bg-transparent p-0" onClick={handleMenuItemClick}>
-              <Dialog>
-                <DialogTrigger>
-                  <Settings className="h-6 w-6 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
-                </DialogTrigger>
-                <DialogContent className="max-w-[95vw] max-h-[80vh] overflow-y-auto">
-                  <SettingsPanel />
-                </DialogContent>
-              </Dialog>
-            </DropdownMenuItem>
+            <div className="flex gap-8 items-center">
+              <DropdownMenuItem className="focus:bg-transparent hover:bg-transparent p-0" onClick={handleMenuItemClick}>
+                <JournalEntryModal
+                  trigger={
+                    <PlusCircle className="h-8 w-8 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
+                  }
+                />
+              </DropdownMenuItem>
+              <DropdownMenuItem className="focus:bg-transparent hover:bg-transparent p-0" onClick={handleMenuItemClick}>
+                <Dialog>
+                  <DialogTrigger>
+                    <History className="h-6 w-6 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[95vw] max-h-[80vh] overflow-y-auto">
+                    <EntryHistory />
+                  </DialogContent>
+                </Dialog>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="focus:bg-transparent hover:bg-transparent p-0" onClick={handleMenuItemClick}>
+                <Dialog>
+                  <DialogTrigger>
+                    <Bell className="h-6 w-6 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[95vw] max-h-[80vh] overflow-y-auto">
+                    <NotificationsPanel />
+                  </DialogContent>
+                </Dialog>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="focus:bg-transparent hover:bg-transparent p-0" onClick={handleMenuItemClick}>
+                <Dialog>
+                  <DialogTrigger>
+                    <Settings className="h-6 w-6 text-white hover:text-primary transition-colors transform hover:scale-110 duration-200" />
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[95vw] max-h-[80vh] overflow-y-auto">
+                    <SettingsPanel />
+                  </DialogContent>
+                </Dialog>
+              </DropdownMenuItem>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
