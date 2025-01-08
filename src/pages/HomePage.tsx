@@ -121,9 +121,9 @@ export default function HomePage() {
         <HeaderIcons />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Total EQ Score Section */}
+          {/* Total EQ Score Section with Integrated Tips */}
           <div className="lg:col-span-4">
-            <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800 h-full">
+            <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
               <TotalEQScore 
                 score={dashboardData.current_eq_score}
                 self_awareness={dashboardData.self_awareness}
@@ -132,6 +132,19 @@ export default function HomePage() {
                 empathy={dashboardData.empathy}
                 social_skills={dashboardData.social_skills}
               />
+              
+              <div className="mt-8 space-y-4">
+                <PersonalizedTips 
+                  pillar={highestPillar[0]}
+                  score={highestPillar[1]}
+                  type="strength"
+                />
+                <PersonalizedTips 
+                  pillar={lowestPillar[0]}
+                  score={lowestPillar[1]}
+                  type="focus"
+                />
+              </div>
             </div>
           </div>
 
@@ -143,20 +156,6 @@ export default function HomePage() {
             
             <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
               <Insights />
-            </div>
-
-            {/* Personalized Tips Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <PersonalizedTips 
-                pillar={highestPillar[0]}
-                score={highestPillar[1]}
-                type="strength"
-              />
-              <PersonalizedTips 
-                pillar={lowestPillar[0]}
-                score={lowestPillar[1]}
-                type="focus"
-              />
             </div>
           </div>
         </div>

@@ -19,25 +19,24 @@ export const PersonalizedTips = ({ pillar, score, type }: PersonalizedTipsProps)
   };
 
   if (isLoading) {
-    return <Skeleton className="w-full h-48" />;
+    return <Skeleton className="w-full h-24" />;
   }
 
   return (
-    <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-      <CardHeader>
-        <CardTitle className="text-xl text-white">
+    <Card className="w-full bg-gray-800/30 backdrop-blur-lg border-gray-700">
+      <CardHeader className="p-3">
+        <CardTitle className="text-sm text-white">
           {type === 'strength' ? '💪 Strength Tips' : '🎯 Focus Area Tips'} - {formatPillarName(pillar)}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="p-3 space-y-2">
         {tips?.map((tip) => (
-          <div key={tip.id} className="p-4 bg-white/5 rounded-lg">
-            <h4 className="font-semibold text-[#00ffd5] mb-2">{tip.title}</h4>
-            <p className="text-gray-300 text-sm">{tip.description}</p>
+          <div key={tip.id} className="p-2 bg-white/5 rounded-lg">
+            <p className="text-gray-300 text-xs">{tip.description}</p>
           </div>
         ))}
         {(!tips || tips.length === 0) && (
-          <p className="text-gray-400 text-center">No tips available at the moment.</p>
+          <p className="text-gray-400 text-xs text-center">No tips available at the moment.</p>
         )}
       </CardContent>
     </Card>
