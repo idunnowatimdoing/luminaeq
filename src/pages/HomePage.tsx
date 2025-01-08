@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { WelcomeHeader } from "@/components/dashboard/WelcomeHeader";
 import { TotalEQScore } from "@/components/dashboard/TotalEQScore";
 import { PillarScores } from "@/components/dashboard/PillarScores";
 import { Insights } from "@/components/dashboard/Insights";
@@ -94,18 +93,21 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#051527] p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-4 md:space-y-8">
+      <div className="max-w-7xl mx-auto space-y-8">
         <HeaderIcons />
-        <WelcomeHeader userName={dashboardData.userName} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
-          <div className="space-y-4 md:space-y-8">
-            <TotalEQScore score={dashboardData.current_eq_score} />
+        {/* Total EQ Score in a distinct container */}
+        <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
+          <TotalEQScore score={dashboardData.current_eq_score} />
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="space-y-8">
             <PillarScores scores={dashboardData} />
             <Insights />
           </div>
           
-          <div className="space-y-4 md:space-y-8">
+          <div className="space-y-8">
             <NotificationsPanel />
           </div>
         </div>
