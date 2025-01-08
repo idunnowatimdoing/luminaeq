@@ -48,6 +48,13 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
+      console.log("Submitting journal entry:", {
+        user_id: user.id,
+        entry_text: entryText,
+        pillar,
+        mood
+      });
+
       // Get sentiment analysis
       const { data: sentimentData } = await supabase.functions.invoke('analyze-sentiment', {
         body: { text: entryText }
