@@ -67,13 +67,12 @@ export const TotalEQScore = ({
   const { highest, lowest } = findExtremeScores(scores);
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-4">
-      <h2 className="text-2xl font-bold text-white">Total EQ Score</h2>
-      <div className="main-orb flex items-center justify-center">
-        <span className="text-2xl font-bold text-white">
-          {score}/500
-        </span>
+    <div className="flex flex-col items-center justify-center space-y-6">
+      <div className="space-y-2 text-center">
+        <h2 className="text-2xl font-bold text-white">Total Score</h2>
+        <p className="text-3xl font-bold text-[#00ffd5]">{score}/500</p>
       </div>
+      <div className="main-orb flex items-center justify-center" />
       <div className="space-y-2 text-center">
         <div className="text-[#00ffd5]">
           <p className="text-sm uppercase tracking-wider">Top Pillar</p>
