@@ -11,11 +11,11 @@ export const PillarScore = ({ title, currentScore, goalScore, gradientClass }: P
   <div className="flex flex-col items-center space-y-4">
     <div className={`pillar-orb ${gradientClass}`} />
     <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
-      <CardHeader className="text-center">
-        <CardTitle className="text-lg text-white">{title}</CardTitle>
+      <CardHeader className="p-4">
+        <CardTitle className="text-base text-white text-center">{title}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex justify-between text-gray-300">
+      <CardContent className="p-4 pt-0">
+        <div className="flex justify-between text-sm text-gray-300">
           <span>Current: {currentScore}/100</span>
           <span>Goal: {goalScore}/100</span>
         </div>

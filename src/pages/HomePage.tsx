@@ -93,26 +93,34 @@ export default function HomePage() {
   }
 
   return (
-    <div className={`min-h-screen bg-[#051527] p-4 md:p-8 ${isMobile ? 'pb-24' : ''}`}>
+    <div className={`min-h-screen bg-[#051527] ${isMobile ? 'p-4 pb-24' : 'p-8'}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         <HeaderIcons />
         
-        {/* Total EQ Score in a distinct container */}
-        <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
-          <TotalEQScore 
-            score={dashboardData.current_eq_score}
-            self_awareness={dashboardData.self_awareness}
-            self_regulation={dashboardData.self_regulation}
-            motivation={dashboardData.motivation}
-            empathy={dashboardData.empathy}
-            social_skills={dashboardData.social_skills}
-          />
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="space-y-8">
-            <PillarScores scores={dashboardData} />
-            <Insights />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Total EQ Score Section - Takes up 4 columns on desktop */}
+          <div className="lg:col-span-4">
+            <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800 h-full">
+              <TotalEQScore 
+                score={dashboardData.current_eq_score}
+                self_awareness={dashboardData.self_awareness}
+                self_regulation={dashboardData.self_regulation}
+                motivation={dashboardData.motivation}
+                empathy={dashboardData.empathy}
+                social_skills={dashboardData.social_skills}
+              />
+            </div>
+          </div>
+
+          {/* Pillar Scores and Insights Section - Takes up 8 columns on desktop */}
+          <div className="lg:col-span-8 space-y-8">
+            <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
+              <PillarScores scores={dashboardData} />
+            </div>
+            
+            <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
+              <Insights />
+            </div>
           </div>
         </div>
       </div>

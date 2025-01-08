@@ -11,9 +11,9 @@ interface PillarScoresProps {
 }
 
 export const PillarScores = ({ scores }: PillarScoresProps) => (
-  <>
-    <h2 className="text-2xl font-bold text-white text-center">EQ Pillar Scores</h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+  <div className="space-y-6">
+    <h2 className="text-2xl font-bold text-white text-center mb-8">EQ Pillar Scores</h2>
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
       <PillarScore
         title="Self Awareness"
         currentScore={scores.self_awareness}
@@ -45,5 +45,5 @@ export const PillarScores = ({ scores }: PillarScoresProps) => (
         gradientClass="gradient-socialskills"
       />
     </div>
-  </>
+  </div>
 );
