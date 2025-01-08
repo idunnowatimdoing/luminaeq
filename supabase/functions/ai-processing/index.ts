@@ -30,12 +30,18 @@ serve(async (req) => {
           messages: [
             {
               role: 'system',
-              content: 'You are a sentiment analysis assistant. Analyze the following text and return ONLY a valid JSON object with these exact fields: sentiment (string: "positive", "negative", or "neutral"), score (number between 0 and 1), and dominant_emotion (string: "joy", "sadness", "anger", "fear", or "neutral"). Do not include any other text or explanation.'
+              content: 'You are a sentiment analysis assistant. Return a JSON object with sentiment (positive/negative/neutral), score (0-1), and dominant_emotion (joy/sadness/anger/fear/neutral). Example: {"sentiment": "positive", "score": 0.8, "dominant_emotion": "joy"}'
             },
             { role: 'user', content: text }
           ],
+          temperature: 0.3, // Lower temperature for more consistent results
         }),
       });
+
+      if (!response.ok) {
+        console.error('OpenAI API error:', await response.text());
+        throw new Error('Failed to get response from OpenAI API');
+      }
 
       const data = await response.json();
       console.log('Raw OpenAI response:', data);
@@ -46,22 +52,50 @@ serve(async (req) => {
       }
 
       try {
-        // Parse the response content as JSON
-        const sentimentData = JSON.parse(data.choices[0].message.content);
-        console.log('Parsed sentiment data:', sentimentData);
-
-        // Validate the required fields
-        if (!sentimentData.sentiment || !sentimentData.score || !sentimentData.dominant_emotion) {
-          console.error('Missing required fields in sentiment data:', sentimentData);
-          throw new Error('Missing required fields in sentiment analysis');
+        let sentimentData;
+        const content = data.choices[0].message.content;
+        
+        // Try to extract JSON if it's wrapped in text
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        const jsonStr = jsonMatch ? jsonMatch[0] : content;
+        
+        try {
+          sentimentData = JSON.parse(jsonStr);
+        } catch (e) {
+          console.error('Failed to parse JSON directly:', e);
+          throw new Error('Invalid JSON format in OpenAI response');
         }
 
+        // Validate the required fields
+        if (!sentimentData.sentiment || 
+            !sentimentData.score || 
+            !sentimentData.dominant_emotion ||
+            typeof sentimentData.score !== 'number' ||
+            sentimentData.score < 0 || 
+            sentimentData.score > 1) {
+          console.error('Invalid sentiment data structure:', sentimentData);
+          throw new Error('Invalid sentiment data structure');
+        }
+
+        // Ensure values are within expected ranges
+        const validSentiments = ['positive', 'negative', 'neutral'];
+        const validEmotions = ['joy', 'sadness', 'anger', 'fear', 'neutral'];
+
+        if (!validSentiments.includes(sentimentData.sentiment)) {
+          sentimentData.sentiment = 'neutral';
+        }
+
+        if (!validEmotions.includes(sentimentData.dominant_emotion)) {
+          sentimentData.dominant_emotion = 'neutral';
+        }
+
+        console.log('Validated sentiment data:', sentimentData);
         return new Response(JSON.stringify(sentimentData), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       } catch (parseError) {
-        console.error('Error parsing OpenAI response as JSON:', parseError);
-        throw new Error('Invalid JSON format in OpenAI response');
+        console.error('Error processing sentiment data:', parseError);
+        throw new Error(`Failed to process sentiment data: ${parseError.message}`);
       }
     }
 
@@ -86,6 +120,11 @@ serve(async (req) => {
         },
         body: formData,
       });
+
+      if (!response.ok) {
+        console.error('Transcription API error:', await response.text());
+        throw new Error('Failed to get transcription from OpenAI API');
+      }
 
       const data = await response.json();
       console.log('Transcription response:', data);
