@@ -17,7 +17,7 @@ const moodIcons = {
   sad: Frown,
   neutral: Meh,
   angry: Angry,
-};
+} as const;
 
 export const EntryHistory = () => {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
