@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollText, Smile, Frown, Meh, Angry, AlertCircle } from "lucide-react";
+import { ScrollText, Smile, Frown, Meh, Angry } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -17,7 +17,6 @@ const moodIcons = {
   sad: Frown,
   neutral: Meh,
   angry: Angry,
-  anxious: AlertCircle,
 };
 
 export const EntryHistory = () => {
@@ -113,4 +112,4 @@ export const EntryHistory = () => {
       </CardContent>
     </Card>
   );
-};
+}
