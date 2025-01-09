@@ -7,7 +7,7 @@ interface JournalSubmissionParams {
   pillar: string;
   mood: string;
   type: string;
-  mediaBlob?: Blob;
+  mediaBlob?: Blob | null;
 }
 
 export const handleJournalSubmission = async ({
