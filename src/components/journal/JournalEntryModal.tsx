@@ -10,6 +10,7 @@ import { AudioRecorder } from "./AudioRecorder";
 import { VideoRecorder } from "./VideoRecorder";
 import { PillarSelect } from "./PillarSelect";
 import { MoodSelector } from "./MoodSelector";
+import { handleJournalSubmission } from "./journalSubmissionHandler";
 
 interface JournalEntryModalProps {
   trigger?: React.ReactNode;
@@ -22,16 +23,17 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
   const [pillar, setPillar] = useState("");
   const [mood, setMood] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState("text");
   const { toast } = useToast();
 
-  const handleSubmit = async () => {
+  const validateEntry = () => {
     if (!entryText.trim()) {
       toast({
         title: "Missing fields",
         description: "Please enter some text for your journal entry",
         variant: "destructive",
       });
-      return;
+      return false;
     }
 
     if (!pillar) {
@@ -40,7 +42,7 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
         description: "Please select an EQ pillar",
         variant: "destructive",
       });
-      return;
+      return false;
     }
 
     if (!mood) {
@@ -49,8 +51,14 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
         description: "Please select your current mood",
         variant: "destructive",
       });
-      return;
+      return false;
     }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateEntry()) return;
 
     setIsSubmitting(true);
     try {
@@ -58,55 +66,26 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
       if (!user) throw new Error("No user found");
 
       console.log("Starting journal entry submission...");
-
-      // Get sentiment analysis using new unified endpoint
-      console.log("Requesting sentiment analysis...");
-      const { data: sentimentData, error: sentimentError } = await supabase.functions.invoke('ai-processing', {
-        body: { 
-          text: entryText,
-          type: 'sentiment'
-        }
-      });
-
-      if (sentimentError) {
-        console.error("Sentiment analysis error:", sentimentError);
-        throw new Error("Failed to analyze sentiment");
-      }
-
-      console.log("Sentiment analysis completed:", sentimentData);
-
-      // Prepare the entry data
-      const entryData = {
+      
+      const success = await handleJournalSubmission({
         user_id: user.id,
         entry_text: entryText,
         pillar,
         mood,
-        sentiment_data: sentimentData
-      };
-
-      console.log("Inserting journal entry:", entryData);
-
-      const { error: insertError } = await supabase
-        .from("journal_entries")
-        .insert(entryData);
-
-      if (insertError) {
-        console.error("Database insertion error:", insertError);
-        throw insertError;
-      }
-
-      console.log("Journal entry saved successfully");
-
-      toast({
-        title: "Success",
-        description: "Journal entry saved successfully",
+        type: activeTab
       });
 
-      setOpen(false);
-      setEntryText("");
-      setPillar("");
-      setMood("");
-      onEntrySubmitted?.();
+      if (success) {
+        toast({
+          title: "Success",
+          description: "Journal entry saved successfully",
+        });
+        setOpen(false);
+        setEntryText("");
+        setPillar("");
+        setMood("");
+        onEntrySubmitted?.();
+      }
     } catch (error: any) {
       console.error('Submission error:', error);
       toast({
@@ -175,7 +154,7 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
             </div>
           </div>
           
-          <Tabs defaultValue="text" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="text" className="flex items-center gap-2">
                 <Type className="h-4 w-4" /> Text

@@ -14,17 +14,22 @@ serve(async (req) => {
 
   try {
     const { text, type, audio } = await req.json();
-    console.log(`Processing ${type} request with content:`, type === 'sentiment' ? text : 'audio file');
+    console.log(`Processing ${type} request`);
 
-    const apiKey = Deno.env.get('EQCompanion-Gemini');
-    if (!apiKey) {
-      throw new Error('Gemini API key not configured');
-    }
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
-
+    // Handle sentiment analysis
     if (type === 'sentiment') {
+      if (!text) {
+        throw new Error('Text is required for sentiment analysis');
+      }
+
+      const apiKey = Deno.env.get('EQCompanion-Gemini');
+      if (!apiKey) {
+        throw new Error('Gemini API key not configured');
+      }
+
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
+
       console.log('Sending request to Gemini for sentiment analysis');
       
       const prompt = `Analyze the sentiment of the following text and return ONLY a JSON object with these exact fields:
@@ -43,38 +48,14 @@ serve(async (req) => {
       console.log('Raw Gemini response:', responseText);
 
       try {
-        // Extract JSON from the response
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
           throw new Error('No JSON found in response');
         }
 
         const sentimentData = JSON.parse(jsonMatch[0]);
-
-        // Validate the data structure
-        if (!sentimentData.sentiment || 
-            !sentimentData.score || 
-            !sentimentData.dominant_emotion ||
-            typeof sentimentData.score !== 'number' ||
-            sentimentData.score < 0 || 
-            sentimentData.score > 1) {
-          console.error('Invalid sentiment data structure:', sentimentData);
-          throw new Error('Invalid sentiment data structure');
-        }
-
-        // Normalize values
-        const validSentiments = ['positive', 'negative', 'neutral'];
-        const validEmotions = ['joy', 'sadness', 'anger', 'fear', 'neutral'];
-
-        if (!validSentiments.includes(sentimentData.sentiment)) {
-          sentimentData.sentiment = 'neutral';
-        }
-
-        if (!validEmotions.includes(sentimentData.dominant_emotion)) {
-          sentimentData.dominant_emotion = 'neutral';
-        }
-
-        console.log('Validated sentiment data:', sentimentData);
+        console.log('Processed sentiment data:', sentimentData);
+        
         return new Response(JSON.stringify(sentimentData), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
@@ -84,12 +65,18 @@ serve(async (req) => {
       }
     }
 
+    // Handle transcription
     if (type === 'transcribe') {
-      console.log('Transcription requests are still handled by OpenAI Whisper');
+      if (!audio) {
+        throw new Error('Audio data is required for transcription');
+      }
+
       const openAIKey = Deno.env.get('OPENAI_API_KEY');
       if (!openAIKey) {
         throw new Error('OpenAI API key not configured');
       }
+
+      console.log('Processing audio transcription request');
 
       // Convert base64 to blob
       const binaryString = atob(audio);
@@ -117,12 +104,7 @@ serve(async (req) => {
       }
 
       const data = await response.json();
-      console.log('Transcription response:', data);
-
-      if (!data.text) {
-        console.error('Invalid transcription response:', data);
-        throw new Error('Invalid transcription response');
-      }
+      console.log('Transcription completed:', data);
 
       return new Response(JSON.stringify({ text: data.text }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
