@@ -189,6 +189,45 @@ export type Database = {
         }
         Relationships: []
       }
+      media_entries: {
+        Row: {
+          created_at: string | null
+          deleted_at: string | null
+          entry_type: string
+          expires_at: string | null
+          id: string
+          media_url: string | null
+          sentiment_data: Json | null
+          size_bytes: number
+          transcription: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          deleted_at?: string | null
+          entry_type: string
+          expires_at?: string | null
+          id?: string
+          media_url?: string | null
+          sentiment_data?: Json | null
+          size_bytes?: number
+          transcription?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          deleted_at?: string | null
+          entry_type?: string
+          expires_at?: string | null
+          id?: string
+          media_url?: string | null
+          sentiment_data?: Json | null
+          size_bytes?: number
+          transcription?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -229,6 +268,9 @@ export type Database = {
           language: string | null
           last_payment_method: Json | null
           leaderboard_opt_out: boolean | null
+          media_retention_days: number | null
+          media_storage_enabled: boolean | null
+          media_storage_quota: number | null
           motivation: number | null
           name: string | null
           onboarding_completed: boolean | null
@@ -243,6 +285,7 @@ export type Database = {
           subscription_tier: string | null
           theme: string | null
           total_eq_score: number | null
+          transcription_on_deletion: boolean | null
           user_id: string
         }
         Insert: {
@@ -257,6 +300,9 @@ export type Database = {
           language?: string | null
           last_payment_method?: Json | null
           leaderboard_opt_out?: boolean | null
+          media_retention_days?: number | null
+          media_storage_enabled?: boolean | null
+          media_storage_quota?: number | null
           motivation?: number | null
           name?: string | null
           onboarding_completed?: boolean | null
@@ -271,6 +317,7 @@ export type Database = {
           subscription_tier?: string | null
           theme?: string | null
           total_eq_score?: number | null
+          transcription_on_deletion?: boolean | null
           user_id: string
         }
         Update: {
@@ -285,6 +332,9 @@ export type Database = {
           language?: string | null
           last_payment_method?: Json | null
           leaderboard_opt_out?: boolean | null
+          media_retention_days?: number | null
+          media_storage_enabled?: boolean | null
+          media_storage_quota?: number | null
           motivation?: number | null
           name?: string | null
           onboarding_completed?: boolean | null
@@ -299,6 +349,7 @@ export type Database = {
           subscription_tier?: string | null
           theme?: string | null
           total_eq_score?: number | null
+          transcription_on_deletion?: boolean | null
           user_id?: string
         }
         Relationships: []
