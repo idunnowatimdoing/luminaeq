@@ -1,8 +1,28 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MediaSettings } from "./MediaSettings";
 import { Card } from "@/components/ui/card";
+import { useMediaSettings } from "@/hooks/useMediaSettings";
 
 export function Settings() {
+  const { settings, loading, error } = useMediaSettings();
+
+  if (loading) {
+    return <div>Loading settings...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading settings: {error.message}</div>;
+  }
+
+  if (!settings) {
+    return <div>No settings found</div>;
+  }
+
+  const handleUpdate = async (key: string, value: any) => {
+    // Implementation of update logic will go here
+    console.log('Updating setting:', key, value);
+  };
+
   return (
     <Tabs defaultValue="media" className="w-full">
       <TabsList>
@@ -12,7 +32,12 @@ export function Settings() {
       </TabsList>
       
       <TabsContent value="media">
-        <MediaSettings />
+        <MediaSettings 
+          mediaStorageEnabled={settings.mediaStorageEnabled}
+          transcriptionOnDeletion={settings.transcriptionOnDeletion}
+          retentionDays={settings.mediaRetentionDays}
+          onUpdate={handleUpdate}
+        />
       </TabsContent>
       
       <TabsContent value="account">
