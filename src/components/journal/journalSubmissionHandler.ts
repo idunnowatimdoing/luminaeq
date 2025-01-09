@@ -99,7 +99,7 @@ export const handleJournalSubmission = async ({
       console.log("Sentiment analysis completed:", sentimentData);
     }
 
-    // Create journal entry
+    // Create journal entry with correct columns
     const { error: insertError } = await supabase
       .from("journal_entries")
       .insert({

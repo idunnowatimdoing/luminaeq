@@ -16,7 +16,7 @@ export const VideoRecorder = ({ onRecordingComplete }: VideoRecorderProps) => {
   const chunksRef = useRef<BlobPart[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const videoPreviewRef = useRef<HTMLVideoElement>(null);
-  const timerRef = useRef<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
