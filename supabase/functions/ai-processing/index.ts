@@ -13,25 +13,19 @@ serve(async (req) => {
   }
 
   try {
-    const { text, type, audio } = await req.json();
-    console.log(`Processing ${type} request`);
+    const { text, type, audio, video } = await req.json();
+    console.log(`Processing ${type} request with Gemini 1.5 Pro`);
 
-    // Handle sentiment analysis
+    const apiKey = Deno.env.get('EQCompanion-Gemini');
+    if (!apiKey) {
+      throw new Error('Gemini API key not configured');
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+    // Handle different content types
     if (type === 'sentiment') {
-      if (!text) {
-        throw new Error('Text is required for sentiment analysis');
-      }
-
-      const apiKey = Deno.env.get('EQCompanion-Gemini');
-      if (!apiKey) {
-        throw new Error('Gemini API key not configured');
-      }
-
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
-
-      console.log('Sending request to Gemini for sentiment analysis');
-      
       const prompt = `Analyze the sentiment of the following text and return ONLY a JSON object with these exact fields:
       - sentiment: either "positive", "negative", or "neutral"
       - score: a number between 0 and 1 indicating the strength of the sentiment
@@ -65,48 +59,38 @@ serve(async (req) => {
       }
     }
 
-    // Handle transcription
+    // Handle audio/video content in a single call
     if (type === 'transcribe') {
-      if (!audio) {
-        throw new Error('Audio data is required for transcription');
+      if (!audio && !video) {
+        throw new Error('Audio or video data is required for transcription');
       }
 
-      const openAIKey = Deno.env.get('OPENAI_API_KEY');
-      if (!openAIKey) {
-        throw new Error('OpenAI API key not configured');
-      }
+      const mediaType = audio ? 'audio' : 'video';
+      const mediaContent = audio || video;
 
-      console.log('Processing audio transcription request');
+      const prompt = `Process this ${mediaType} content and return ONLY a JSON object with:
+      - transcription: the full text transcription
+      - sentiment_analysis: {
+          sentiment: "positive", "negative", or "neutral",
+          score: 0-1 indicating strength,
+          dominant_emotion: "joy", "sadness", "anger", "fear", or "neutral",
+          confidence_level: 0-1 indicating analysis confidence
+        }
+      - key_points: array of main points discussed
+      
+      Return only the JSON object, no other text.`;
 
-      // Convert base64 to blob
-      const binaryString = atob(audio);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      const audioBlob = new Blob([bytes], { type: 'audio/mp3' });
-
-      const formData = new FormData();
-      formData.append('model', 'whisper-1');
-      formData.append('file', audioBlob, 'audio.mp3');
-
-      const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIKey}`,
-        },
-        body: formData,
+      // Process audio/video content
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: prompt }, { inlineData: { data: mediaContent, mimeType: `${mediaType}/webm` } }] }],
       });
 
-      if (!response.ok) {
-        console.error('Transcription API error:', await response.text());
-        throw new Error('Failed to get transcription from OpenAI API');
-      }
+      const response = await result.response;
+      const analysisData = JSON.parse(response.text());
+      
+      console.log(`${mediaType} analysis completed:`, analysisData);
 
-      const data = await response.json();
-      console.log('Transcription completed:', data);
-
-      return new Response(JSON.stringify({ text: data.text }), {
+      return new Response(JSON.stringify(analysisData), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
