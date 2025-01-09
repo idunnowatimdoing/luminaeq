@@ -24,13 +24,14 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
   const [mood, setMood] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("text");
+  const [mediaBlob, setMediaBlob] = useState<Blob | null>(null);
   const { toast } = useToast();
 
   const validateEntry = () => {
-    if (!entryText.trim()) {
+    if (!entryText.trim() && !mediaBlob) {
       toast({
-        title: "Missing fields",
-        description: "Please enter some text for your journal entry",
+        title: "Missing content",
+        description: "Please enter text or record media for your journal entry",
         variant: "destructive",
       });
       return false;
@@ -72,7 +73,8 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
         entry_text: entryText,
         pillar,
         mood,
-        type: activeTab
+        type: activeTab,
+        mediaBlob
       });
 
       if (success) {
@@ -84,6 +86,7 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
         setEntryText("");
         setPillar("");
         setMood("");
+        setMediaBlob(null);
         onEntrySubmitted?.();
       }
     } catch (error: any) {
@@ -99,9 +102,9 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
   };
 
   const handleMediaRecordingComplete = async (blob: Blob) => {
+    setMediaBlob(blob);
     try {
-      // Convert blob to base64
-      const base64Audio = await new Promise<string>((resolve) => {
+      const base64Media = await new Promise<string>((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => {
           const base64 = reader.result as string;
@@ -110,10 +113,9 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
         reader.readAsDataURL(blob);
       });
 
-      // Get transcription using new unified endpoint
       const { data: transcriptionData, error: transcriptionError } = await supabase.functions.invoke('ai-processing', {
         body: { 
-          audio: base64Audio,
+          audio: base64Media,
           type: 'transcribe'
         }
       });
