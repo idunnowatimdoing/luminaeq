@@ -24,8 +24,14 @@ serve(async (req) => {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-    // Handle different content types
+    // Handle text-only sentiment analysis
     if (type === 'sentiment') {
+      if (!text) {
+        throw new Error('Text is required for sentiment analysis');
+      }
+
+      console.log('Processing text sentiment analysis');
+      
       const prompt = `Analyze the sentiment of the following text and return ONLY a JSON object with these exact fields:
       - sentiment: either "positive", "negative", or "neutral"
       - score: a number between 0 and 1 indicating the strength of the sentiment
@@ -42,24 +48,29 @@ serve(async (req) => {
       console.log('Raw Gemini response:', responseText);
 
       try {
-        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) {
-          throw new Error('No JSON found in response');
-        }
-
-        const sentimentData = JSON.parse(jsonMatch[0]);
+        // First try direct JSON parsing
+        const sentimentData = JSON.parse(responseText);
         console.log('Processed sentiment data:', sentimentData);
         
         return new Response(JSON.stringify(sentimentData), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       } catch (parseError) {
-        console.error('Error processing sentiment data:', parseError);
-        throw new Error(`Failed to process sentiment data: ${parseError.message}`);
+        // Fallback to regex if the response contains additional text
+        console.log('Direct JSON parse failed, attempting regex extraction');
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+          throw new Error('No JSON found in response');
+        }
+        const sentimentData = JSON.parse(jsonMatch[0]);
+        console.log('Processed sentiment data (via regex):', sentimentData);
+        return new Response(JSON.stringify(sentimentData), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
       }
     }
 
-    // Handle audio/video content in a single call
+    // Handle audio/video content
     if (type === 'transcribe') {
       if (!audio && !video) {
         throw new Error('Audio or video data is required for transcription');
@@ -67,6 +78,7 @@ serve(async (req) => {
 
       const mediaType = audio ? 'audio' : 'video';
       const mediaContent = audio || video;
+      console.log(`Processing ${mediaType} content`);
 
       const prompt = `Process this ${mediaType} content and return ONLY a JSON object with:
       - transcription: the full text transcription
@@ -80,19 +92,48 @@ serve(async (req) => {
       
       Return only the JSON object, no other text.`;
 
-      // Process audio/video content
-      const result = await model.generateContent({
-        contents: [{ role: "user", parts: [{ text: prompt }, { inlineData: { data: mediaContent, mimeType: `${mediaType}/webm` } }] }],
-      });
+      try {
+        const result = await model.generateContent({
+          contents: [{ 
+            role: "user", 
+            parts: [
+              { text: prompt }, 
+              { inlineData: { 
+                data: mediaContent, 
+                mimeType: `${mediaType}/webm` 
+              }}
+            ] 
+          }],
+        });
 
-      const response = await result.response;
-      const analysisData = JSON.parse(response.text());
-      
-      console.log(`${mediaType} analysis completed:`, analysisData);
+        const response = await result.response;
+        const responseText = response.text();
+        console.log(`Raw ${mediaType} analysis response:`, responseText);
 
-      return new Response(JSON.stringify(analysisData), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+        // First try direct JSON parsing
+        try {
+          const analysisData = JSON.parse(responseText);
+          console.log(`Processed ${mediaType} analysis:`, analysisData);
+          return new Response(JSON.stringify(analysisData), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        } catch (parseError) {
+          // Fallback to regex if needed
+          console.log('Direct JSON parse failed, attempting regex extraction');
+          const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+          if (!jsonMatch) {
+            throw new Error('No JSON found in response');
+          }
+          const analysisData = JSON.parse(jsonMatch[0]);
+          console.log(`Processed ${mediaType} analysis (via regex):`, analysisData);
+          return new Response(JSON.stringify(analysisData), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      } catch (error) {
+        console.error(`Error processing ${mediaType}:`, error);
+        throw new Error(`Failed to process ${mediaType} content: ${error.message}`);
+      }
     }
 
     throw new Error('Invalid processing type');
