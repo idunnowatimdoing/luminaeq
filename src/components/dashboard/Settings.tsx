@@ -19,6 +19,9 @@ interface UserSettings {
   language: string;
   storage_preference: 'local' | 'cloud';
   subscription_status: string;
+  media_storage_enabled: boolean;
+  transcription_on_deletion: boolean;
+  media_retention_days: number;
 }
 
 export const Settings = () => {
@@ -30,7 +33,10 @@ export const Settings = () => {
     theme: 'system',
     language: 'en-US',
     storage_preference: 'cloud',
-    subscription_status: 'free'
+    subscription_status: 'free',
+    media_storage_enabled: true,
+    transcription_on_deletion: false,
+    media_retention_days: 30
   });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -42,14 +48,30 @@ export const Settings = () => {
 
   const fetchSettings = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No authenticated user");
+
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
+        .eq("user_id", user.id)
         .single();
 
       if (error) throw error;
       if (data) {
-        setSettings(data);
+        setSettings({
+          push_notifications: data.push_notifications,
+          in_app_notifications: data.in_app_notifications,
+          journaling_prompts: data.journaling_prompts,
+          leaderboard_opt_out: data.leaderboard_opt_out,
+          theme: data.theme || 'system',
+          language: data.language || 'en-US',
+          storage_preference: data.storage_preference || 'cloud',
+          subscription_status: data.subscription_status || 'free',
+          media_storage_enabled: data.media_storage_enabled,
+          transcription_on_deletion: data.transcription_on_deletion,
+          media_retention_days: data.media_retention_days
+        });
       }
       setLoading(false);
     } catch (error: any) {
@@ -82,10 +104,13 @@ export const Settings = () => {
 
   const updateSetting = async (key: keyof UserSettings, value: any) => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No authenticated user");
+
       const { error } = await supabase
         .from("profiles")
         .update({ [key]: value })
-        .not("id", "is", null);
+        .eq("user_id", user.id);
 
       if (error) throw error;
       setSettings((prev) => ({ ...prev, [key]: value }));
@@ -104,6 +129,10 @@ export const Settings = () => {
     }
   };
 
+  if (loading) {
+    return <div>Loading settings...</div>;
+  }
+
   return (
     <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -121,12 +150,20 @@ export const Settings = () => {
           </TabsList>
 
           <TabsContent value="account">
-            <AccountSettings />
+            <AccountSettings 
+              language={settings.language}
+              storagePreference={settings.storage_preference}
+              onUpdate={updateSetting}
+            />
           </TabsContent>
 
           <TabsContent value="notifications">
             <NotificationSettings 
-              settings={settings}
+              settings={{
+                push_notifications: settings.push_notifications,
+                in_app_notifications: settings.in_app_notifications,
+                journaling_prompts: settings.journaling_prompts
+              }}
               onUpdate={updateSetting}
             />
           </TabsContent>
@@ -146,7 +183,12 @@ export const Settings = () => {
           </TabsContent>
 
           <TabsContent value="media">
-            <MediaSettings />
+            <MediaSettings 
+              mediaStorageEnabled={settings.media_storage_enabled}
+              transcriptionOnDeletion={settings.transcription_on_deletion}
+              retentionDays={settings.media_retention_days}
+              onUpdate={updateSetting}
+            />
           </TabsContent>
         </Tabs>
       </CardContent>

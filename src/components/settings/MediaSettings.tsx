@@ -3,51 +3,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
-export const MediaSettings = () => {
+interface MediaSettingsProps {
+  mediaStorageEnabled: boolean;
+  transcriptionOnDeletion: boolean;
+  retentionDays: number;
+  onUpdate: (key: string, value: any) => void;
+}
+
+export const MediaSettings = ({ 
+  mediaStorageEnabled, 
+  transcriptionOnDeletion, 
+  retentionDays,
+  onUpdate 
+}: MediaSettingsProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [mediaStorageEnabled, setMediaStorageEnabled] = useState(true);
-  const [transcriptionOnDeletion, setTranscriptionOnDeletion] = useState(false);
-  const [retentionDays, setRetentionDays] = useState(30);
-  const { toast } = useToast();
 
-  const handleSaveSettings = async () => {
+  const handleSave = async () => {
     setIsLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No authenticated user");
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          media_storage_enabled: mediaStorageEnabled,
-          transcription_on_deletion: transcriptionOnDeletion,
-          media_retention_days: retentionDays,
-        })
-        .eq('user_id', user.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Settings saved",
-        description: "Your media preferences have been updated successfully.",
-      });
-    } catch (error: any) {
-      console.error('Error saving settings:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save settings. Please try again.",
-        variant: "destructive",
-      });
+      await onUpdate('media_storage_enabled', mediaStorageEnabled);
+      await onUpdate('transcription_on_deletion', transcriptionOnDeletion);
+      await onUpdate('media_retention_days', retentionDays);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Card className="w-full">
+    <Card>
       <CardHeader>
         <CardTitle>Media Settings</CardTitle>
       </CardHeader>
@@ -62,7 +47,7 @@ export const MediaSettings = () => {
           <Switch
             id="media-storage"
             checked={mediaStorageEnabled}
-            onCheckedChange={setMediaStorageEnabled}
+            onCheckedChange={(checked) => onUpdate('media_storage_enabled', checked)}
           />
         </div>
 
@@ -72,7 +57,7 @@ export const MediaSettings = () => {
               <Label>Media Retention Period (Days)</Label>
               <Slider
                 value={[retentionDays]}
-                onValueChange={(value) => setRetentionDays(value[0])}
+                onValueChange={(value) => onUpdate('media_retention_days', value[0])}
                 max={90}
                 min={1}
                 step={1}
@@ -93,19 +78,19 @@ export const MediaSettings = () => {
               <Switch
                 id="transcription"
                 checked={transcriptionOnDeletion}
-                onCheckedChange={setTranscriptionOnDeletion}
+                onCheckedChange={(checked) => onUpdate('transcription_on_deletion', checked)}
               />
             </div>
           </>
         )}
 
-        <button
-          onClick={handleSaveSettings}
+        <Button
+          onClick={handleSave}
           disabled={isLoading}
-          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md"
+          className="w-full"
         >
           {isLoading ? "Saving..." : "Save Settings"}
-        </button>
+        </Button>
       </CardContent>
     </Card>
   );

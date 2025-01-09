@@ -10,9 +10,14 @@ export const PrivacySettings = ({ leaderboardOptOut, onUpdate }: PrivacySettings
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Label htmlFor="leaderboard-opt-out" className="text-white">
-          Opt out of Leaderboard
-        </Label>
+        <div className="space-y-0.5">
+          <Label htmlFor="leaderboard-opt-out" className="text-white">
+            Opt out of Leaderboard
+          </Label>
+          <p className="text-sm text-gray-400">
+            Hide your progress from the public leaderboard
+          </p>
+        </div>
         <Switch
           id="leaderboard-opt-out"
           checked={leaderboardOptOut}

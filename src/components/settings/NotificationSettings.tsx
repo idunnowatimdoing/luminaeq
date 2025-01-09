@@ -14,9 +14,14 @@ export const NotificationSettings = ({ settings, onUpdate }: NotificationSetting
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Label htmlFor="push-notifications" className="text-white">
-          Push Notifications
-        </Label>
+        <div className="space-y-0.5">
+          <Label htmlFor="push-notifications" className="text-white">
+            Push Notifications
+          </Label>
+          <p className="text-sm text-gray-400">
+            Receive notifications even when you're not using the app
+          </p>
+        </div>
         <Switch
           id="push-notifications"
           checked={settings.push_notifications}
@@ -25,9 +30,14 @@ export const NotificationSettings = ({ settings, onUpdate }: NotificationSetting
       </div>
       
       <div className="flex items-center justify-between">
-        <Label htmlFor="in-app-notifications" className="text-white">
-          In-app Notifications
-        </Label>
+        <div className="space-y-0.5">
+          <Label htmlFor="in-app-notifications" className="text-white">
+            In-app Notifications
+          </Label>
+          <p className="text-sm text-gray-400">
+            Receive notifications while using the app
+          </p>
+        </div>
         <Switch
           id="in-app-notifications"
           checked={settings.in_app_notifications}
@@ -36,9 +46,14 @@ export const NotificationSettings = ({ settings, onUpdate }: NotificationSetting
       </div>
       
       <div className="flex items-center justify-between">
-        <Label htmlFor="journaling-prompts" className="text-white">
-          Journaling Prompts
-        </Label>
+        <div className="space-y-0.5">
+          <Label htmlFor="journaling-prompts" className="text-white">
+            Journaling Prompts
+          </Label>
+          <p className="text-sm text-gray-400">
+            Receive daily prompts to help with journaling
+          </p>
+        </div>
         <Switch
           id="journaling-prompts"
           checked={settings.journaling_prompts}

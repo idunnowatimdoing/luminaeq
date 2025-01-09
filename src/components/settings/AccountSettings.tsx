@@ -6,7 +6,13 @@ import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
-export const AccountSettings = () => {
+interface AccountSettingsProps {
+  language: string;
+  storagePreference: 'local' | 'cloud';
+  onUpdate: (key: string, value: any) => void;
+}
+
+export const AccountSettings = ({ language, storagePreference, onUpdate }: AccountSettingsProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -42,19 +48,11 @@ export const AccountSettings = () => {
 
   return (
     <div className="space-y-4">
-      <Button 
-        variant="outline" 
-        className="w-full justify-start" 
-        onClick={handleSignOut}
-      >
-        <LogOut className="mr-2 h-4 w-4" /> Sign Out
-      </Button>
-      
       <div className="space-y-2">
         <Label className="text-white">Storage Preference</Label>
         <Select
-          defaultValue="cloud"
-          onValueChange={(value) => console.log(value)}
+          value={storagePreference}
+          onValueChange={(value: 'local' | 'cloud') => onUpdate('storage_preference', value)}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select storage preference" />
@@ -69,8 +67,8 @@ export const AccountSettings = () => {
       <div className="space-y-2">
         <Label className="text-white">Language</Label>
         <Select
-          defaultValue="en-US"
-          onValueChange={(value) => console.log(value)}
+          value={language}
+          onValueChange={(value) => onUpdate('language', value)}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select language" />
@@ -82,6 +80,14 @@ export const AccountSettings = () => {
           </SelectContent>
         </Select>
       </div>
+
+      <Button 
+        variant="outline" 
+        className="w-full justify-start" 
+        onClick={handleSignOut}
+      >
+        <LogOut className="mr-2 h-4 w-4" /> Sign Out
+      </Button>
 
       <Button 
         variant="outline" 
