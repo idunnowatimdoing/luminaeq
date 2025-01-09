@@ -38,15 +38,27 @@ export const handleJournalSubmission = async ({
     if (mediaBlob && (type === 'audio' || type === 'video')) {
       if (!profileData.media_storage_enabled) {
         console.log("Media storage is disabled, processing transcription only");
-        const { data: transcriptionData, error: transcriptionError } = await supabase.functions.invoke('ai-processing', {
+        
+        // Convert blob to base64 once and store it
+        const base64Media = await blobToBase64(mediaBlob);
+        
+        // Make the transcription request
+        const { data: transcriptionResponse, error: transcriptionError } = await supabase.functions.invoke('ai-processing', {
           body: { 
-            audio: await blobToBase64(mediaBlob),
+            audio: base64Media,
             type: 'transcribe'
           }
         });
 
-        if (transcriptionError) throw transcriptionError;
-        entry_text = transcriptionData?.text || entry_text;
+        if (transcriptionError) {
+          console.error("Transcription error:", transcriptionError);
+          throw transcriptionError;
+        }
+
+        // Use the transcription response
+        if (transcriptionResponse?.text) {
+          entry_text = transcriptionResponse.text;
+        }
       } else {
         console.log("Processing media upload with retention settings");
         const filePath = `${user_id}/${crypto.randomUUID()}.${type === 'audio' ? 'webm' : 'mp4'}`;
@@ -56,7 +68,10 @@ export const handleJournalSubmission = async ({
           .from('media')
           .upload(filePath, mediaBlob);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error("Upload error:", uploadError);
+          throw uploadError;
+        }
 
         // Calculate expiration date based on retention days
         const expiresAt = addDays(new Date(), profileData.media_retention_days);
@@ -74,7 +89,10 @@ export const handleJournalSubmission = async ({
           .select()
           .single();
 
-        if (mediaError) throw mediaError;
+        if (mediaError) {
+          console.error("Media entry error:", mediaError);
+          throw mediaError;
+        }
         mediaEntry = mediaData;
       }
     }
@@ -83,7 +101,7 @@ export const handleJournalSubmission = async ({
     let sentimentData = null;
     if (type === 'text' || !profileData.media_storage_enabled) {
       console.log("Requesting sentiment analysis...");
-      const { data: analysisData, error: analysisError } = await supabase.functions.invoke('ai-processing', {
+      const { data: analysisResponse, error: analysisError } = await supabase.functions.invoke('ai-processing', {
         body: { 
           text: entry_text,
           type: 'sentiment'
@@ -95,7 +113,7 @@ export const handleJournalSubmission = async ({
         throw analysisError;
       }
 
-      sentimentData = analysisData;
+      sentimentData = analysisResponse;
       console.log("Sentiment analysis completed:", sentimentData);
     }
 
@@ -111,7 +129,10 @@ export const handleJournalSubmission = async ({
         media_entry_id: mediaEntry?.id
       });
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      console.error("Journal entry insert error:", insertError);
+      throw insertError;
+    }
 
     console.log("Journal entry saved successfully");
     return true;
