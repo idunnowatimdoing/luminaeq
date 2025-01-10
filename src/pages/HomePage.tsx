@@ -137,8 +137,7 @@ export default function HomePage() {
         
         <JournalEntryModal
           trigger={null}
-          open={isJournalModalOpen}
-          onOpenChange={setIsJournalModalOpen}
+          onEntrySubmitted={() => fetchDashboardData()}
         />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

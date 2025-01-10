@@ -85,7 +85,14 @@ export const Settings = () => {
           subscription_status: data.subscription_status || 'free',
           media_storage_enabled: data.media_storage_enabled,
           transcription_on_deletion: data.transcription_on_deletion,
-          media_retention_days: data.media_retention_days
+          media_retention_days: data.media_retention_days,
+          hotkey_settings: data.hotkey_settings || {
+            newEntry: 'Alt+N',
+            viewHistory: 'Alt+H',
+            viewInsights: 'Alt+I',
+            viewSettings: 'Alt+S',
+            viewChallenges: 'Alt+C'
+          }
         });
       }
       setLoading(false);
