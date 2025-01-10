@@ -8,6 +8,7 @@ import { Insights } from "@/components/dashboard/Insights";
 import { HeaderIcons } from "@/components/dashboard/HeaderIcons";
 import { PersonalizedTips } from "@/components/dashboard/PersonalizedTips";
 import { StatCards } from "@/components/dashboard/StatCards";
+import { Recommendations } from "@/components/dashboard/Recommendations";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award, Mountain, GraduationCap, UserRound } from "lucide-react";
@@ -160,39 +161,7 @@ export default function HomePage() {
             </div>
 
             {/* Activity Cards Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              {/* Achievements Card */}
-              <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
-                <CardContent className="flex flex-col items-center justify-center p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">Achievements</h3>
-                  <Award {...iconStyle} />
-                </CardContent>
-              </Card>
-
-              {/* Challenges Card */}
-              <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
-                <CardContent className="flex flex-col items-center justify-center p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">Challenges</h3>
-                  <Mountain {...iconStyle} />
-                </CardContent>
-              </Card>
-
-              {/* Learning Card */}
-              <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
-                <CardContent className="flex flex-col items-center justify-center p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">Learning</h3>
-                  <GraduationCap {...iconStyle} />
-                </CardContent>
-              </Card>
-
-              {/* EQ Coach Card */}
-              <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
-                <CardContent className="flex flex-col items-center justify-center p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">EQ Coach</h3>
-                  <UserRound {...iconStyle} />
-                </CardContent>
-              </Card>
-            </div>
+            <StatCards />
           </div>
 
           {/* Right Column */}
@@ -207,7 +176,7 @@ export default function HomePage() {
               </div>
               
               <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
-                <StatCards />
+                <Recommendations />
               </div>
             </div>
           </div>
