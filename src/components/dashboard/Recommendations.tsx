@@ -59,7 +59,10 @@ export const Recommendations = () => {
       <CardContent className="space-y-4 text-gray-300">
         <div className="flex items-center space-x-2">
           <div className="w-1 h-4 bg-[#00ffd5] rounded" />
-          <p>{latestRecommendation || "Loading recommendations..."}</p>
+          <p>
+            {latestRecommendation || 
+             "Not enough data to provide personalized recommendations at this time. Please continue to journal and participate in challenges to activate this feature."}
+          </p>
         </div>
       </CardContent>
     </Card>
