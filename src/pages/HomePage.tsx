@@ -131,13 +131,15 @@ export default function HomePage() {
   const { highestPillar, lowestPillar } = findExtremeScores(dashboardData);
 
   return (
-    <div className={`min-h-screen bg-[#051527] ${isMobile ? 'p-4 pb-24' : 'p-8'}`}>
+    <div className={`min-h-screen bg-[#051527] ${isMobile ? 'p-4 pb-24' : 'p-8 pt-24'}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         <HeaderIcons />
         
         <JournalEntryModal
           trigger={null}
           onEntrySubmitted={() => fetchDashboardData()}
+          isOpen={isJournalModalOpen}
+          onOpenChange={setIsJournalModalOpen}
         />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
