@@ -262,6 +262,7 @@ export type Database = {
           billing_cycle: string | null
           created_at: string | null
           empathy: number | null
+          hotkey_settings: Json | null
           id: string
           in_app_notifications: boolean | null
           journaling_prompts: boolean | null
@@ -294,6 +295,7 @@ export type Database = {
           billing_cycle?: string | null
           created_at?: string | null
           empathy?: number | null
+          hotkey_settings?: Json | null
           id?: string
           in_app_notifications?: boolean | null
           journaling_prompts?: boolean | null
@@ -326,6 +328,7 @@ export type Database = {
           billing_cycle?: string | null
           created_at?: string | null
           empathy?: number | null
+          hotkey_settings?: Json | null
           id?: string
           in_app_notifications?: boolean | null
           journaling_prompts?: boolean | null

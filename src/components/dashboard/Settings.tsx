@@ -9,6 +9,7 @@ import { NotificationSettings } from "../settings/NotificationSettings";
 import { AppearanceSettings } from "../settings/AppearanceSettings";
 import { PrivacySettings } from "../settings/PrivacySettings";
 import { MediaSettings } from "../settings/MediaSettings";
+import { HotkeySettings } from "../settings/HotkeySettings";
 
 interface UserSettings {
   push_notifications: boolean;
@@ -22,6 +23,13 @@ interface UserSettings {
   media_storage_enabled: boolean;
   transcription_on_deletion: boolean;
   media_retention_days: number;
+  hotkey_settings: {
+    newEntry: string;
+    viewHistory: string;
+    viewInsights: string;
+    viewSettings: string;
+    viewChallenges: string;
+  };
 }
 
 export const Settings = () => {
@@ -36,7 +44,14 @@ export const Settings = () => {
     subscription_status: 'free',
     media_storage_enabled: true,
     transcription_on_deletion: false,
-    media_retention_days: 30
+    media_retention_days: 30,
+    hotkey_settings: {
+      newEntry: 'Alt+N',
+      viewHistory: 'Alt+H',
+      viewInsights: 'Alt+I',
+      viewSettings: 'Alt+S',
+      viewChallenges: 'Alt+C'
+    }
   });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -141,12 +156,13 @@ export const Settings = () => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="account" className="space-y-4">
-          <TabsList className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <TabsList className="grid grid-cols-2 lg:grid-cols-6 gap-4">
             <TabsTrigger value="account">Account</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
             <TabsTrigger value="appearance">Appearance</TabsTrigger>
             <TabsTrigger value="privacy">Privacy</TabsTrigger>
             <TabsTrigger value="media">Media</TabsTrigger>
+            <TabsTrigger value="hotkeys">Hotkeys</TabsTrigger>
           </TabsList>
 
           <TabsContent value="account">
@@ -188,6 +204,13 @@ export const Settings = () => {
               transcriptionOnDeletion={settings.transcription_on_deletion}
               retentionDays={settings.media_retention_days}
               onUpdate={updateSetting}
+            />
+          </TabsContent>
+
+          <TabsContent value="hotkeys">
+            <HotkeySettings
+              hotkeySettings={settings.hotkey_settings}
+              onUpdate={(value) => updateSetting('hotkey_settings', value)}
             />
           </TabsContent>
         </Tabs>

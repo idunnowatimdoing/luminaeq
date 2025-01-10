@@ -10,8 +10,8 @@ import { PersonalizedTips } from "@/components/dashboard/PersonalizedTips";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { Recommendations } from "@/components/dashboard/Recommendations";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Card, CardContent } from "@/components/ui/card";
-import { Award, Mountain, GraduationCap, UserRound } from "lucide-react";
+import { useHotkeys } from "@/hooks/useHotkeys";
+import { JournalEntryModal } from "@/components/journal/JournalEntryModal";
 
 interface DashboardData {
   current_eq_score: number;
@@ -26,8 +26,11 @@ interface DashboardData {
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [isJournalModalOpen, setIsJournalModalOpen] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
+
+  useHotkeys(() => setIsJournalModalOpen(true));
 
   useEffect(() => {
     fetchDashboardData();
@@ -131,6 +134,12 @@ export default function HomePage() {
     <div className={`min-h-screen bg-[#051527] ${isMobile ? 'p-4 pb-24' : 'p-8'}`}>
       <div className="max-w-7xl mx-auto space-y-8">
         <HeaderIcons />
+        
+        <JournalEntryModal
+          trigger={null}
+          open={isJournalModalOpen}
+          onOpenChange={setIsJournalModalOpen}
+        />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column */}
