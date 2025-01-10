@@ -9,6 +9,8 @@ import { HeaderIcons } from "@/components/dashboard/HeaderIcons";
 import { PersonalizedTips } from "@/components/dashboard/PersonalizedTips";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GraduationCap } from "lucide-react";
 
 interface DashboardData {
   current_eq_score: number;
@@ -122,8 +124,9 @@ export default function HomePage() {
         <HeaderIcons />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Total EQ Score Section with Integrated Tips */}
-          <div className="lg:col-span-4">
+          {/* Left Column */}
+          <div className="lg:col-span-4 space-y-8">
+            {/* Total EQ Score Section */}
             <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
               <TotalEQScore 
                 score={dashboardData.current_eq_score}
@@ -147,20 +150,76 @@ export default function HomePage() {
                 />
               </div>
             </div>
+
+            {/* Additional Cards Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Achievements Card */}
+              <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <h3 className="text-xl font-semibold text-white mb-4">Achievements</h3>
+                  <div className="relative">
+                    <div className="text-[#00ffd5]" style={{ filter: "drop-shadow(0 0 8px rgba(0, 255, 213, 0.5))" }}>
+                      Coming Soon
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Challenges Card */}
+              <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <h3 className="text-xl font-semibold text-white mb-4">Challenges</h3>
+                  <div className="relative">
+                    <div className="text-[#00ffd5]" style={{ filter: "drop-shadow(0 0 8px rgba(0, 255, 213, 0.5))" }}>
+                      Coming Soon
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Learning Card */}
+              <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <h3 className="text-xl font-semibold text-white mb-4">Learning</h3>
+                  <div className="relative">
+                    <GraduationCap 
+                      size={32} 
+                      className="text-[#00ffd5]"
+                      style={{ filter: "drop-shadow(0 0 8px rgba(0, 255, 213, 0.5))" }}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* EQ Coach Card */}
+              <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <h3 className="text-xl font-semibold text-white mb-4">EQ Coach</h3>
+                  <div className="relative">
+                    <div className="text-[#00ffd5]" style={{ filter: "drop-shadow(0 0 8px rgba(0, 255, 213, 0.5))" }}>
+                      Coming Soon
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
-          {/* Pillar Scores and Insights Section */}
+          {/* Right Column */}
           <div className="lg:col-span-8 space-y-8">
             <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
               <PillarScores scores={dashboardData} />
             </div>
             
-            <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
-              <Insights />
-            </div>
+            <div className="grid grid-cols-1 gap-8">
+              <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
+                <Insights />
+              </div>
 
-            {/* Stats Cards Section - Now positioned under Insights */}
-            <StatCards />
+              <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
+                <StatCards />
+              </div>
+            </div>
           </div>
         </div>
       </div>
