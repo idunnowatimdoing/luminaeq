@@ -9,8 +9,8 @@ import { HeaderIcons } from "@/components/dashboard/HeaderIcons";
 import { PersonalizedTips } from "@/components/dashboard/PersonalizedTips";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Award, Mountain, GraduationCap, UserRound } from "lucide-react";
 
 interface DashboardData {
   current_eq_score: number;
@@ -108,6 +108,14 @@ export default function HomePage() {
     return { highestPillar, lowestPillar };
   };
 
+  const iconStyle = {
+    size: 48,
+    className: "text-[#FFE5B4] animate-pulse",
+    style: {
+      filter: "drop-shadow(0 0 12px rgba(255, 229, 180, 0.7))"
+    }
+  };
+
   if (loading) {
     return <div className="p-8"><Skeleton className="w-full h-[600px]" /></div>;
   }
@@ -157,11 +165,7 @@ export default function HomePage() {
               <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
                 <CardContent className="flex flex-col items-center justify-center p-6">
                   <h3 className="text-xl font-semibold text-white mb-4">Achievements</h3>
-                  <div className="relative">
-                    <div className="text-[#00ffd5]" style={{ filter: "drop-shadow(0 0 8px rgba(0, 255, 213, 0.5))" }}>
-                      Coming Soon
-                    </div>
-                  </div>
+                  <Award {...iconStyle} />
                 </CardContent>
               </Card>
 
@@ -169,11 +173,7 @@ export default function HomePage() {
               <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
                 <CardContent className="flex flex-col items-center justify-center p-6">
                   <h3 className="text-xl font-semibold text-white mb-4">Challenges</h3>
-                  <div className="relative">
-                    <div className="text-[#00ffd5]" style={{ filter: "drop-shadow(0 0 8px rgba(0, 255, 213, 0.5))" }}>
-                      Coming Soon
-                    </div>
-                  </div>
+                  <Mountain {...iconStyle} />
                 </CardContent>
               </Card>
 
@@ -181,13 +181,7 @@ export default function HomePage() {
               <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
                 <CardContent className="flex flex-col items-center justify-center p-6">
                   <h3 className="text-xl font-semibold text-white mb-4">Learning</h3>
-                  <div className="relative">
-                    <GraduationCap 
-                      size={32} 
-                      className="text-[#00ffd5]"
-                      style={{ filter: "drop-shadow(0 0 8px rgba(0, 255, 213, 0.5))" }}
-                    />
-                  </div>
+                  <GraduationCap {...iconStyle} />
                 </CardContent>
               </Card>
 
@@ -195,11 +189,7 @@ export default function HomePage() {
               <Card className="bg-black/40 backdrop-blur-lg border-gray-800">
                 <CardContent className="flex flex-col items-center justify-center p-6">
                   <h3 className="text-xl font-semibold text-white mb-4">EQ Coach</h3>
-                  <div className="relative">
-                    <div className="text-[#00ffd5]" style={{ filter: "drop-shadow(0 0 8px rgba(0, 255, 213, 0.5))" }}>
-                      Coming Soon
-                    </div>
-                  </div>
+                  <UserRound {...iconStyle} />
                 </CardContent>
               </Card>
             </div>
