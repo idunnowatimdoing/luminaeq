@@ -7,6 +7,7 @@ import { PillarScores } from "@/components/dashboard/PillarScores";
 import { Insights } from "@/components/dashboard/Insights";
 import { HeaderIcons } from "@/components/dashboard/HeaderIcons";
 import { PersonalizedTips } from "@/components/dashboard/PersonalizedTips";
+import { StatCards } from "@/components/dashboard/StatCards";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award, Mountain, GraduationCap, UserRound } from "lucide-react";
@@ -203,6 +204,10 @@ export default function HomePage() {
             <div className="grid grid-cols-1 gap-8">
               <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
                 <Insights />
+              </div>
+              
+              <div className="bg-black/40 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-gray-800">
+                <StatCards />
               </div>
             </div>
           </div>
