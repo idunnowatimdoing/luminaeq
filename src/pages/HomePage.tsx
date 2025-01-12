@@ -137,7 +137,7 @@ export default function HomePage() {
         
         <JournalEntryModal
           trigger={null}
-          onEntrySubmitted={() => fetchDashboardData()}
+          onEntrySubmitted={fetchDashboardData}
           isOpen={isJournalModalOpen}
           onOpenChange={setIsJournalModalOpen}
         />

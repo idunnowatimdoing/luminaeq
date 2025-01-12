@@ -15,10 +15,17 @@ import { handleJournalSubmission } from "./journalSubmissionHandler";
 interface JournalEntryModalProps {
   trigger?: React.ReactNode;
   onEntrySubmitted?: () => void;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryModalProps) {
-  const [open, setOpen] = useState(false);
+export function JournalEntryModal({ 
+  trigger, 
+  onEntrySubmitted,
+  isOpen,
+  onOpenChange 
+}: JournalEntryModalProps) {
+  const [localOpen, setLocalOpen] = useState(false);
   const [entryText, setEntryText] = useState("");
   const [pillar, setPillar] = useState("");
   const [mood, setMood] = useState("");
@@ -26,6 +33,10 @@ export function JournalEntryModal({ trigger, onEntrySubmitted }: JournalEntryMod
   const [activeTab, setActiveTab] = useState("text");
   const [mediaBlob, setMediaBlob] = useState<Blob | null>(null);
   const { toast } = useToast();
+
+  // Use either controlled or uncontrolled open state
+  const open = isOpen !== undefined ? isOpen : localOpen;
+  const setOpen = onOpenChange || setLocalOpen;
 
   const validateEntry = () => {
     if (!entryText.trim() && !mediaBlob) {
