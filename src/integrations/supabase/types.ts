@@ -519,6 +519,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_frequent_emotions: {
+        Args: {
+          user_uuid: string
+          days: number
+        }
+        Returns: {
+          emotion: string
+          count: number
+        }[]
+      }
+      get_pillar_streak: {
+        Args: {
+          user_uuid: string
+          pillar_name: string
+        }
+        Returns: number
+      }
       mock_auth_uid: {
         Args: {
           uid: string
