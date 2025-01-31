@@ -33,6 +33,7 @@ export const AssessmentInit = ({ onInitialized }: AssessmentInitProps) => {
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('onboarding_completed')
+          .eq('user_id', session.user.id)
           .single();
 
         if (profileError) {
