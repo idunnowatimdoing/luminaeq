@@ -5,17 +5,22 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 interface PillarScoreProps {
   title: string;
   currentScore?: number;
-  goalScore?: number;
   gradientClass: string;
   safeSpaceEntries?: number;
   safeSpaceLimit?: number;
   isSafeSpace?: boolean;
 }
 
+const getPillarLevel = (score: number = 0): string => {
+  if (score >= 90) return "Advanced";
+  if (score >= 75) return "Proficient";
+  if (score >= 60) return "Intermediate";
+  return "Beginner";
+};
+
 export const PillarScore = ({ 
   title, 
   currentScore, 
-  goalScore, 
   gradientClass,
   safeSpaceEntries,
   safeSpaceLimit,
@@ -42,7 +47,7 @@ export const PillarScore = ({
             {isSafeSpace ? (
               <p>Private journaling for your eyes only. No AI analysis.</p>
             ) : (
-              <p>{title} Score Details</p>
+              <p>{title} Level Details</p>
             )}
           </TooltipContent>
         </Tooltip>
@@ -65,9 +70,10 @@ export const PillarScore = ({
               )}
             </div>
           ) : (
-            <div className="flex justify-between text-sm text-gray-300">
-              <span>Current: {currentScore}/100</span>
-              <span>Goal: {goalScore}/100</span>
+            <div className="text-center">
+              <span className="text-lg font-semibold text-[#00ffd5]">
+                {getPillarLevel(currentScore)}
+              </span>
             </div>
           )}
         </CardContent>
