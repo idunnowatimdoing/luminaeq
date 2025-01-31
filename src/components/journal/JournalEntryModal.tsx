@@ -10,6 +10,7 @@ import { AudioRecorder } from "./AudioRecorder";
 import { VideoRecorder } from "./VideoRecorder";
 import { PillarSelect } from "./PillarSelect";
 import { MoodSelector } from "./MoodSelector";
+import { TagInput } from "./TagInput";
 import { handleJournalSubmission } from "./journalSubmissionHandler";
 
 interface JournalEntryModalProps {
@@ -29,6 +30,7 @@ export function JournalEntryModal({
   const [entryText, setEntryText] = useState("");
   const [pillar, setPillar] = useState("");
   const [mood, setMood] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("text");
   const [mediaBlob, setMediaBlob] = useState<Blob | null>(null);
@@ -85,7 +87,8 @@ export function JournalEntryModal({
         pillar,
         mood,
         type: activeTab,
-        mediaBlob
+        mediaBlob,
+        tags
       });
 
       if (success) {
@@ -97,6 +100,7 @@ export function JournalEntryModal({
         setEntryText("");
         setPillar("");
         setMood("");
+        setTags([]);
         setMediaBlob(null);
         onEntrySubmitted?.();
       }
@@ -164,6 +168,11 @@ export function JournalEntryModal({
             <div className="space-y-2">
               <label className="text-sm font-medium">How are you feeling?</label>
               <MoodSelector value={mood} onChange={setMood} />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Tags</label>
+              <TagInput tags={tags} onChange={setTags} />
             </div>
           </div>
           

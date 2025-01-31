@@ -8,6 +8,7 @@ interface JournalSubmissionParams {
   mood: string;
   type: string;
   mediaBlob?: Blob | null;
+  tags?: string[];
 }
 
 export const handleJournalSubmission = async ({
@@ -16,7 +17,8 @@ export const handleJournalSubmission = async ({
   pillar,
   mood,
   type,
-  mediaBlob
+  mediaBlob,
+  tags = []
 }: JournalSubmissionParams): Promise<boolean> => {
   console.log(`Processing ${type} journal entry...`);
 
@@ -117,7 +119,7 @@ export const handleJournalSubmission = async ({
       console.log("Sentiment analysis completed:", sentimentData);
     }
 
-    // Create journal entry with correct columns
+    // Create journal entry with tags
     const { error: insertError } = await supabase
       .from("journal_entries")
       .insert({
@@ -126,7 +128,8 @@ export const handleJournalSubmission = async ({
         pillar,
         mood,
         sentiment_data: sentimentData,
-        media_entry_id: mediaEntry?.id
+        media_entry_id: mediaEntry?.id,
+        tags
       });
 
     if (insertError) {

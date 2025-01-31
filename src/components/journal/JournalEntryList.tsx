@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 
 interface JournalEntry {
   id: string;
@@ -8,6 +9,7 @@ interface JournalEntry {
   mood: string;
   entry_text: string;
   entry_audio?: string;
+  tags?: string[];
 }
 
 interface JournalEntryListProps {
@@ -38,6 +40,15 @@ export const JournalEntryList = ({ entries, isLoading }: JournalEntryListProps) 
                 <p className="text-gray-300 whitespace-pre-wrap">{entry.entry_text}</p>
                 {entry.entry_audio && (
                   <audio controls className="mt-2 w-full" src={entry.entry_audio} />
+                )}
+                {entry.tags && entry.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {entry.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                 )}
               </CardContent>
             </Card>
