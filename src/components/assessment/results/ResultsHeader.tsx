@@ -19,8 +19,8 @@ export const ResultsHeader = ({ totalScore }: ResultsHeaderProps) => {
         Congratulations! Here's a breakdown of your emotional intelligence across five key pillars.
       </p>
       <div className="flex flex-col items-center space-y-2">
-        <span className="text-5xl font-bold text-[#00ffd5]">{totalScore}</span>
-        <span className="text-xl text-gray-300">Overall EQ Score - {getTotalLevel(totalScore)} (out of 500)</span>
+        <span className="text-5xl font-bold text-[#00ffd5]">{getTotalLevel(totalScore)}</span>
+        <span className="text-xl text-gray-300">Overall EQ Level</span>
       </div>
     </div>
   );
