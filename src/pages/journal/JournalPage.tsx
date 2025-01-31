@@ -11,6 +11,10 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { handleJournalSubmission } from "@/components/journal/journalSubmissionHandler";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const JournalPage = () => {
   const { pillar } = useParams();
@@ -23,6 +27,21 @@ export const JournalPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("text");
   const [mediaBlob, setMediaBlob] = useState<Blob | null>(null);
+
+  // Fetch previous entries
+  const { data: previousEntries, isLoading } = useQuery({
+    queryKey: ['journal-entries', pillar],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('journal_entries')
+        .select('*')
+        .eq('pillar', pillar)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
 
   const formatPillarName = (pillar: string) => {
     return pillar
@@ -198,7 +217,34 @@ export const JournalPage = () => {
           {/* Right page - Previous Entries */}
           <div className="bg-black/20 backdrop-blur-lg rounded-xl p-6 border border-gray-800">
             <h2 className="text-xl font-semibold text-white mb-4">Previous Entries</h2>
-            <p className="text-gray-400">Previous entries will be displayed here...</p>
+            <ScrollArea className="h-[600px] pr-4">
+              {isLoading ? (
+                <p className="text-gray-400">Loading entries...</p>
+              ) : previousEntries?.length === 0 ? (
+                <p className="text-gray-400">No entries yet. Start journaling!</p>
+              ) : (
+                <div className="space-y-4">
+                  {previousEntries?.map((entry) => (
+                    <Card key={entry.id} className="bg-black/40 border-gray-800">
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <CardTitle className="text-sm font-medium text-gray-200">
+                            {format(new Date(entry.created_at), 'MMM d, yyyy h:mm a')}
+                          </CardTitle>
+                          <span className="text-sm text-gray-400 capitalize">{entry.mood}</span>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-300 whitespace-pre-wrap">{entry.entry_text}</p>
+                        {entry.entry_audio && (
+                          <audio controls className="mt-2 w-full" src={entry.entry_audio} />
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
           </div>
         </div>
       </div>
