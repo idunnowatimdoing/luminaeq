@@ -10,6 +10,7 @@ import { AssessmentPage } from "./pages/assessment/AssessmentPage";
 import { AssessmentResults } from "./components/assessment/AssessmentResults";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { OnboardingFlow } from "./components/onboarding/OnboardingFlow";
+import { JournalPage } from "./pages/journal/JournalPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,6 +41,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <HomePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/journal/:pillar"
+              element={
+                <ProtectedRoute>
+                  <JournalPage />
                 </ProtectedRoute>
               }
             />
