@@ -20,17 +20,25 @@ const getPillarLevel = (score: number = 0): string => {
   return "Beginner";
 };
 
-const getNextLevelThreshold = (score: number = 0): number => {
-  if (score < 60) return 60;
-  if (score < 75) return 75;
-  if (score < 90) return 90;
-  return 100;
+const getLevelRange = (score: number = 0): { min: number; max: number } => {
+  if (score >= 90) return { min: 90, max: 100 };
+  if (score >= 75) return { min: 75, max: 90 };
+  if (score >= 60) return { min: 60, max: 75 };
+  return { min: 0, max: 60 };
 };
 
-const getProgressToNextLevel = (score: number = 0): number => {
-  const nextThreshold = getNextLevelThreshold(score);
-  const currentThreshold = score >= 90 ? 90 : score >= 75 ? 75 : score >= 60 ? 60 : 0;
-  return ((score - currentThreshold) / (nextThreshold - currentThreshold)) * 100;
+const getProgressInCurrentLevel = (score: number = 0): number => {
+  const { min, max } = getLevelRange(score);
+  return Math.min(100, ((score - min) / (max - min)) * 100);
+};
+
+const getNextLevel = (currentLevel: string): string => {
+  switch (currentLevel) {
+    case "Beginner": return "Intermediate";
+    case "Intermediate": return "Proficient";
+    case "Proficient": return "Advanced";
+    default: return "Mastery";
+  }
 };
 
 export const PillarScore = ({ 
@@ -119,11 +127,11 @@ export const PillarScore = ({
               </div>
               <div className="space-y-1">
                 <Progress 
-                  value={getProgressToNextLevel(currentScore)} 
+                  value={getProgressInCurrentLevel(currentScore)} 
                   className="h-1.5 bg-gray-700/50"
                 />
                 <p className="text-xs text-gray-400 text-center">
-                  {Math.round(getProgressToNextLevel(currentScore))}% to {getPillarLevel(getNextLevelThreshold(currentScore))}
+                  {Math.round(getProgressInCurrentLevel(currentScore))}% to {getNextLevel(getPillarLevel(currentScore))}
                 </p>
               </div>
               <p className="text-xs text-gray-300 text-center italic">
