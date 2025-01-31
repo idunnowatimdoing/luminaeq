@@ -32,11 +32,20 @@ export const StatCards = () => {
               <Toggle 
                 pressed={card.enabled}
                 onPressedChange={card.onToggle}
-                className="absolute top-2 right-2"
-                size="sm"
-                variant="outline"
+                className={`absolute top-2 right-2 w-14 h-7 rounded-full transition-colors duration-200 ease-in-out
+                  ${card.enabled 
+                    ? 'bg-gradient-to-r from-lumina-yellow to-lumina-teal border-none' 
+                    : 'bg-gray-600'
+                  }`}
               >
-                {card.enabled ? "On" : "Off"}
+                <div 
+                  className={`absolute w-6 h-6 rounded-full transition-transform duration-200 ease-in-out
+                    ${card.enabled 
+                      ? 'translate-x-7 bg-white' 
+                      : 'translate-x-0.5 bg-gray-300'
+                    }
+                  `}
+                />
               </Toggle>
               <h3 className="text-xl font-semibold text-white mb-4">{card.title}</h3>
               <Icon 
