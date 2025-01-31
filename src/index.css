@@ -99,6 +99,50 @@
   }
 }
 
+/* Journal Card Styles */
+.journal-card {
+  @apply bg-gray-800/50 backdrop-blur-lg border-gray-700;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.journal-card::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 0;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent
+  );
+  transform: translateX(-100%) rotateY(-90deg);
+  transform-origin: right;
+}
+
+.journal-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.group:hover .journal-card {
+  transform: rotateY(-15deg) translateX(10px);
+  box-shadow: 
+    -10px 10px 20px rgba(0, 0, 0, 0.3),
+    -15px 15px 30px rgba(0, 0, 0, 0.2);
+}
+
 /* Orb Animation Styles */
 .auth-orb {
   @apply absolute w-48 h-48 rounded-full;
@@ -151,6 +195,7 @@
   opacity: 0.7;
 }
 
+/* Gradient Classes */
 .gradient-selfawareness {
   background: linear-gradient(-45deg, #00ffd5, #00b4d8, #0077b6, #00ffd5);
   box-shadow: 

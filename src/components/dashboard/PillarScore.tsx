@@ -35,7 +35,7 @@ export const PillarScore = ({
 
   return (
     <div 
-      className="flex flex-col items-center space-y-4 cursor-pointer transition-transform hover:scale-105"
+      className="flex flex-col items-center space-y-4 cursor-pointer transition-transform hover:scale-105 group"
       onClick={handlePillarClick}
     >
       <TooltipProvider>
@@ -53,7 +53,7 @@ export const PillarScore = ({
         </Tooltip>
       </TooltipProvider>
       
-      <Card className="w-full bg-gray-800/50 backdrop-blur-lg border-gray-700">
+      <Card className="w-full journal-card">
         <CardHeader className="p-4">
           <CardTitle className="text-base text-white text-center">{title}</CardTitle>
         </CardHeader>
