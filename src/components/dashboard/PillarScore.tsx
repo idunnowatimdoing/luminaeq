@@ -53,7 +53,7 @@ export const PillarScore = ({
         </Tooltip>
       </TooltipProvider>
       
-      <Card className="w-full journal-card bg-gray-800/50 backdrop-blur-lg border border-gray-700/50">
+      <Card className="w-full journal-card bg-black/40 backdrop-blur-xl border-2 border-gray-700/50">
         <CardHeader className="p-4">
           <CardTitle className="text-base text-white/90 text-center font-semibold">{title}</CardTitle>
         </CardHeader>
