@@ -144,6 +144,7 @@ export type Database = {
           mood: string | null
           pillar: string | null
           sentiment_data: Json | null
+          tags: string[] | null
           user_id: string | null
         }
         Insert: {
@@ -154,6 +155,7 @@ export type Database = {
           mood?: string | null
           pillar?: string | null
           sentiment_data?: Json | null
+          tags?: string[] | null
           user_id?: string | null
         }
         Update: {
@@ -164,6 +166,7 @@ export type Database = {
           mood?: string | null
           pillar?: string | null
           sentiment_data?: Json | null
+          tags?: string[] | null
           user_id?: string | null
         }
         Relationships: []
