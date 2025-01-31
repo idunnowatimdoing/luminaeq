@@ -27,27 +27,29 @@ export const StatCards = () => {
       {cards.map((card) => {
         const Icon = card.icon;
         return (
-          <Card key={card.title} className="bg-black/40 backdrop-blur-lg border-gray-800">
-            <CardContent className="flex flex-col items-center justify-center p-6 relative">
-              <Toggle 
-                pressed={card.enabled}
-                onPressedChange={card.onToggle}
-                className={`absolute top-2 right-2 w-14 h-7 rounded-full transition-colors duration-200 ease-in-out
-                  ${card.enabled 
-                    ? 'bg-gradient-to-r from-lumina-yellow to-lumina-teal border-none' 
-                    : 'bg-gray-600'
-                  }`}
-              >
-                <div 
-                  className={`absolute w-6 h-6 rounded-full transition-transform duration-200 ease-in-out
-                    ${card.enabled 
-                      ? 'translate-x-7 bg-white' 
-                      : 'translate-x-0.5 bg-gray-300'
-                    }
-                  `}
-                />
-              </Toggle>
-              <h3 className="text-xl font-semibold text-white mb-4">{card.title}</h3>
+          <Card key={card.title} className="bg-black/40 backdrop-blur-lg border-gray-800 relative overflow-hidden">
+            <CardContent className="flex flex-col items-center justify-center p-6">
+              <div className="absolute top-4 right-4">
+                <Toggle 
+                  pressed={card.enabled}
+                  onPressedChange={card.onToggle}
+                  className="relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out"
+                  style={{
+                    background: card.enabled 
+                      ? 'linear-gradient(to right, #00ffd5, #00b4d8)' 
+                      : '#374151'
+                  }}
+                >
+                  <div 
+                    className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out"
+                    style={{
+                      transform: card.enabled ? 'translateX(24px)' : 'translateX(0)',
+                    }}
+                  />
+                </Toggle>
+              </div>
+              
+              <h3 className="text-xl font-semibold text-white mb-4 mt-2">{card.title}</h3>
               <Icon 
                 size={48} 
                 className={`${card.enabled ? 'text-[#FFE5B4] animate-pulse' : 'text-gray-500'}`}
